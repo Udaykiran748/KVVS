@@ -135,12 +135,6 @@ const Home = () => {
                 </div>
                 <span className="text-base font-medium tracking-wide">Modular Scalability</span>
               </li>
-              <li className="flex items-center space-x-5 text-gray-200">
-                <div className="p-3 border border-slate-700 rounded-xl bg-slate-800/80 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                  <RefreshCw className="w-5 h-5 text-blue-400" />
-                </div>
-                <span className="text-base font-medium tracking-wide">10-Year Maintenance Cycle</span>
-              </li>
             </ul>
           </div>
 

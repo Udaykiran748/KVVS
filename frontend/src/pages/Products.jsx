@@ -234,7 +234,7 @@ const Products = () => {
         )}
 
         {/* --- Separate Video Section --- */}
-        <div className="mt-24 max-w-4xl mx-auto">
+        <div className="mt-24 max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="font-orbitron font-extrabold text-2xl sm:text-3xl text-black tracking-wider mb-3">
               SEE THE GENERATOR IN ACTION
@@ -279,7 +279,7 @@ const Products = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="w-full max-w-6xl aspect-video px-4"
+              className="w-full max-w-4xl aspect-video px-4"
             >
               <video
                 src="/images/RFG Video.mp4"
