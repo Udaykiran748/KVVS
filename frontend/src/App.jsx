@@ -14,11 +14,8 @@ import About from './pages/About';
 import Products from './pages/Products';
 import EventDetails from './pages/EventDetails';
 import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-
 // Protected Customer Pages
-import Register from './pages/Register';
+import Booking from './pages/Booking';
 import BookingHistory from './pages/BookingHistory';
 
 // Protected Admin Pages
@@ -42,25 +39,12 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/event" element={<EventDetails />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-
-              {/* Attendee Protected Routes */}
-              <Route 
-                path="/register" 
-                element={
-                  <ProtectedRoute>
-                    <Register />
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="/booking" element={<Booking />} />
+              
+              {/* Attendee Routes */}
               <Route 
                 path="/history" 
-                element={
-                  <ProtectedRoute>
-                    <BookingHistory />
-                  </ProtectedRoute>
-                } 
+                element={<BookingHistory />}
               />
 
               {/* Admin Protected Routes */}

@@ -31,15 +31,15 @@ const Home = () => {
   const faqs = [
     {
       q: 'How does a magnetic-power generator generate electricity without fuel?',
-      a: 'The Vortex Generator operates using zero-point permanent neodymium magnet arrays arranged in an asynchronous stator structure. This configuration establishes a perpetual magnetic torque cycle that spins the internal rotor, converting kinetic magnetic flux into alternating current (AC) electricity through copper coils—completely free of diesel, solar rays, or combustion.'
+      a: 'The K V V Sai electronic Generator operates using zero-point permanent neodymium magnet arrays arranged in an asynchronous stator structure. This configuration establishes a perpetual magnetic torque cycle that spins the internal rotor, converting kinetic magnetic flux into alternating current (AC) electricity through copper coils—completely free of diesel, solar rays, or combustion.'
     },
     {
       q: 'Does it make noise during operation?',
-      a: 'No. The Vortex Generator employs superconducting liquid convection bearings and a vaccum-sealed core, dampening mechanical vibrations. The entire device operates silently below 15 decibels, making it quieter than standard ambient refrigerator cycles.'
+      a: 'No. The K V V Sai electronic Generator employs superconducting liquid convection bearings and a vaccum-sealed core, dampening mechanical vibrations. The entire device operates silently below 15 decibels, making it quieter than standard ambient refrigerator cycles.'
     },
     {
       q: 'What KW models are available, and how do I select one?',
-      a: 'We offer three base models designed for various loads: the Vortex-2 (2KW) for cabins, apartments, and essential appliances; the Vortex-5 (5KW) which completely powers standard residential houses; and the Vortex-10 (10KW) tailored for commercial estates, charging cells, or light factories.'
+      a: 'We offer three base models designed for various loads: the K V V Sai electronic-2 (2KW) for cabins, apartments, and essential appliances; the K V V Sai electronic-5 (5KW) which completely powers standard residential houses; and the K V V Sai electronic-10 (10KW) tailored for commercial estates, charging cells, or light factories.'
     },
     {
       q: 'Why is there a launch event booking fee?',
@@ -97,8 +97,8 @@ const Home = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-5 mb-8 z-20 relative"
         >
-          <Link to="/products" className="btn-cyber px-8 py-3 rounded-sm text-xs tracking-wider font-bold w-full sm:w-auto flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(0,242,254,0.3)]">
-            <span>RESERVE PASS / MODEL</span>
+          <Link to="/booking" className="btn-cyber px-8 py-3 rounded-sm text-xs tracking-wider font-bold w-full sm:w-auto flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(0,242,254,0.3)]">
+            <span>BOOKING GENERATOR</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link to="/about" className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
@@ -111,46 +111,43 @@ const Home = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="relative w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-4 mt-8 mb-24 z-10"
+          className="relative w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 mt-12 mb-24 z-10 bg-[#191e24] rounded-3xl p-8 lg:p-12 shadow-2xl border border-slate-800 overflow-hidden"
         >
           {/* Left Column: Key Features */}
-          <div className="flex flex-col space-y-5 lg:w-1/4 text-left z-10 order-2 lg:order-1 px-4 lg:px-0 mt-8 lg:mt-0">
-            <h3 className="font-orbitron font-bold text-black text-sm tracking-wider mb-2">KEY FEATURES:</h3>
-            <ul className="space-y-5">
-              <li className="flex items-center space-x-4 text-black">
-                <div className="p-2 border border-slate-300 rounded-full bg-slate-100">
-                  <Zap className="w-4 h-4 text-black" />
+          <div className="flex flex-col space-y-6 lg:w-1/3 text-left z-10 order-2 lg:order-1 px-4 lg:px-0">
+            <h3 className="font-orbitron font-bold text-white text-lg tracking-wider mb-2">KEY FEATURES:</h3>
+            <ul className="space-y-6">
+              <li className="flex items-center space-x-5 text-gray-200">
+                <div className="p-3 border border-slate-700 rounded-xl bg-slate-800/80 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                  <Zap className="w-5 h-5 text-blue-400" />
                 </div>
-                <span className="text-sm font-medium tracking-wide">Continuous Power</span>
+                <span className="text-base font-medium tracking-wide">Continuous Power</span>
               </li>
-              <li className="flex items-center space-x-4 text-black">
-                <div className="p-2 border border-slate-300 rounded-full bg-slate-100">
-                  <Activity className="w-4 h-4 text-black" />
+              <li className="flex items-center space-x-5 text-gray-200">
+                <div className="p-3 border border-slate-700 rounded-xl bg-slate-800/80 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                  <Activity className="w-5 h-5 text-blue-400" />
                 </div>
-                <span className="text-sm font-medium tracking-wide">Zero Inputs</span>
+                <span className="text-base font-medium tracking-wide">Zero Inputs</span>
               </li>
-              <li className="flex items-center space-x-4 text-black">
-                <div className="p-2 border border-slate-300 rounded-full bg-slate-100">
-                  <Cpu className="w-4 h-4 text-black" />
+              <li className="flex items-center space-x-5 text-gray-200">
+                <div className="p-3 border border-slate-700 rounded-xl bg-slate-800/80 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                  <Cpu className="w-5 h-5 text-blue-400" />
                 </div>
-                <span className="text-sm font-medium tracking-wide">Modular Scalability</span>
+                <span className="text-base font-medium tracking-wide">Modular Scalability</span>
               </li>
-              <li className="flex items-center space-x-4 text-black">
-                <div className="p-2 border border-slate-300 rounded-full bg-slate-100">
-                  <RefreshCw className="w-4 h-4 text-black" />
+              <li className="flex items-center space-x-5 text-gray-200">
+                <div className="p-3 border border-slate-700 rounded-xl bg-slate-800/80 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                  <RefreshCw className="w-5 h-5 text-blue-400" />
                 </div>
-                <span className="text-sm font-medium tracking-wide">10-Year Maintenance Cycle</span>
+                <span className="text-base font-medium tracking-wide">10-Year Maintenance Cycle</span>
               </li>
             </ul>
           </div>
 
           {/* Center Image */}
-          <div className="relative w-full lg:w-1/2 flex justify-center items-center z-0 order-1 lg:order-2">
-            <img src="/images/Generator1.jpg" alt="Zero-Point Generator Engine" className="w-full max-w-lg object-contain z-10" />
-
+          <div className="relative w-full lg:w-2/3 flex justify-center items-center z-0 order-1 lg:order-2">
+            <img src="/images/Generator1.jpg" alt="Zero-Point Generator Engine" className="w-full max-w-[100%] lg:max-w-xl object-contain z-10" />
           </div>
-          {/* Right Spacer to keep center image centered */}
-          <div className="hidden lg:block lg:w-1/4 order-3"></div>
         </motion.div>
 
         {/* Live Launch Countdown Timer Box */}
@@ -171,7 +168,7 @@ const Home = () => {
             <Countdown targetDate={event.date} />
 
             <div className="mt-8 pt-6 border-t border-slate-800/80 text-xs sm:text-sm text-black flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p>VENUE: <span className="text-blue-600 font-semibold">{event.venue}</span></p>
+              <p>VENUE: <span className="text-blue-600 font-semibold">Plot No. Q8, Building No. 44/1 & 64, E J Hosalli, Hosalli Sindhanur Hobli, Raichur–Koppal Road, Near Industrial Estate, Sindhanur, Raichur, Karnataka – 584128, india.</span></p>
               <p>RESERVATION VALUE: <span className="text-green-600 font-bold">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span></p>
             </div>
           </motion.div>
@@ -217,7 +214,7 @@ const Home = () => {
             MAGNETIC STATORS
           </h2>
           <p className="text-black text-sm sm:text-base leading-relaxed mb-6">
-            Unlike wind or solar modules which depend on external weather currents, the Vortex series relies entirely on the spin forces of high-coercivity Neodymium arrays.
+            Unlike wind or solar modules which depend on external weather currents, the K V V Sai electronic series relies entirely on the spin forces of high-coercivity Neodymium arrays.
           </p>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">

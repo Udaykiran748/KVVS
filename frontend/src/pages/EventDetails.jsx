@@ -24,15 +24,15 @@ const EventDetails = () => {
 
   const agenda = [
     { time: '09:30 AM', title: 'Security Clearances & Registration Check-in', desc: 'Verify VIP QR boarding passes at entrance security checkpoints. Level-1 badge issuance.' },
-    { time: '10:30 AM', title: 'Keynote: Engineering Perpetual Neodymium Stators', desc: 'Zero-point energy physics seminar by leading researchers. Highlighting Vortex polar repulsion equations.' },
-    { time: '11:45 AM', title: 'Live Unveiling: 2KW, 5KW & 10KW Vortex Series', desc: 'First live public demonstration of magnetic generator cores powering continuous residential loads without external fuels.' },
+    { time: '10:30 AM', title: 'Keynote: Engineering Perpetual Neodymium Stators', desc: 'Zero-point energy physics seminar by leading researchers. Highlighting K V V Sai electronic polar repulsion equations.' },
+    { time: '11:45 AM', title: 'Live Unveiling: 2KW, 5KW & 10KW K V V Sai electronic Series', desc: 'First live public demonstration of magnetic generator cores powering continuous residential loads without external fuels.' },
     { time: '01:00 PM', title: 'Laboratory Cell Access & Hands-On Testing', desc: 'Attendees visit active thermal cells and review real-time electrical flux analytics and convection loops.' },
     { time: '02:30 PM', title: 'Preorder Reservations Priority Queueing', desc: 'Exclusive booking priority desk registers confirmed attendees to priority production-run queue slots.' }
   ];
 
   const speakers = [
     { name: 'Dr. Evelyn Carter', role: 'Chief of Quantum Magnetic Dynamics', institution: 'MIT Clean Energy Lab' },
-    { name: 'Rohan Sharma', role: 'Vortex System Stator Architect', institution: 'Quantum Power Industries' }
+    { name: 'Rohan Sharma', role: 'K V V Sai electronic System Stator Architect', institution: 'Quantum Power Industries' }
   ];
 
   if (loading) {
@@ -90,7 +90,7 @@ const EventDetails = () => {
                     <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-black text-xs font-orbitron">VENUE GATE</p>
-                      <p className="text-black font-semibold mt-1">{event.venue}</p>
+                      <p className="text-black font-semibold mt-1">Plot No. Q8, Building No. 44/1 & 64, E J Hosalli, Hosalli Sindhanur Hobli, Raichur–Koppal Road, Near Industrial Estate, Sindhanur, Raichur, Karnataka – 584128, india.</p>
                     </div>
                   </div>
 
@@ -104,8 +104,8 @@ const EventDetails = () => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-slate-800/60 text-center">
-                  <Link to="/products" className="btn-cyber w-full py-3 rounded text-xs block text-center">
-                    RESERVE ENTRY CLEARANCE
+                  <Link to="/booking" className="btn-cyber w-full py-3 rounded text-xs block text-center">
+                    BOOKING GENERATOR
                   </Link>
                 </div>
               </div>
@@ -114,11 +114,11 @@ const EventDetails = () => {
               <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
                 <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-4 flex items-center space-x-1.5">
                   <Users className="w-4 h-4 text-blue-600" />
-                  <span>SEAT COUNTER CAPACITIES</span>
+                  <span>BOOKING GENERATOR CAPACITIES </span>
                 </h3>
 
                 <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="text-slate-500">Reserved Passes</span>
+                  <span className="text-slate-500"> Booking Generator </span>
                   <span className="text-black font-bold">{event.total_slots - event.available_slots} / {event.total_slots}</span>
                 </div>
 

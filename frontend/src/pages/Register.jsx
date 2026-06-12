@@ -28,14 +28,51 @@ const Register = () => {
     const loadBookingParameters = async () => {
       try {
         const prodRes = await productsAPI.getAll();
-        setProducts(prodRes.data);
+
+        const hardcodedProducts = [
+          {
+            id: 'static-3',
+            name: 'Resources Free Generator - 3KW',
+            kw_capacity: 3,
+            price: '6000',
+          },
+          {
+            id: 'static-4',
+            name: 'Resources Free Generator - 4KW',
+            kw_capacity: 4,
+            price: '6000',
+          },
+          {
+            id: 'static-5',
+            name: 'Resources Free Generator - 5KW',
+            kw_capacity: 5,
+            price: '6000',
+          },
+          {
+            id: 'static-1',
+            name: 'Resources Free Generator - 6KW',
+            kw_capacity: 6,
+            price: '6000',
+          },
+          {
+            id: 'static-2',
+            name: 'Energy Booster System',
+            kw_capacity: 40,
+            price: '6000',
+          }
+        ];
+
+        const apiProducts = (prodRes.data || []).filter(p => !p.name.includes('K V V Sai electronic'));
+        const allProducts = [...hardcodedProducts, ...apiProducts];
+
+        setProducts(allProducts);
 
         // Pre-select product from URL search param
         const urlProductId = searchParams.get('product');
         if (urlProductId) {
           setSelectedProductId(urlProductId);
-        } else if (prodRes.data.length > 0) {
-          setSelectedProductId(prodRes.data[0].id.toString());
+        } else if (allProducts.length > 0) {
+          setSelectedProductId(allProducts[0].id.toString());
         }
 
         const eventRes = await eventAPI.getActive();
@@ -385,7 +422,7 @@ const Register = () => {
             </div>
 
             <h3 className="font-orbitron font-extrabold text-lg text-cyan-400 tracking-wide text-glow-cyan mb-2">
-              VORTEX PAY SANDBOX
+              K V V SAI ELECTRONIC PAY SANDBOX
             </h3>
             <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Demo checkout Simulation Active</p>
 

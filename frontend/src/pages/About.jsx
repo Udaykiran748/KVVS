@@ -56,66 +56,48 @@ const About = () => {
           >
             <div className="text-center mb-10">
               <h4 className="font-orbitron font-bold text-xl sm:text-3xl text-blue-600 leading-tight mb-4">
-                Magnetic Field Working in a Generator
+                Magnetic Field Working Based on a Generator
               </h4>
-              <p className="text-black text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
-                A generator converts mechanical energy into electrical energy using the principle of electromagnetic induction, discovered by Michael Faraday.
-              </p>
             </div>
 
             <div className="bg-white/50 backdrop-blur-sm border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-              <h5 className="font-orbitron font-bold text-lg sm:text-xl text-black mb-8 border-b border-slate-200 pb-4">
-                How the Magnetic Field Works
-              </h5>
-
-              <div className="space-y-8 text-black text-sm sm:text-base">
-
-                <div className="flex flex-col sm:flex-row sm:space-x-4">
-                  <span className="font-orbitron font-bold text-cyan-500 text-lg sm:text-xl shrink-0 w-8 mb-2 sm:mb-0">01</span>
-                  <div>
-                    <h6 className="font-bold mb-2">Magnetic Field Creation</h6>
-                    <p className="text-slate-700">A strong magnet (permanent magnet or electromagnet) creates a magnetic field between its north and south poles.</p>
-                  </div>
+              <div className="space-y-6 text-black text-sm sm:text-base leading-relaxed text-justify">
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    A generator is an electrical machine that converts mechanical energy into electrical energy through the principle of electromagnetic induction. The magnetic field plays a crucial role in the operation of a generator because it provides the magnetic flux required for the generation of electricity. The working principle of a generator was discovered by Michael Faraday, who stated that whenever a conductor moves through a magnetic field or experiences a change in magnetic flux, an electromotive force (EMF) is induced in the conductor. This principle forms the basis of all modern power generation systems.
+                  </p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:space-x-4">
-                  <span className="font-orbitron font-bold text-cyan-500 text-lg sm:text-xl shrink-0 w-8 mb-2 sm:mb-0">02</span>
-                  <div>
-                    <h6 className="font-bold mb-2">Movement of the Conductor</h6>
-                    <p className="text-slate-700">A coil of wire (armature) is rotated within this magnetic field by a turbine, engine, or other mechanical source.</p>
-                  </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    In a generator, a magnetic field is created either by permanent magnets or electromagnets. The magnetic field exists between the north and south poles of the magnet and produces magnetic lines of force. A coil of wire, known as the armature winding, is placed within this magnetic field. When mechanical energy from a turbine, engine, or any other prime mover rotates the armature, the conductors of the coil cut through the magnetic lines of force. As the coil continues to rotate, the amount of magnetic flux linked with the conductor changes continuously. This changing magnetic flux induces a voltage in the coil according to Faraday's law of electromagnetic induction.
+                  </p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:space-x-4">
-                  <span className="font-orbitron font-bold text-cyan-500 text-lg sm:text-xl shrink-0 w-8 mb-2 sm:mb-0">03</span>
-                  <div>
-                    <h6 className="font-bold mb-2">Cutting Magnetic Flux</h6>
-                    <p className="text-slate-700">As the coil rotates, it cuts through the magnetic field lines. The magnetic flux linked with the coil changes continuously.</p>
-                  </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    The induced voltage causes electrons within the conductor to move, creating an electric current. When the generator is connected to an external electrical circuit, this current flows through the circuit and supplies electrical power to various loads. The continuous rotation of the armature ensures a continuous change in magnetic flux, resulting in a continuous generation of electricity. In alternating current (AC) generators, the direction of current changes periodically due to the rotation of the coil, whereas in direct current (DC) generators, a commutator is used to convert the internally generated alternating current into direct current.
+                  </p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:space-x-4">
-                  <span className="font-orbitron font-bold text-cyan-500 text-lg sm:text-xl shrink-0 w-8 mb-2 sm:mb-0">04</span>
-                  <div>
-                    <h6 className="font-bold mb-2">Induced EMF</h6>
-                    <p className="text-slate-700 mb-4">Due to the changing magnetic flux, an electromotive force (EMF) is induced in the coil according to Faraday's Law.</p>
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono max-w-sm">
-                      <p className="font-bold mb-2 text-slate-800 border-b border-slate-200 pb-1">Where:</p>
-                      <p className="mb-1"><span className="font-bold">E</span> = induced voltage (EMF)</p>
-                      <p className="mb-1"><span className="font-bold">N</span> = number of turns in the coil</p>
-                      <p><span className="font-bold">Φ</span> = magnetic flux</p>
-                    </div>
-                  </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    The strength of the magnetic field significantly affects the performance of a generator. A stronger magnetic field increases the magnetic flux and results in a higher induced voltage. Similarly, increasing the speed of rotation of the armature increases the rate at which magnetic flux is cut, thereby increasing the generated EMF. The number of turns in the armature winding also influences the amount of voltage produced. Therefore, generator designers carefully select the magnetic field strength, coil design, and rotational speed to achieve the desired electrical output.
+                  </p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:space-x-4">
-                  <span className="font-orbitron font-bold text-cyan-500 text-lg sm:text-xl shrink-0 w-8 mb-2 sm:mb-0">05</span>
-                  <div>
-                    <h6 className="font-bold mb-2">Electric Current Production</h6>
-                    <p className="text-slate-700">If the coil is connected to an external circuit, the induced EMF causes current to flow, producing electrical power.</p>
-                  </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    The magnetic field not only enables the generation of electricity but also determines the efficiency and reliability of the generator. Without a magnetic field, electromagnetic induction cannot occur, and no electrical energy can be produced. For this reason, maintaining a stable and strong magnetic field is essential for effective generator operation. Modern generators used in thermal power plants, hydroelectric stations, wind farms, nuclear power plants, and industrial facilities rely on this fundamental interaction between magnetic fields and conductors to produce electricity on a large scale.
+                  </p>
                 </div>
-
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    In conclusion, the magnetic field is the fundamental element that makes electricity generation possible. By providing the magnetic flux required for electromagnetic induction, it allows mechanical energy to be converted into electrical energy efficiently and continuously. The interaction between the rotating armature and the magnetic field forms the basis of generator operation and remains one of the most important principles in electrical engineering and power generation.
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>

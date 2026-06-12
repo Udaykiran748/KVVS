@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="absolute top-0 left-0 w-80 h-80 rounded-full bg-[#00f2fe]/5 blur-3xl"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
 
           {/* Brand Info */}
           <div className="space-y-4">
@@ -30,7 +30,7 @@ const Footer = () => {
           </div>
 
           {/* Quick links */}
-          <div>
+          <div className="md:justify-self-center">
             <h4 className="font-orbitron font-semibold text-sm tracking-wider text-blue-600 mb-4">EXPLORE CLEARANCES</h4>
             <ul className="space-y-2.5 text-sm text-black">
               <li><Link to="/about" className="hover:text-[#B8860B] transition-colors">Generator Science</Link></li>
@@ -40,32 +40,22 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Technical Specs */}
-          <div>
-            <h4 className="font-orbitron font-semibold text-sm tracking-wider text-blue-600 mb-4">TECHNICAL PARAMETERS</h4>
-            <ul className="space-y-2 text-xs text-black font-orbitron">
-              <li>MODEL: Vortex Core Series</li>
-              <li>MAGNETICS: NdFeB Neodymium</li>
-              <li>EFFICIENCY: Zero Combustion</li>
-              <li>COOLING: Liquified Convection</li>
-            </ul>
-          </div>
 
           {/* Contact Details */}
-          <div>
+          <div className="md:justify-self-end max-w-sm">
             <h4 className="font-orbitron font-semibold text-sm tracking-wider text-blue-600 mb-4">COMMUNICATIONS HUB</h4>
             <ul className="space-y-3 text-sm text-black">
-              <li className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>Sector 7, Aerospace Tech Park, Bangalore, KA, India</span>
+              <li className="flex items-start space-x-3">
+                <MapPin className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                <span>Plot No. Q8, Building No. 44/1 & 64, E J Hosalli, Hosalli Sindhanur Hobli, Raichur–Koppal Road, Near Industrial Estate, Sindhanur, Raichur, Karnataka – 584128, india.</span>
               </li>
-              <li className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>+91 80 4096 3026</span>
+              <li className="flex items-center space-x-3">
+                <Phone className="w-5 h-5 text-blue-400 shrink-0" />
+                <span>+91 9035121902</span>
               </li>
-              <li className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>cleared@vortexgenerator.com</span>
+              <li className="flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-blue-400 shrink-0" />
+                <span>Kvvsaielectricals@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -75,7 +65,7 @@ const Footer = () => {
         {/* Horizontal Divider */}
         <div className="border-t border-slate-800/80 pt-8 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500">
           <p className="mb-4 sm:mb-0">
-            &copy; 3026 Vortex Generator Industries. Perpetual licensing active.
+            &copy; 2026 K V V Sai electronic Generator Industries. Perpetual licensing active.
           </p>
           <div className="flex space-x-4">
             <span className="hover:text-black cursor-pointer">Security Protocol</span>

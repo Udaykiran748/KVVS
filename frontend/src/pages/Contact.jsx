@@ -62,7 +62,7 @@ const Contact = () => {
               {/* Glowing top line */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
-              <h3 className="font-orbitron font-bold text-base text-black mb-6">SUPPORT COORDINATES</h3>
+              <h3 className="font-orbitron font-bold text-base text-black mb-6">CONTACT DETAILS</h3>
 
               <div className="space-y-6 text-xs sm:text-sm">
 
@@ -72,7 +72,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-orbitron text-black text-[10px] tracking-wider uppercase">LABORATORY SECTOR</h4>
-                    <p className="text-black font-semibold mt-1">Sector 7, Aerospace Tech Park, Bangalore, KA, India</p>
+                    <p className="text-black font-semibold mt-1">Plot No. Q8, Building No. 44/1 & 64, E J Hosalli, Hosalli Sindhanur Hobli, Raichur–Koppal Road, Near Industrial Estate, Sindhanur, Raichur, Karnataka – 584128, india.</p>
                   </div>
                 </div>
 
@@ -82,7 +82,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-orbitron text-black text-[10px] tracking-wider uppercase">COMMUNICATIONS LINE</h4>
-                    <p className="text-black font-semibold mt-1">+91 80 4096 3026</p>
+                    <p className="text-black font-semibold mt-1">+91 9035121902</p>
                   </div>
                 </div>
 
@@ -92,19 +92,11 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-orbitron text-black text-[10px] tracking-wider uppercase">ENCRYPTED EMAIL</h4>
-                    <p className="text-black font-semibold mt-1">cleared@vortexgenerator.com</p>
+                    <p className="text-black font-semibold mt-1">Kvvsaielectricals@gmail.com</p>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3.5">
-                  <div className="p-2 bg-slate-100 border border-slate-800 rounded-lg text-blue-600">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-orbitron text-black text-[10px] tracking-wider uppercase">SECURE NETWORK</h4>
-                    <p className="text-black font-semibold mt-1">quantum-vortex.net</p>
-                  </div>
-                </div>
+
 
               </div>
             </div>

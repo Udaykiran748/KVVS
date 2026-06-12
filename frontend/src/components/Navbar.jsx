@@ -86,12 +86,12 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <Link to="/login" className="flex items-center space-x-1 px-4 py-2 text-sm text-black hover:text-black transition-colors">
-                  <LogIn className="w-4 h-4" />
-                  <span>Terminal Access</span>
+                <Link to="/history" className="flex items-center space-x-1 px-4 py-2 text-sm text-black hover:text-black transition-colors">
+                  <Calendar className="w-3 h-3" />
+                  <span>Booking History</span>
                 </Link>
-                <Link to="/products" className="btn-cyber px-5 py-2 rounded text-xs">
-                  RESERVE NOW
+                <Link to="/booking" className="btn-cyber px-5 py-2 rounded text-xs">
+                  BOOKING GENERATOR
                 </Link>
               </div>
             )}
@@ -166,19 +166,19 @@ const Navbar = () => {
               ) : (
                 <div className="space-y-2">
                   <Link
-                    to="/login"
+                    to="/booking"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center space-x-2 w-full px-4 py-2.5 rounded border border-slate-800 text-sm font-medium text-black hover:text-black"
                   >
-                    <LogIn className="w-4 h-4" />
-                    <span>Terminal Access</span>
+                    <Calendar className="w-4 h-4" />
+                    <span>BOOKING HISTORY</span>
                   </Link>
                   <Link
-                    to="/products"
+                    to="/booking"
                     onClick={() => setIsOpen(false)}
                     className="btn-cyber block text-center w-full px-4 py-2.5 rounded text-sm"
                   >
-                    RESERVE NOW
+                    BOOKING GENERATOR
                   </Link>
                 </div>
               )}
