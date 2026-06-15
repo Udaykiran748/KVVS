@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="relative bg-white border-t border-slate-800/80 pt-16 pb-8 overflow-hidden">
       {/* Dynamic background lighting */}
       <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-blue-500/5 blur-3xl"></div>
-      <div className="absolute top-0 left-0 w-80 h-80 rounded-full bg-[#00f2fe]/5 blur-3xl"></div>
+      <div className="absolute top-0 left-0 w-80 h-80 rounded-full bg-[#3b82f6]/5 blur-3xl"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">

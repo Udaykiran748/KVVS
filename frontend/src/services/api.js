@@ -41,6 +41,7 @@ export const authAPI = {
   signup: (userData) => API.post('/auth/register', userData),
   login: (credentials) => API.post('/auth/login', credentials),
   adminLogin: (credentials) => API.post('/auth/admin/login', credentials),
+  adminForgotPassword: (data) => API.post('/auth/admin/forgot-password', data),
   getMe: () => API.get('/auth/me')
 };
 
@@ -69,7 +70,7 @@ export const bookingsAPI = {
 export const adminAPI = {
   // Dashboard
   getAnalytics: () => API.get('/admin/analytics'),
-  getRegistrations: () => API.get('/admin/registrations'),
+  getRegistrations: () => API.get('/admin/booking-generators'),
   validatePass: (passId) => API.post('/admin/validate-pass', { pass_id: passId }),
 
   // Users
@@ -82,7 +83,7 @@ export const adminAPI = {
   updatePaymentStatus: (id, data) => API.put(`/admin/payments/${id}/status`, data),
 
   // Registrations
-  cancelRegistration: (id) => API.put(`/admin/registrations/${id}/cancel`),
+  cancelRegistration: (id) => API.put(`/admin/booking-generators/${id}/cancel`),
 
   // Products (admin-scoped)
   getAllProducts: () => API.get('/admin/products'),

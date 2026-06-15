@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Cpu, User, LogIn, LogOut, Menu, X, Shield, Calendar, History } from 'lucide-react';
+import { Cpu, User, LogIn, LogOut, Menu, X, Shield, Calendar, History, AlertTriangle } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     logout();
     setIsOpen(false);
     navigate('/');
@@ -29,7 +35,8 @@ const Navbar = () => {
     }`;
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 glass-panel border-b border-slate-800/60 backdrop-blur-md">
+    <>
+      <nav className="fixed top-0 left-0 w-full z-50 glass-panel border-b border-slate-800/60 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
 
@@ -70,14 +77,14 @@ const Navbar = () => {
 
                 <div className="flex items-center space-x-2 border-l border-slate-700/60 pl-4">
                   <div className="text-right">
-                    <p className="text-xs text-[#00f2fe] font-orbitron">{user.name.split(' ')[0]}</p>
+                    <p className="text-xs text-[#3b82f6] font-orbitron">{user.name.split(' ')[0]}</p>
                     <p className="text-[10px] text-black capitalize">{user.role}</p>
                   </div>
                   <User className="w-8 h-8 p-1.5 bg-slate-100 border border-slate-800 rounded-full text-black" />
                 </div>
 
                 <button
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                   className="flex items-center space-x-1 p-2 rounded-md text-red-400 hover:bg-red-500/10 transition-colors"
                   title="Logout"
                 >
@@ -86,10 +93,6 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <Link to="/history" className="flex items-center space-x-1 px-4 py-2 text-sm text-black hover:text-black transition-colors">
-                  <Calendar className="w-3 h-3" />
-                  <span>Booking History</span>
-                </Link>
                 <Link to="/booking" className="btn-cyber px-5 py-2 rounded text-xs">
                   BOOKING GENERATOR
                 </Link>
@@ -130,7 +133,7 @@ const Navbar = () => {
                   <div className="flex items-center space-x-3">
                     <User className="w-9 h-9 p-1.5 bg-slate-100 border border-slate-800 rounded-full text-black" />
                     <div>
-                      <p className="text-sm text-[#00f2fe] font-orbitron">{user.name}</p>
+                      <p className="text-sm text-[#3b82f6] font-orbitron">{user.name}</p>
                       <p className="text-xs text-black capitalize">{user.role}</p>
                     </div>
                   </div>
@@ -156,7 +159,7 @@ const Navbar = () => {
                   )}
 
                   <button
-                    onClick={handleLogout}
+                    onClick={handleLogoutClick}
                     className="flex items-center space-x-2 w-full px-3 py-2.5 rounded-md text-red-400 hover:bg-red-500/10 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
@@ -165,14 +168,6 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Link
-                    to="/booking"
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-2.5 rounded border border-slate-800 text-sm font-medium text-black hover:text-black"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    <span>BOOKING HISTORY</span>
-                  </Link>
                   <Link
                     to="/booking"
                     onClick={() => setIsOpen(false)}
@@ -187,6 +182,36 @@ const Navbar = () => {
         </div>
       )}
     </nav>
+
+      {/* Custom Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="bg-slate-100 border border-slate-300 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0" />
+              <h3 className="font-bold text-slate-900 font-mono tracking-wide">CONFIRM LOGOUT</h3>
+            </div>
+            <p className="text-slate-700 text-sm mb-6 font-mono leading-relaxed">
+              {isAdmin ? "Are you sure you want to log out of the admin panel?" : "Are you sure you want to log out?"}
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowLogoutConfirm(false)} 
+                className="flex-1 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-200 transition text-sm font-mono"
+              >
+                CANCEL
+              </button>
+              <button 
+                onClick={confirmLogout} 
+                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white transition text-sm font-mono font-bold"
+              >
+                LOGOUT
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

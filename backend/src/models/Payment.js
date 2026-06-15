@@ -7,7 +7,7 @@ const Payment = sequelize.define('Payment', {
     autoIncrement: true,
     primaryKey: true
   },
-  registration_id: {
+  booking_generator_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },

@@ -1,4 +1,4 @@
-const { Registration, Payment, Pass, Product, Event } = require('../models');
+const { BookingGenerator, Payment, Pass, Product, Event } = require('../models');
 
 /**
  * Retrieve booking history ledger for the logged-in attendee.
@@ -7,7 +7,7 @@ const getUserBookings = async (req, res) => {
   try {
     const user_id = req.user.id;
 
-    const bookings = await Registration.findAll({
+    const bookings = await BookingGenerator.findAll({
       where: { user_id },
       include: [
         { model: Product },

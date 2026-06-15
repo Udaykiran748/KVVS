@@ -23,29 +23,29 @@ const StatusBadge = ({ status }) => {
     unavailable: 'bg-red-500/10  text-red-400    border-red-500/20',
   };
   return (
-    <span className={`px-2.5 py-0.5 text-[10px] font-semibold font-mono rounded-full border uppercase ${map[status] || 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'}`}>
+    <span className={`px-2.5 py-0.5 text-[10px] font-semibold font-mono rounded-full border uppercase ${map[status] || 'bg-zinc-500/10 text-slate-600 border-zinc-500/20'}`}>
       {status}
     </span>
   );
 };
 
 const ConfirmModal = ({ message, onConfirm, onCancel }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
     <motion.div
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl"
+      className="bg-slate-100 border border-slate-300 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl"
     >
       <div className="flex items-center gap-3 mb-4">
         <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0" />
-        <h3 className="font-bold text-black font-mono tracking-wide">CONFIRM ACTION</h3>
+        <h3 className="font-bold text-slate-900 font-mono tracking-wide">CONFIRM ACTION</h3>
       </div>
-      <p className="text-zinc-300 text-sm mb-6 font-mono leading-relaxed">{message}</p>
+      <p className="text-slate-700 text-sm mb-6 font-mono leading-relaxed">{message}</p>
       <div className="flex gap-3">
-        <button onClick={onCancel} className="flex-1 py-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 transition text-sm font-mono">
+        <button onClick={onCancel} className="flex-1 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-200 transition text-sm font-mono">
           CANCEL
         </button>
-        <button onClick={onConfirm} className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-black transition text-sm font-mono font-bold">
+        <button onClick={onConfirm} className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-slate-900 transition text-sm font-mono font-bold">
           CONFIRM
         </button>
       </div>
@@ -58,6 +58,7 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => (
 const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [viewReg, setViewReg] = useState(null);
 
   if (!analytics) return null;
   const { metrics, productStats, recentBookings } = analytics;
@@ -76,13 +77,13 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { title: 'REGISTERED USERS', value: metrics.totalUsers, sub: 'total accounts', icon: Users, color: 'cyan' },
+          { title: 'REGISTERED USERS', value: metrics.totalUsers, sub: 'total accounts', icon: Users, color: 'blue' },
           { title: 'CONFIRMED BOOKINGS', value: metrics.confirmedBookings, sub: `${metrics.pendingBookings} pending`, icon: CheckCircle, color: 'emerald' },
           { title: 'CAPACITY', value: `${metrics.bookedSlots}/${metrics.totalSlots}`, sub: `${metrics.availableSlots} slots open`, icon: Calendar, color: 'indigo' },
           { title: 'NET REVENUE', value: `₹${parseFloat(metrics.totalRevenue).toLocaleString('en-IN')}`, sub: 'captured payments', icon: DollarSign, color: 'purple' },
         ].map((card, i) => {
           const colorMap = {
-            cyan: 'text-cyan-400   border-cyan-500/20   bg-cyan-950/10',
+            blue: 'text-blue-400   border-blue-500/20   bg-blue-950/10',
             emerald: 'text-emerald-400 border-emerald-500/20 bg-emerald-950/10',
             indigo: 'text-indigo-400  border-indigo-500/20  bg-indigo-950/10',
             purple: 'text-purple-400  border-purple-500/20  bg-purple-950/10',
@@ -93,11 +94,11 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
               transition={{ delay: i * 0.06 }}
               className={`glass-panel p-5 rounded-xl border ${cls[1]} ${cls[2]} flex justify-between items-start`}>
               <div>
-                <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-wider block mb-1">{card.title}</span>
+                <span className="text-slate-500 font-mono text-[10px] uppercase tracking-wider block mb-1">{card.title}</span>
                 <span className={`text-2xl font-bold font-mono ${cls[0]}`}>{card.value}</span>
-                <span className="text-zinc-600 text-[10px] block mt-1 font-mono">{card.sub}</span>
+                <span className="text-slate-500 text-[10px] block mt-1 font-mono">{card.sub}</span>
               </div>
-              <div className={`p-2.5 rounded-lg border ${cls[1]} bg-zinc-900/60`}>
+              <div className={`p-2.5 rounded-lg border ${cls[1]} bg-slate-100/60`}>
                 <card.icon className={`w-5 h-5 ${cls[0]}`} />
               </div>
             </motion.div>
@@ -110,38 +111,37 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
         <div className="lg:col-span-2 space-y-6">
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="glass-panel p-6 rounded-xl">
-            <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-cyan-400 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" /> EVENT SEATING CAPACITY MATRIX
+            <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-blue-400 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" /> BOOKING GENERATOR CAPACITY MATRIX
             </h2>
             <div className="flex justify-between text-xs font-mono mb-2">
-              <span className="text-zinc-500">BOARDING RESERVED</span>
-              <span className="text-cyan-400 font-semibold">{bookingRatio.toFixed(1)}% SECURED</span>
+              <span className="text-slate-500">CAPACITY RESERVED</span>
+              <span className="text-blue-400 font-semibold">{bookingRatio.toFixed(1)}% SECURED</span>
             </div>
-            <div className="h-3 w-full bg-zinc-950 rounded-full border border-zinc-800 p-[1px]">
-              <div className="h-full bg-gradient-to-r from-cyan-500 via-sky-400 to-indigo-500 rounded-full transition-all duration-1000"
+            <div className="h-3 w-full bg-slate-50 rounded-full border border-slate-300 p-[1px]">
+              <div className="h-full bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500 rounded-full transition-all duration-1000"
                 style={{ width: `${bookingRatio}%` }} />
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-zinc-800/60 text-center font-mono text-xs">
-              <div><span className="text-zinc-600 block mb-1">TOTAL SLOTS</span><span className="text-black font-bold">{metrics.totalSlots}</span></div>
-              <div><span className="text-zinc-600 block mb-1">SECURED</span><span className="text-emerald-400 font-bold">{metrics.bookedSlots}</span></div>
-              <div><span className="text-zinc-600 block mb-1">OPEN</span><span className="text-cyan-400 font-bold">{metrics.availableSlots}</span></div>
+            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-300/60 text-center font-mono text-xs">
+              <div><span className="text-slate-500 block mb-1">TOTAL SLOTS</span><span className="text-slate-900 font-bold">{metrics.totalSlots}</span></div>
+              <div><span className="text-slate-500 block mb-1">SECURED</span><span className="text-emerald-400 font-bold">{metrics.bookedSlots}</span></div>
+              <div><span className="text-slate-500 block mb-1">OPEN</span><span className="text-blue-400 font-bold">{metrics.availableSlots}</span></div>
             </div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="glass-panel p-6 rounded-xl">
-            <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-cyan-400 flex items-center gap-2">
+            <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-blue-400 flex items-center gap-2">
               <Zap className="w-4 h-4" /> GENERATOR MODELS DEMAND MATRIX
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {productStats.map((item, i) => (
-                <div key={i} className="border border-zinc-800 bg-zinc-950/30 p-4 rounded-lg relative overflow-hidden hover:border-zinc-700 transition">
-                  <div className="absolute top-1 right-2 font-mono text-3xl font-extrabold text-zinc-800 select-none">{item.kw}KW</div>
-                  <h3 className="font-mono text-xs font-semibold text-black mb-1 uppercase">{item.name}</h3>
-                  <p className="text-[10px] text-cyan-400 font-mono mb-3">{item.kw} KW</p>
-                  <div className="flex justify-between border-t border-zinc-900 pt-2 font-mono text-xs">
-                    <div><span className="text-zinc-600 block text-[10px]">BOOKINGS</span><span className="font-bold text-black">{item.bookings}</span></div>
-                    <div className="text-right"><span className="text-zinc-600 block text-[10px]">REVENUE</span><span className="font-bold text-emerald-400">₹{parseFloat(item.revenue).toLocaleString('en-IN')}</span></div>
+                <div key={i} className="border border-slate-300 bg-slate-50/30 p-4 rounded-lg relative overflow-hidden hover:border-slate-300 transition">
+                  <h3 className="font-mono text-xs font-semibold text-slate-900 mb-1 uppercase">{item.name}</h3>
+                  <p className="text-[10px] text-blue-400 font-mono mb-3">{item.kw} KW</p>
+                  <div className="flex justify-between border-t border-slate-300 pt-2 font-mono text-xs">
+                    <div><span className="text-slate-500 block text-[10px]">BOOKINGS</span><span className="font-bold text-slate-900">{item.bookings}</span></div>
+                    <div className="text-right"><span className="text-slate-500 block text-[10px]">REVENUE</span><span className="font-bold text-emerald-400">₹{parseFloat(item.revenue).toLocaleString('en-IN')}</span></div>
                   </div>
                 </div>
               ))}
@@ -152,28 +152,28 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
         {/* Recent Bookings */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="glass-panel p-6 rounded-xl flex flex-col">
-          <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-cyan-400 flex items-center gap-2">
+          <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-blue-400 flex items-center gap-2">
             <Clock className="w-4 h-4" /> LATEST REGISTRIES
           </h2>
           <div className="space-y-3 flex-1 overflow-y-auto max-h-72 pr-1">
             {recentBookings.length > 0 ? recentBookings.map((b, i) => (
-              <div key={i} className="p-3 border border-zinc-900 bg-zinc-950/20 rounded-lg flex justify-between items-start font-mono text-[10px]">
+              <div key={i} className="p-3 border border-slate-300 bg-slate-50/20 rounded-lg flex justify-between items-start font-mono text-[10px]">
                 <div>
-                  <div className="font-semibold text-black text-xs truncate max-w-[130px]">{b.User?.name || 'Unknown'}</div>
-                  <div className="text-zinc-500">{b.booking_id}</div>
-                  <div className="text-cyan-400">{b.Product?.name}</div>
+                  <div className="font-semibold text-slate-900 text-xs truncate max-w-[130px]">{b.User?.name || 'Unknown'}</div>
+                  <div className="text-slate-500">{b.booking_id}</div>
+                  <div className="text-blue-400">{b.Product?.name}</div>
                 </div>
                 <div className="text-right space-y-1">
                   <StatusBadge status={b.status} />
-                  <div className="text-zinc-600">{new Date(b.createdAt).toLocaleDateString()}</div>
+                  <div className="text-slate-500">{new Date(b.createdAt).toLocaleDateString()}</div>
                 </div>
               </div>
             )) : (
-              <div className="h-32 flex items-center justify-center text-zinc-600 font-mono text-xs">NO BOOKINGS YET</div>
+              <div className="h-32 flex items-center justify-center text-slate-500 font-mono text-xs">NO BOOKINGS YET</div>
             )}
           </div>
           <button onClick={() => document.getElementById('ledger-terminal')?.scrollIntoView({ behavior: 'smooth' })}
-            className="mt-4 w-full py-2 font-mono text-xs text-zinc-500 border border-zinc-800 hover:bg-zinc-900 hover:text-black rounded-lg transition flex items-center justify-center gap-2">
+            className="mt-4 w-full py-2 font-mono text-xs text-slate-500 border border-slate-300 hover:bg-slate-100 hover:text-slate-900 rounded-lg transition flex items-center justify-center gap-2">
             VIEW FULL LEDGER <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </motion.div>
@@ -181,23 +181,23 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
 
       {/* Registrations Ledger */}
       <motion.div id="ledger-terminal" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-        className="glass-panel rounded-xl overflow-hidden border border-zinc-800">
-        <div className="p-5 border-b border-zinc-800/80 bg-zinc-950/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        className="glass-panel rounded-xl overflow-hidden border border-slate-300">
+        <div className="p-5 border-b border-slate-300/80 bg-slate-50/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-sm font-bold font-mono text-cyan-400 flex items-center gap-2">
-              <Filter className="w-4 h-4" /> BOARDING PASS LEDGER
+            <h2 className="text-sm font-bold font-mono text-blue-400 flex items-center gap-2">
+              <Filter className="w-4 h-4" /> BOOKING GENERATOR LEDGER
             </h2>
-            <p className="text-zinc-500 font-mono text-[10px] mt-0.5">Complete registry of all event registrations</p>
+            <p className="text-slate-500 font-mono text-[10px] mt-0.5">Complete registry of all booking generators</p>
           </div>
           <div className="flex gap-3 w-full md:w-auto">
             <div className="relative flex-1 sm:w-56">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
               <input type="text" placeholder="Search name, email, ID..." value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 font-mono text-xs bg-zinc-950 border border-zinc-800 rounded-lg focus:border-cyan-500 outline-none text-black" />
+                className="w-full pl-8 pr-3 py-2 font-mono text-xs bg-slate-50 border border-slate-300 rounded-lg focus:border-blue-500 outline-none text-slate-900" />
             </div>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2 font-mono text-xs bg-zinc-950 border border-zinc-800 rounded-lg text-black focus:border-cyan-500 outline-none cursor-pointer">
+              className="px-3 py-2 font-mono text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:border-blue-500 outline-none cursor-pointer">
               <option value="all">ALL STATUS</option>
               <option value="confirmed">CONFIRMED</option>
               <option value="pending">PENDING</option>
@@ -208,49 +208,112 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950/30 text-zinc-500 font-mono text-[10px] uppercase tracking-wider">
+              <tr className="border-b border-slate-300 bg-slate-50/30 text-slate-500 font-mono text-[10px] uppercase tracking-wider">
                 <th className="py-3 px-5">Booking ID</th>
                 <th className="py-3 px-5">Guest</th>
                 <th className="py-3 px-5">Product</th>
                 <th className="py-3 px-5">Payment</th>
                 <th className="py-3 px-5">Status</th>
-                <th className="py-3 px-5 text-center">Pass</th>
+                <th className="py-3 px-5 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-zinc-300">
+            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-slate-700">
               {filtered.length > 0 ? filtered.map((reg, i) => (
-                <tr key={i} className="hover:bg-zinc-950/30 transition">
-                  <td className="py-3 px-5 font-semibold text-black">{reg.booking_id}</td>
+                <tr key={i} className="hover:bg-slate-50/30 transition">
+                  <td className="py-3 px-5 font-semibold text-slate-900">{reg.booking_id}</td>
                   <td className="py-3 px-5">
-                    <div className="font-semibold text-black">{reg.User?.name}</div>
-                    <div className="text-zinc-500 text-[10px]">{reg.User?.email}</div>
-                    <div className="text-zinc-600 text-[10px]">{reg.User?.mobile}</div>
+                    <div className="font-semibold text-slate-900">{reg.User?.name}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.User?.email}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.User?.mobile}</div>
                   </td>
                   <td className="py-3 px-5">
-                    <div className="text-cyan-400 font-semibold">{reg.Product?.name}</div>
-                    <div className="text-zinc-500 text-[10px]">{reg.Product?.kw_capacity} KW</div>
+                    <div className="text-blue-400 font-semibold">{reg.Product?.name}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.Product?.kw_capacity} KW</div>
                   </td>
                   <td className="py-3 px-5">
                     <div className="font-semibold">₹{parseFloat(reg.Payment?.amount || 0).toLocaleString('en-IN')}</div>
-                    <div className="text-zinc-500 text-[10px]">{reg.Payment?.transaction_id?.substring(0, 16) || 'N/A'}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.Payment?.transaction_id?.substring(0, 16) || 'N/A'}</div>
                   </td>
                   <td className="py-3 px-5"><StatusBadge status={reg.status} /></td>
                   <td className="py-3 px-5 text-center">
-                    {reg.Pass
-                      ? <span className="text-cyan-400 font-mono text-[10px] bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-500/20">{reg.Pass.pass_id}</span>
-                      : <span className="text-zinc-600 text-[10px]">PENDING</span>}
+                    <button onClick={() => setViewReg(reg)}
+                      className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="View Details">
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="6" className="py-10 text-center text-zinc-600 italic">No matching registrations found.</td></tr>
+                <tr><td colSpan="6" className="py-10 text-center text-slate-500 italic">No matching registrations found.</td></tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="p-3 bg-zinc-950/40 border-t border-zinc-800/60 text-[10px] font-mono text-zinc-600 flex justify-between">
+        <div className="p-3 bg-slate-50/40 border-t border-slate-300/60 text-[10px] font-mono text-slate-500 flex justify-between">
           <span>{filtered.length} RECORDS LOADED</span><span>ADMIN SESSION ACTIVE</span>
         </div>
       </motion.div>
+
+      {/* Registration Detail Modal */}
+      <AnimatePresence>
+        {viewReg && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="font-bold text-slate-900 font-mono">BOOKING DETAILS - {viewReg.booking_id}</h3>
+                <button onClick={() => setViewReg(null)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <h4 className="text-blue-500 font-mono text-xs font-bold border-b border-slate-300 pb-1">CUSTOMER INFO</h4>
+                  {[
+                    ['Customer Name', viewReg.customer_name || viewReg.User?.name],
+                    ['Company', viewReg.company_name],
+                    ['Email', viewReg.email_address || viewReg.User?.email],
+                    ['Mobile', viewReg.mobile_number || viewReg.User?.mobile],
+                    ['Address', viewReg.delivery_address],
+                    ['City/State', viewReg.city ? `${viewReg.city}, ${viewReg.state}` : ''],
+                    ['Pincode', viewReg.pincode]
+                  ].filter(x => x[1]).map(([k, v]) => (
+                    <div key={k} className="flex justify-between border-b border-slate-300/50 pb-1">
+                      <span className="text-slate-500 font-mono text-[10px] uppercase">{k}</span>
+                      <span className="text-slate-900 font-mono text-xs font-semibold text-right">{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-3">
+                  <h4 className="text-blue-500 font-mono text-xs font-bold border-b border-slate-300 pb-1">GENERATOR REQUIREMENTS</h4>
+                  {[
+                    ['Model', viewReg.Product?.name],
+                    ['Capacity', viewReg.kw_capacity ? `${viewReg.kw_capacity} KW` : ''],
+                    ['Booking Date', viewReg.booking_date],
+                    ['Time', viewReg.start_time ? `${viewReg.start_time} - ${viewReg.end_time}` : ''],
+                    ['Duration', viewReg.number_of_days ? `${viewReg.number_of_days} Days` : ''],
+                    ['Fuel Required', viewReg.fuel_required],
+                    ['Operator', viewReg.operator_required],
+                    ['Backup Gen', viewReg.backup_generator_required],
+                    ['Payment Method', viewReg.payment_method]
+                  ].filter(x => x[1]).map(([k, v]) => (
+                    <div key={k} className="flex justify-between border-b border-slate-300/50 pb-1">
+                      <span className="text-slate-500 font-mono text-[10px] uppercase">{k}</span>
+                      <span className="text-slate-900 font-mono text-xs font-semibold text-right">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {viewReg.special_instructions && (
+                <div className="mt-4">
+                  <h4 className="text-blue-500 font-mono text-xs font-bold border-b border-slate-300 pb-1 mb-2">SPECIAL INSTRUCTIONS</h4>
+                  <p className="text-xs font-mono text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-300">{viewReg.special_instructions}</p>
+                </div>
+              )}
+              <button onClick={() => setViewReg(null)} className="mt-6 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 font-bold hover:text-white rounded-xl font-mono text-sm transition">CLOSE</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };
@@ -332,16 +395,16 @@ const ProductsTab = () => {
       {confirm && <ConfirmModal message={confirm.msg} onConfirm={confirm.onOk} onCancel={() => setConfirm(null)} />}
       {toast && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-950 border-red-700 text-red-300' : 'bg-emerald-950 border-emerald-700 text-emerald-300'}`}>
+          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           {toast.msg}
         </motion.div>
       )}
 
       <div className="flex justify-between items-center">
-        <h2 className="text-sm font-bold font-mono text-cyan-400 flex items-center gap-2">
+        <h2 className="text-sm font-bold font-mono text-blue-400 flex items-center gap-2">
           <Package className="w-4 h-4" /> PRODUCT CATALOGUE MANAGEMENT
         </h2>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-mono text-xs font-bold rounded-lg transition">
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-400 text-zinc-950 font-mono text-xs font-bold rounded-lg transition">
           <Plus className="w-3.5 h-3.5" /> ADD PRODUCT
         </button>
       </div>
@@ -350,12 +413,12 @@ const ProductsTab = () => {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="flex justify-between items-center mb-5">
-                <h3 className="font-bold text-black font-mono tracking-wide">{editing ? 'EDIT PRODUCT' : 'NEW PRODUCT'}</h3>
-                <button onClick={() => setShowForm(false)} className="text-zinc-500 hover:text-black transition"><X className="w-5 h-5" /></button>
+                <h3 className="font-bold text-slate-900 font-mono tracking-wide">{editing ? 'EDIT PRODUCT' : 'NEW PRODUCT'}</h3>
+                <button onClick={() => setShowForm(false)} className="text-slate-500 hover:text-slate-900 transition"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 {[
@@ -364,46 +427,46 @@ const ProductsTab = () => {
                   { label: 'Price (₹)', key: 'price', placeholder: 'e.g. 45000', type: 'number' },
                 ].map(f => (
                   <div key={f.key}>
-                    <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
+                    <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
                     <input type={f.type || 'text'} value={form[f.key]} placeholder={f.placeholder}
                       onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                      className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-sm focus:border-cyan-500 outline-none" />
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
                   </div>
                 ))}
                 <div>
-                  <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">Availability</label>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Availability</label>
                   <select value={form.availability_status} onChange={e => setForm(p => ({ ...p, availability_status: e.target.value }))}
-                    className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-sm focus:border-cyan-500 outline-none cursor-pointer">
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none cursor-pointer">
                     <option value="available">Available</option>
                     <option value="unavailable">Unavailable</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">Specifications (JSON)</label>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Specifications (JSON)</label>
                   <textarea rows={3} value={form.specifications} placeholder='{"fuel_type":"Diesel","runtime":"8hr"}'
                     onChange={e => setForm(p => ({ ...p, specifications: e.target.value }))}
-                    className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-xs focus:border-cyan-500 outline-none resize-none" />
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none resize-none" />
                 </div>
                 <div>
-                  <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">Benefits (one per line)</label>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Benefits (one per line)</label>
                   <textarea rows={3} value={form.benefits} placeholder={"Auto-start\nFuel efficient\nQuiet operation"}
                     onChange={e => setForm(p => ({ ...p, benefits: e.target.value }))}
-                    className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-xs focus:border-cyan-500 outline-none resize-none" />
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none resize-none" />
                 </div>
                 <div>
-                  <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">Product Image</label>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Product Image</label>
                   <div onClick={() => fileRef.current?.click()}
-                    className="border-2 border-dashed border-zinc-700 hover:border-cyan-500 rounded-lg p-4 text-center cursor-pointer transition">
-                    <Upload className="w-5 h-5 text-zinc-500 mx-auto mb-1" />
-                    <p className="text-zinc-500 font-mono text-xs">Click to upload image</p>
+                    className="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-lg p-4 text-center cursor-pointer transition">
+                    <Upload className="w-5 h-5 text-slate-500 mx-auto mb-1" />
+                    <p className="text-slate-500 font-mono text-xs">Click to upload image</p>
                     <input type="file" ref={fileRef} accept="image/*" className="hidden" />
                   </div>
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border border-zinc-700 text-zinc-400 hover:bg-zinc-800 transition font-mono text-sm">CANCEL</button>
+                <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-200 transition font-mono text-sm">CANCEL</button>
                 <button onClick={handleSave} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-mono text-sm font-bold transition flex items-center justify-center gap-2">
+                  className="flex-1 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-60 text-zinc-950 font-mono text-sm font-bold transition flex items-center justify-center gap-2">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? 'SAVING...' : 'SAVE PRODUCT'}
                 </button>
@@ -414,36 +477,36 @@ const ProductsTab = () => {
       </AnimatePresence>
 
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-zinc-500 font-mono text-xs">
-          <Loader2 className="w-5 h-5 animate-spin mr-2 text-cyan-500" /> LOADING PRODUCTS...
+        <div className="flex items-center justify-center py-16 text-slate-500 font-mono text-xs">
+          <Loader2 className="w-5 h-5 animate-spin mr-2 text-blue-500" /> LOADING PRODUCTS...
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {products.map(p => (
             <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="glass-panel border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition group">
-              <div className="h-32 bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center relative">
+              className="glass-panel border border-slate-300 rounded-xl overflow-hidden hover:border-slate-300 transition group">
+              <div className="h-48 bg-white flex items-center justify-center relative overflow-hidden border-b border-slate-200">
                 {p.image_url && !p.image_url.includes('placeholder') ? (
-                  <img src={p.image_url} alt={p.name} className="h-full w-full object-cover opacity-70 group-hover:opacity-90 transition" />
+                  <img src={p.image_url} alt={p.name} className="h-full w-full object-contain p-4 group-hover:scale-105 transition duration-500" />
                 ) : (
-                  <Zap className="w-12 h-12 text-zinc-700" />
+                  <Zap className="w-12 h-12 text-slate-300" />
                 )}
-                <div className="absolute top-2 right-2"><StatusBadge status={p.availability_status} /></div>
-                <div className="absolute bottom-2 left-3 font-mono text-3xl font-extrabold text-zinc-800 select-none">{p.kw_capacity}KW</div>
+                <div className="absolute top-3 right-3"><StatusBadge status={p.availability_status} /></div>
+                <div className="absolute bottom-2 left-3 font-mono text-2xl font-extrabold text-blue-400 select-none pointer-events-none">{p.kw_capacity}KW</div>
               </div>
               <div className="p-4">
-                <h3 className="font-bold text-black font-mono text-sm mb-1">{p.name}</h3>
+                <h3 className="font-bold text-slate-900 font-mono text-sm mb-1">{p.name}</h3>
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-cyan-400 font-mono text-xs">{p.kw_capacity} KW Capacity</span>
+                  <span className="text-blue-400 font-mono text-xs">{p.kw_capacity} KW Capacity</span>
                   <span className="text-emerald-400 font-mono text-sm font-bold">₹{parseFloat(p.price).toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => openEdit(p)}
-                    className="flex-1 py-2 rounded-lg border border-zinc-700 hover:border-cyan-500 hover:text-cyan-400 text-zinc-400 transition text-xs font-mono flex items-center justify-center gap-1">
+                    className="flex-1 py-2 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-600 transition text-xs font-mono flex items-center justify-center gap-1">
                     <Edit2 className="w-3 h-3" /> EDIT
                   </button>
                   <button onClick={() => handleDelete(p.id)}
-                    className="flex-1 py-2 rounded-lg border border-zinc-700 hover:border-red-500 hover:text-red-400 text-zinc-400 transition text-xs font-mono flex items-center justify-center gap-1">
+                    className="flex-1 py-2 rounded-lg border border-slate-300 hover:border-red-500 hover:text-red-400 text-slate-600 transition text-xs font-mono flex items-center justify-center gap-1">
                     <Trash2 className="w-3 h-3" /> DELETE
                   </button>
                 </div>
@@ -451,7 +514,7 @@ const ProductsTab = () => {
             </motion.div>
           ))}
           {products.length === 0 && (
-            <div className="col-span-3 py-16 text-center text-zinc-600 font-mono text-xs">No products found. Click ADD PRODUCT to create one.</div>
+            <div className="col-span-3 py-16 text-center text-slate-500 font-mono text-xs">No products found. Click ADD PRODUCT to create one.</div>
           )}
         </div>
       )}
@@ -508,12 +571,12 @@ const UsersTab = () => {
       <AnimatePresence>
         {viewUser && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-md shadow-2xl">
               <div className="flex justify-between items-center mb-5">
-                <h3 className="font-bold text-black font-mono">USER PROFILE</h3>
-                <button onClick={() => setViewUser(null)}><X className="w-5 h-5 text-zinc-500 hover:text-black transition" /></button>
+                <h3 className="font-bold text-slate-900 font-mono">USER PROFILE</h3>
+                <button onClick={() => setViewUser(null)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
               </div>
               <div className="space-y-3">
                 {[
@@ -522,34 +585,34 @@ const UsersTab = () => {
                   ['Joined', new Date(viewUser.createdAt).toLocaleDateString()],
                   ['Total Bookings', viewUser.bookingCount], ['Confirmed', viewUser.confirmedCount]
                 ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-zinc-800 pb-2">
-                    <span className="text-zinc-500 font-mono text-xs uppercase">{k}</span>
-                    <span className="text-black font-mono text-xs font-semibold">{v || '—'}</span>
+                  <div key={k} className="flex justify-between border-b border-slate-300 pb-2">
+                    <span className="text-slate-500 font-mono text-xs uppercase">{k}</span>
+                    <span className="text-slate-900 font-mono text-xs font-semibold">{v || '—'}</span>
                   </div>
                 ))}
               </div>
-              <button onClick={() => setViewUser(null)} className="mt-5 w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-black rounded-xl font-mono text-sm transition">CLOSE</button>
+              <button onClick={() => setViewUser(null)} className="mt-5 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 rounded-xl font-mono text-sm transition">CLOSE</button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className="flex justify-between items-center">
-        <h2 className="text-sm font-bold font-mono text-cyan-400 flex items-center gap-2">
+        <h2 className="text-sm font-bold font-mono text-blue-400 flex items-center gap-2">
           <Users className="w-4 h-4" /> REGISTERED USER ACCOUNTS
         </h2>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
           <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-8 pr-4 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-xs focus:border-cyan-500 outline-none" />
+            className="pl-8 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none" />
         </div>
       </div>
 
-      <div className="glass-panel rounded-xl overflow-hidden border border-zinc-800">
+      <div className="glass-panel rounded-xl overflow-hidden border border-slate-300">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950/40 text-zinc-500 font-mono text-[10px] uppercase tracking-wider">
+              <tr className="border-b border-slate-300 bg-slate-50/40 text-slate-500 font-mono text-[10px] uppercase tracking-wider">
                 <th className="py-3 px-5">#</th>
                 <th className="py-3 px-5">Name / Email</th>
                 <th className="py-3 px-5">Mobile</th>
@@ -558,46 +621,46 @@ const UsersTab = () => {
                 <th className="py-3 px-5 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-zinc-300">
+            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-slate-700">
               {loading ? (
-                <tr><td colSpan="6" className="py-10 text-center text-zinc-500">
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto text-cyan-500" />
+                <tr><td colSpan="6" className="py-10 text-center text-slate-500">
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto text-blue-500" />
                 </td></tr>
               ) : filtered.length > 0 ? filtered.map((u, i) => (
-                <tr key={u.id} className="hover:bg-zinc-950/30 transition">
-                  <td className="py-3 px-5 text-zinc-600">{i + 1}</td>
+                <tr key={u.id} className="hover:bg-slate-50/30 transition">
+                  <td className="py-3 px-5 text-slate-500">{i + 1}</td>
                   <td className="py-3 px-5">
-                    <div className="font-semibold text-black">{u.name}</div>
-                    <div className="text-zinc-500 text-[10px]">{u.email}</div>
+                    <div className="font-semibold text-slate-900">{u.name}</div>
+                    <div className="text-slate-500 text-[10px]">{u.email}</div>
                   </td>
-                  <td className="py-3 px-5 text-zinc-400">{u.mobile}</td>
+                  <td className="py-3 px-5 text-slate-600">{u.mobile}</td>
                   <td className="py-3 px-5">
-                    <span className="text-black font-semibold">{u.bookingCount}</span>
-                    <span className="text-zinc-600"> total / </span>
+                    <span className="text-slate-900 font-semibold">{u.bookingCount}</span>
+                    <span className="text-slate-500"> total / </span>
                     <span className="text-emerald-400">{u.confirmedCount}</span>
-                    <span className="text-zinc-600"> confirmed</span>
+                    <span className="text-slate-500"> confirmed</span>
                   </td>
-                  <td className="py-3 px-5 text-zinc-500">{new Date(u.createdAt).toLocaleDateString()}</td>
+                  <td className="py-3 px-5 text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
                   <td className="py-3 px-5">
                     <div className="flex items-center justify-center gap-2">
                       <button onClick={() => setViewUser(u)}
-                        className="p-1.5 rounded-lg border border-zinc-700 hover:border-cyan-500 hover:text-cyan-400 text-zinc-500 transition" title="View Profile">
+                        className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="View Profile">
                         <Eye className="w-3.5 h-3.5" />
                       </button>
                       <button onClick={() => handleDelete(u.id, u.name)}
-                        className="p-1.5 rounded-lg border border-zinc-700 hover:border-red-500 hover:text-red-400 text-zinc-500 transition" title="Delete User">
+                        className="p-1.5 rounded-lg border border-slate-300 hover:border-red-500 hover:text-red-400 text-slate-500 transition" title="Delete User">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="6" className="py-10 text-center text-zinc-600 italic">No users found.</td></tr>
+                <tr><td colSpan="6" className="py-10 text-center text-slate-500 italic">No users found.</td></tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="p-3 bg-zinc-950/40 border-t border-zinc-800/60 text-[10px] font-mono text-zinc-600 flex justify-between">
+        <div className="p-3 bg-slate-50/40 border-t border-slate-300/60 text-[10px] font-mono text-slate-500 flex justify-between">
           <span>{filtered.length} ACCOUNTS</span><span>ADMIN SECURE VIEW</span>
         </div>
       </div>
@@ -656,7 +719,7 @@ const PaymentsTab = () => {
 
   const filtered = payments.filter(p => {
     const q = search.toLowerCase();
-    const reg = p.Registration;
+    const reg = p.BookingGenerator;
     const match = [reg?.User?.name, reg?.User?.email, reg?.booking_id, p.order_id, p.transaction_id]
       .some(v => v?.toLowerCase().includes(q));
     const statusOk = statusFilter === 'all' || p.status === statusFilter;
@@ -681,31 +744,31 @@ const PaymentsTab = () => {
       <AnimatePresence>
         {statusModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-black font-mono">UPDATE PAYMENT STATUS</h3>
-                <button onClick={() => setStatusModal(null)}><X className="w-5 h-5 text-zinc-500 hover:text-black transition" /></button>
+                <h3 className="font-bold text-slate-900 font-mono">UPDATE PAYMENT STATUS</h3>
+                <button onClick={() => setStatusModal(null)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
               </div>
-              <div className="mb-4 p-3 bg-zinc-950 rounded-lg border border-zinc-800 font-mono text-xs space-y-1">
-                <div><span className="text-zinc-500">Booking: </span><span className="text-black">{statusModal.Registration?.booking_id}</span></div>
-                <div><span className="text-zinc-500">Guest: </span><span className="text-cyan-400">{statusModal.Registration?.User?.name}</span></div>
-                <div><span className="text-zinc-500">Amount: </span><span className="text-emerald-400 font-bold">₹{parseFloat(statusModal.amount).toLocaleString('en-IN')}</span></div>
-                <div><span className="text-zinc-500">Current: </span><StatusBadge status={statusModal.status} /></div>
+              <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-300 font-mono text-xs space-y-1">
+                <div><span className="text-slate-500">Booking: </span><span className="text-slate-900">{statusModal.BookingGenerator?.booking_id}</span></div>
+                <div><span className="text-slate-500">Guest: </span><span className="text-blue-400">{statusModal.BookingGenerator?.User?.name}</span></div>
+                <div><span className="text-slate-500">Amount: </span><span className="text-emerald-400 font-bold">₹{parseFloat(statusModal.amount).toLocaleString('en-IN')}</span></div>
+                <div><span className="text-slate-500">Current: </span><StatusBadge status={statusModal.status} /></div>
               </div>
-              <label className="text-zinc-400 font-mono text-[10px] uppercase mb-1 block">New Status</label>
+              <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">New Status</label>
               <select value={newStatus} onChange={e => setNewStatus(e.target.value)}
-                className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-sm focus:border-cyan-500 outline-none mb-5 cursor-pointer">
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none mb-5 cursor-pointer">
                 <option value="pending">Pending</option>
-                <option value="captured">Captured (Confirm)</option>
+                <option value="success">Success (Confirm)</option>
                 <option value="failed">Failed</option>
                 <option value="refunded">Refunded</option>
               </select>
               <div className="flex gap-3">
-                <button onClick={() => setStatusModal(null)} className="flex-1 py-2.5 border border-zinc-700 text-zinc-400 hover:bg-zinc-800 rounded-xl font-mono text-sm transition">CANCEL</button>
+                <button onClick={() => setStatusModal(null)} className="flex-1 py-2.5 border border-slate-300 text-slate-600 hover:bg-slate-200 rounded-xl font-mono text-sm transition">CANCEL</button>
                 <button onClick={handleStatusUpdate} disabled={saving}
-                  className="flex-1 py-2.5 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-bold rounded-xl font-mono text-sm transition flex items-center justify-center gap-2">
+                  className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-400 disabled:opacity-60 text-zinc-950 font-bold rounded-xl font-mono text-sm transition flex items-center justify-center gap-2">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCheck className="w-4 h-4" />}
                   {saving ? 'SAVING...' : 'UPDATE'}
                 </button>
@@ -718,7 +781,7 @@ const PaymentsTab = () => {
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {[
-          { label: 'TOTAL CAPTURED', value: `₹${totalCaptured.toLocaleString('en-IN')}`, icon: CheckCheck, color: 'emerald' },
+          { label: 'TOTAL SUCCESS', value: `₹${totalCaptured.toLocaleString('en-IN')}`, icon: CheckCheck, color: 'emerald' },
           { label: 'PENDING REVIEW', value: totalPending, icon: Clock, color: 'amber' },
           { label: 'FAILED / REFUNDED', value: totalFailed, icon: Ban, color: 'red' },
         ].map((c, i) => {
@@ -728,7 +791,7 @@ const PaymentsTab = () => {
             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
               className={`glass-panel p-5 rounded-xl border ${bc} flex justify-between items-center`}>
               <div>
-                <span className="text-zinc-500 font-mono text-[10px] uppercase block mb-1">{c.label}</span>
+                <span className="text-slate-500 font-mono text-[10px] uppercase block mb-1">{c.label}</span>
                 <span className={`text-xl font-bold font-mono ${tc}`}>{c.value}</span>
               </div>
               <c.icon className={`w-6 h-6 ${tc} opacity-60`} />
@@ -738,19 +801,19 @@ const PaymentsTab = () => {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-sm font-bold font-mono text-cyan-400 flex items-center gap-2">
+        <h2 className="text-sm font-bold font-mono text-blue-400 flex items-center gap-2">
           <CreditCard className="w-4 h-4" /> PAYMENT TRANSACTION LEDGER
         </h2>
         <div className="flex gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
             <input type="text" placeholder="Search payments..." value={search} onChange={e => setSearch(e.target.value)}
-              className="pl-8 pr-4 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-xs focus:border-cyan-500 outline-none" />
+              className="pl-8 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none" />
           </div>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-black font-mono text-xs focus:border-cyan-500 outline-none cursor-pointer">
+            className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none cursor-pointer">
             <option value="all">ALL</option>
-            <option value="captured">CAPTURED</option>
+            <option value="success">SUCCESS</option>
             <option value="pending">PENDING</option>
             <option value="failed">FAILED</option>
             <option value="refunded">REFUNDED</option>
@@ -758,11 +821,11 @@ const PaymentsTab = () => {
         </div>
       </div>
 
-      <div className="glass-panel rounded-xl overflow-hidden border border-zinc-800">
+      <div className="glass-panel rounded-xl overflow-hidden border border-slate-300">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950/40 text-zinc-500 font-mono text-[10px] uppercase tracking-wider">
+              <tr className="border-b border-slate-300 bg-slate-50/40 text-slate-500 font-mono text-[10px] uppercase tracking-wider">
                 <th className="py-3 px-5">Booking</th>
                 <th className="py-3 px-5">Guest</th>
                 <th className="py-3 px-5">Product</th>
@@ -772,37 +835,37 @@ const PaymentsTab = () => {
                 <th className="py-3 px-5 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-zinc-300">
+            <tbody className="divide-y divide-zinc-900 font-mono text-xs text-slate-700">
               {loading ? (
                 <tr><td colSpan="7" className="py-10 text-center">
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto text-cyan-500" />
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto text-blue-500" />
                 </td></tr>
               ) : filtered.length > 0 ? filtered.map((p, i) => (
-                <tr key={p.id} className="hover:bg-zinc-950/30 transition">
-                  <td className="py-3 px-5 text-black font-semibold">{p.Registration?.booking_id || '—'}</td>
+                <tr key={p.id} className="hover:bg-slate-50/30 transition">
+                  <td className="py-3 px-5 text-slate-900 font-semibold">{p.BookingGenerator?.booking_id || '—'}</td>
                   <td className="py-3 px-5">
-                    <div className="text-black font-semibold">{p.Registration?.User?.name || '—'}</div>
-                    <div className="text-zinc-500 text-[10px]">{p.Registration?.User?.email}</div>
+                    <div className="text-slate-900 font-semibold">{p.BookingGenerator?.User?.name || '—'}</div>
+                    <div className="text-slate-500 text-[10px]">{p.BookingGenerator?.User?.email}</div>
                   </td>
                   <td className="py-3 px-5">
-                    <div className="text-cyan-400">{p.Registration?.Product?.name || '—'}</div>
-                    <div className="text-zinc-600 text-[10px]">{p.Registration?.Product?.kw_capacity} KW</div>
+                    <div className="text-blue-400">{p.BookingGenerator?.Product?.name || '—'}</div>
+                    <div className="text-slate-500 text-[10px]">{p.BookingGenerator?.Product?.kw_capacity} KW</div>
                   </td>
                   <td className="py-3 px-5 text-emerald-400 font-bold">₹{parseFloat(p.amount || 0).toLocaleString('en-IN')}</td>
                   <td className="py-3 px-5">
-                    <div className="text-zinc-400 text-[10px]">{p.order_id?.substring(0, 20) || '—'}</div>
-                    {p.transaction_id && <div className="text-zinc-600 text-[10px]">{p.transaction_id?.substring(0, 20)}</div>}
+                    <div className="text-slate-600 text-[10px]">{p.order_id?.substring(0, 20) || '—'}</div>
+                    {p.transaction_id && <div className="text-slate-500 text-[10px]">{p.transaction_id?.substring(0, 20)}</div>}
                   </td>
                   <td className="py-3 px-5"><StatusBadge status={p.status} /></td>
                   <td className="py-3 px-5">
                     <div className="flex items-center justify-center gap-2">
                       <button onClick={() => openStatusModal(p)}
-                        className="p-1.5 rounded-lg border border-zinc-700 hover:border-cyan-500 hover:text-cyan-400 text-zinc-500 transition" title="Override Status">
+                        className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="Override Status">
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
-                      {p.Registration && p.Registration.status !== 'cancelled' && (
-                        <button onClick={() => handleCancelReg(p.Registration.id)}
-                          className="p-1.5 rounded-lg border border-zinc-700 hover:border-red-500 hover:text-red-400 text-zinc-500 transition" title="Cancel Registration">
+                      {p.BookingGenerator && p.BookingGenerator.status !== 'cancelled' && (
+                        <button onClick={() => handleCancelReg(p.BookingGenerator.id)}
+                          className="p-1.5 rounded-lg border border-slate-300 hover:border-red-500 hover:text-red-400 text-slate-500 transition" title="Cancel Registration">
                           <Ban className="w-3.5 h-3.5" />
                         </button>
                       )}
@@ -810,12 +873,12 @@ const PaymentsTab = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="7" className="py-10 text-center text-zinc-600 italic">No payments found.</td></tr>
+                <tr><td colSpan="7" className="py-10 text-center text-slate-500 italic">No payments found.</td></tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="p-3 bg-zinc-950/40 border-t border-zinc-800/60 text-[10px] font-mono text-zinc-600 flex justify-between">
+        <div className="p-3 bg-slate-50/40 border-t border-slate-300/60 text-[10px] font-mono text-slate-500 flex justify-between">
           <span>{filtered.length} TRANSACTIONS</span><span>FINANCIAL RECORDS ENCRYPTED</span>
         </div>
       </div>
@@ -858,38 +921,28 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center text-black relative pt-20">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center text-slate-900 relative pt-20">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 border-4 border-t-cyan-400 border-r-cyan-400/30 border-b-cyan-400/10 border-l-cyan-400/50 rounded-full animate-spin" />
-          <p className="font-mono text-cyan-400 animate-pulse tracking-widest uppercase text-sm">Synchronizing Admin Command Center...</p>
+          <div className="w-16 h-16 border-4 border-t-blue-400 border-r-blue-400/30 border-b-blue-400/10 border-l-blue-400/50 rounded-full animate-spin" />
+          <p className="font-mono text-blue-400 animate-pulse tracking-widest uppercase text-sm">Synchronizing Admin Command Center...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-black pt-24 pb-16">
+    <div className="min-h-screen bg-white text-slate-900 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-wider text-black">
-              COMMAND CTR
+            <h1 className="text-3xl font-extrabold tracking-wider text-slate-900">
+              KVVSai electronic Admin Page
             </h1>
-            <p className="text-zinc-600 font-mono text-xs mt-1">SECURE LAUNCH EVENT COORDINATION TERMINAL • V3.026</p>
+            <p className="text-slate-500 font-mono text-xs mt-1">SECURE LAUNCH EVENT COORDINATION</p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => fetchOverview(true)} disabled={refreshing}
-              className="flex items-center gap-2 px-4 py-2 font-mono text-xs border border-zinc-700 bg-zinc-900/80 hover:bg-zinc-800 rounded-lg transition disabled:opacity-50">
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'SYNCING...' : 'FORCE RE-SYNC'}
-            </button>
-            <Link to="/admin/scanner"
-              className="flex items-center gap-2 px-5 py-2 font-mono text-xs font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-sky-500 text-zinc-950 hover:brightness-110 transition">
-              <QrCode className="w-4 h-4" /> GATE SCANNER
-            </Link>
-          </div>
+
         </div>
 
         {error && (
@@ -899,12 +952,12 @@ const AdminDashboard = () => {
         )}
 
         {/* Tab Navigation */}
-        <div className="flex gap-1 mb-8 bg-zinc-950/60 border border-zinc-800 rounded-xl p-1.5 w-fit">
+        <div className="flex gap-1 mb-8 bg-slate-50/60 border border-slate-300 rounded-xl p-1.5 w-fit">
           {TABS.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-mono text-xs font-semibold tracking-wider transition-all duration-200 ${activeTab === tab.key
-                ? 'bg-cyan-500 text-zinc-950 shadow-lg shadow-cyan-500/20'
-                : 'text-zinc-500 hover:text-black hover:bg-zinc-800'
+                ? 'bg-blue-500 text-zinc-950 shadow-lg shadow-blue-500/20'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200'
                 }`}>
               <tab.icon className="w-3.5 h-3.5" />
               {tab.label}

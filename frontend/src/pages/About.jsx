@@ -4,7 +4,7 @@ import { ShieldCheck, Compass, Sparkles, Cpu, GitFork } from 'lucide-react';
 
 const About = () => {
   const steps = [
-    { icon: <Cpu className="w-6 h-6 text-cyan-400" />, title: 'ASYMMETRICAL ROTORS', desc: 'Custom stator geometry ensures permanent polar repulsion that overrides standard magnetic locking, allowing rotor spin loops to continue infinitely.' },
+    { icon: <Cpu className="w-6 h-6 text-blue-400" />, title: 'ASYMMETRICAL ROTORS', desc: 'Custom stator geometry ensures permanent polar repulsion that overrides standard magnetic locking, allowing rotor spin loops to continue infinitely.' },
     { icon: <Compass className="w-6 h-6 text-purple-400" />, title: 'FLUX COMPRESSORS', desc: 'Inductive copper conduits squeeze high-speed magnetic flux lines, focusing force directly onto rotor coils to minimize torque losses.' },
     { icon: <GitFork className="w-6 h-6 text-blue-400" />, title: 'CRYOGENIC SEALING', desc: 'Core chambers operate in air-free magnetic vacuums, completely blocking standard friction heat, dampening noise, and maximizing lifecycles.' }
   ];
@@ -14,7 +14,7 @@ const About = () => {
 
       {/* Visual background lights */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
-      <div className="absolute top-1/3 left-10 w-96 h-96 rounded-full bg-cyan-500/5 blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-1/3 left-10 w-96 h-96 rounded-full bg-blue-500/5 blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-purple-500/5 blur-[100px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,7 +121,7 @@ const About = () => {
                 className="glass-panel glass-panel-hover rounded-xl p-8 border border-slate-800/80 shadow-lg relative overflow-hidden"
               >
                 {/* Visual accent top borders */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent"></div>
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#3b82f6] to-transparent"></div>
 
                 <div className="p-3 w-max bg-slate-100 border border-slate-800 rounded-full mb-6">
                   {step.icon}

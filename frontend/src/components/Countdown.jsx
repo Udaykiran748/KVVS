@@ -36,8 +36,8 @@ const Countdown = ({ targetDate }) => {
 
   if (hasLaunched) {
     return (
-      <div className="text-center font-orbitron border border-[#00f2fe]/40 rounded-lg p-6 bg-slate-50/80 glow-shadow-cyan max-w-xl mx-auto">
-        <h3 className="text-2xl text-[#00f2fe] font-extrabold animate-pulse tracking-wider mb-2">LAUNCH INITIATED</h3>
+      <div className="text-center font-orbitron border border-[#3b82f6]/40 rounded-lg p-6 bg-slate-50/80 glow-shadow-blue max-w-xl mx-auto">
+        <h3 className="text-2xl text-[#3b82f6] font-extrabold animate-pulse tracking-wider mb-2">LAUNCH INITIATED</h3>
         <p className="text-sm text-black">Superconducting active magnetic core is currently online at target grid cells.</p>
       </div>
     );

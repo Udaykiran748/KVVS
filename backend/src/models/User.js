@@ -31,6 +31,18 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT,
     allowNull: false
   },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  state: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  pincode: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   role: {
     type: DataTypes.STRING,
     defaultValue: 'user'

@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
-const { Registration, Payment, Pass, User, Product, Event } = require('../models');
+const { BookingGenerator, Payment, Pass, User, Product, Event } = require('../models');
 const { generateQRCode } = require('../services/qrService');
 const { generatePassPDF } = require('../services/pdfService');
 const { sendPassEmail } = require('../services/emailService');
@@ -29,7 +29,28 @@ if (!isDemoMode) {
  */
 const initiateBooking = async (req, res) => {
   try {
-    const { product_id, event_id } = req.body;
+    const {
+      product_id,
+      event_id,
+      kw_capacity,
+      customer_name,
+      mobile_number,
+      email_address,
+      company_name,
+      booking_date,
+      start_time,
+      end_time,
+      number_of_days,
+      delivery_address,
+      city,
+      state,
+      pincode,
+      fuel_required,
+      operator_required,
+      backup_generator_required,
+      special_instructions,
+      payment_method
+    } = req.body;
     const user_id = req.user.id;
 
     if (!product_id || !event_id) {
@@ -50,14 +71,46 @@ const initiateBooking = async (req, res) => {
     // Generate unique booking identifier
     const booking_id = `QP-3026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    // Create a pending Registration
-    const registration = await Registration.create({
+    // Create a pending BookingGenerator
+    const bookingGenerator = await BookingGenerator.create({
       user_id,
       product_id,
       event_id,
       booking_id,
+      kw_capacity,
+      customer_name,
+      mobile_number,
+      email_address,
+      company_name,
+      booking_date: booking_date || null,
+      start_time,
+      end_time,
+      number_of_days,
+      delivery_address,
+      city,
+      state,
+      pincode,
+      fuel_required,
+      operator_required,
+      backup_generator_required,
+      special_instructions,
+      payment_method,
       status: 'pending'
     });
+
+    // Update User Database coordinates from the booking form
+    const user = await User.findByPk(user_id);
+    if (user) {
+      await user.update({
+        name: customer_name || user.name,
+        mobile: mobile_number || user.mobile,
+        email: email_address || user.email,
+        address: delivery_address || user.address,
+        city: city || user.city,
+        state: state || user.state,
+        pincode: pincode || user.pincode
+      });
+    }
 
     const bookingAmount = event.ticket_price; // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -69,14 +122,14 @@ const initiateBooking = async (req, res) => {
         currency: 'INR',
         receipt: booking_id
       };
-      
+
       const order = await razorpay.orders.create(options);
       order_id = order.id;
     }
 
     // Save pending payment record in DB
     const payment = await Payment.create({
-      registration_id: registration.id,
+      booking_generator_id: bookingGenerator.id,
       order_id,
       amount: bookingAmount,
       status: 'pending'
@@ -84,7 +137,7 @@ const initiateBooking = async (req, res) => {
 
     return res.status(201).json({
       message: 'Booking checkout initiated.',
-      registration_id: registration.id,
+      booking_generator_id: bookingGenerator.id,
       booking_id,
       order_id,
       amount: bookingAmount,
@@ -102,21 +155,21 @@ const initiateBooking = async (req, res) => {
  */
 const verifyPayment = async (req, res) => {
   try {
-    const { registration_id, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { booking_generator_id, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-    if (!registration_id || !razorpay_order_id) {
-      return res.status(400).json({ message: 'Registration parameters and Order ID are required.' });
+    if (!booking_generator_id || !razorpay_order_id) {
+      return res.status(400).json({ message: 'Booking generator parameters and Order ID are required.' });
     }
 
-    const registration = await Registration.findByPk(registration_id, {
+    const bookingGenerator = await BookingGenerator.findByPk(booking_generator_id, {
       include: [User, Product, Event]
     });
 
-    if (!registration) {
-      return res.status(404).json({ message: 'Associated event registration record not found.' });
+    if (!bookingGenerator) {
+      return res.status(404).json({ message: 'Associated booking generator record not found.' });
     }
 
-    const payment = await Payment.findOne({ where: { registration_id: registration.id, order_id: razorpay_order_id } });
+    const payment = await Payment.findOne({ where: { booking_generator_id: bookingGenerator.id, order_id: razorpay_order_id } });
     if (!payment) {
       return res.status(404).json({ message: 'Transaction record mismatch.' });
     }
@@ -127,7 +180,7 @@ const verifyPayment = async (req, res) => {
       // Bypass standard verification in Demo Mode
       isVerified = true;
       console.log('Payment Verification: Bypassing signature check for Demo checkout.');
-      
+
       await payment.update({
         transaction_id: razorpay_payment_id || `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
         status: 'captured',
@@ -153,17 +206,17 @@ const verifyPayment = async (req, res) => {
         });
       } else {
         await payment.update({ status: 'failed' });
-        await registration.update({ status: 'cancelled' });
+        await bookingGenerator.update({ status: 'cancelled' });
         return res.status(400).json({ message: 'Payment validation signature signature mismatch. Rejected.' });
       }
     }
 
     if (isVerified) {
       // Update registration status to confirmed
-      await registration.update({ status: 'confirmed' });
+      await bookingGenerator.update({ status: 'confirmed' });
 
       // Deduct available slots from the launch event
-      const event = registration.Event;
+      const event = bookingGenerator.Event;
       if (event.available_slots > 0) {
         await event.update({ available_slots: event.available_slots - 1 });
       }
@@ -176,17 +229,17 @@ const verifyPayment = async (req, res) => {
 
       // Save pass model details
       const newPass = await Pass.create({
-        registration_id: registration.id,
+        booking_generator_id: bookingGenerator.id,
         pass_id,
         qr_code_url: qrCodeUrl
       });
 
       // Generate PDF pass on server
       const pdfPath = await generatePassPDF({
-        user: registration.User,
-        product: registration.Product,
-        event: registration.Event,
-        booking_id: registration.booking_id,
+        user: bookingGenerator.User,
+        product: bookingGenerator.Product,
+        event: bookingGenerator.Event,
+        booking_id: bookingGenerator.booking_id,
         pass_id,
         qr_code_url: qrCodeUrl
       });
@@ -196,22 +249,22 @@ const verifyPayment = async (req, res) => {
 
       // Dispatch Email with pass attachment via Nodemailer
       await sendPassEmail(
-        registration.User.email,
-        registration.User.name,
+        bookingGenerator.User.email,
+        bookingGenerator.User.name,
         {
-          booking_id: registration.booking_id,
+          booking_id: bookingGenerator.booking_id,
           pass_id,
-          product_name: registration.Product.name,
-          event_title: registration.Event.title,
-          event_date: registration.Event.date,
-          event_venue: registration.Event.venue
+          product_name: bookingGenerator.Product.name,
+          event_title: bookingGenerator.Event.title,
+          event_date: bookingGenerator.Event.date,
+          event_venue: bookingGenerator.Event.venue
         },
         pdfPath
       );
 
       return res.json({
         message: 'Transaction captured and boarding pass processed successfully.',
-        booking_id: registration.booking_id,
+        booking_id: bookingGenerator.booking_id,
         pass: {
           id: newPass.id,
           pass_id: newPass.pass_id,

@@ -8,7 +8,7 @@ const { JWT_SECRET } = require('../middleware/authMiddleware');
  */
 const register = async (req, res) => {
   try {
-    const { name, email, password, mobile, address } = req.body;
+    const { name, email, password, mobile, address, city, state, pincode } = req.body;
 
     if (!name || !email || !password || !mobile || !address) {
       return res.status(400).json({ message: 'All fields are required.' });
@@ -31,6 +31,9 @@ const register = async (req, res) => {
       password: hashedPassword,
       mobile,
       address,
+      city,
+      state,
+      pincode,
       role: 'user'
     });
 
@@ -50,6 +53,9 @@ const register = async (req, res) => {
         email: newUser.email,
         mobile: newUser.mobile,
         address: newUser.address,
+        city: newUser.city,
+        state: newUser.state,
+        pincode: newUser.pincode,
         role: 'user'
       }
     });
@@ -95,6 +101,9 @@ const login = async (req, res) => {
         email: user.email,
         mobile: user.mobile,
         address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
         role: user.role
       }
     });
@@ -159,7 +168,7 @@ const getMe = async (req, res) => {
       if (!admin) return res.status(404).json({ message: 'Admin profile not found.' });
       return res.json({ user: admin });
     } else {
-      const user = await User.findByPk(id, { attributes: ['id', 'name', 'email', 'mobile', 'address', 'role'] });
+      const user = await User.findByPk(id, { attributes: ['id', 'name', 'email', 'mobile', 'address', 'city', 'state', 'pincode', 'role'] });
       if (!user) return res.status(404).json({ message: 'User profile not found.' });
       return res.json({ user });
     }
@@ -169,9 +178,39 @@ const getMe = async (req, res) => {
   }
 };
 
+/**
+ * Admin Forgot Password (direct update)
+ */
+const adminForgotPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: 'Email and new password are required.' });
+    }
+
+    const admin = await Admin.findOne({ where: { email } });
+    if (!admin) {
+      // Don't reveal if email exists or not for security, but we will return success anyway or specifically for this basic setup we can return 404
+      return res.status(404).json({ message: 'Admin account with this email not found.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await admin.update({ password: hashedPassword });
+
+    return res.json({ message: 'Password updated successfully. You can now login.' });
+  } catch (error) {
+    console.error('Admin Forgot Password Error:', error);
+    return res.status(500).json({ message: 'Internal server error during password reset.' });
+  }
+};
+
 module.exports = {
   register,
   login,
   adminLogin,
-  getMe
+  getMe,
+  adminForgotPassword
 };

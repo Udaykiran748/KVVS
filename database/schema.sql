@@ -1,7 +1,7 @@
 -- Futuristic Generator Launch Event MySQL Database Schema
 
-CREATE DATABASE IF NOT EXISTS quantum_power_db;
-USE quantum_power_db;
+CREATE DATABASE IF NOT EXISTS kvvsai_electronic_db;
+USE kvvsai_electronic_db;
 
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS users (
@@ -9,8 +9,11 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  mobile VARCHAR(20) NOT NULL,
+  mobile VARCHAR(50) NOT NULL,
   address TEXT NOT NULL,
+  city VARCHAR(100) NULL,
+  state VARCHAR(100) NULL,
+  pincode VARCHAR(20) NULL,
   role VARCHAR(50) DEFAULT 'user',
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
@@ -53,21 +56,6 @@ CREATE TABLE IF NOT EXISTS events (
   available_slots INT NOT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 5. Registrations Table (Product Reservations/Bookings)
-CREATE TABLE IF NOT EXISTS registrations (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  product_id INT NOT NULL,
-  event_id INT NOT NULL,
-  booking_id VARCHAR(50) NOT NULL UNIQUE, -- E.g. QG-2026-XXXXX
-  status VARCHAR(50) DEFAULT 'pending', -- pending, confirmed, cancelled
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-  FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 6. Payments Table

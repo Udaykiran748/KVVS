@@ -3,30 +3,30 @@ const User = require('./User');
 const Admin = require('./Admin');
 const Product = require('./Product');
 const Event = require('./Event');
-const Registration = require('./Registration');
+const BookingGenerator = require('./BookingGenerator');
 const Payment = require('./Payment');
 const Pass = require('./Pass');
 const Attendance = require('./Attendance');
 
-// 1. User <-> Registration
-User.hasMany(Registration, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-Registration.belongsTo(User, { foreignKey: 'user_id' });
+// 1. User <-> BookingGenerator
+User.hasMany(BookingGenerator, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+BookingGenerator.belongsTo(User, { foreignKey: 'user_id' });
 
-// 2. Product <-> Registration
-Product.hasMany(Registration, { foreignKey: 'product_id', onDelete: 'CASCADE' });
-Registration.belongsTo(Product, { foreignKey: 'product_id' });
+// 2. Product <-> BookingGenerator
+Product.hasMany(BookingGenerator, { foreignKey: 'product_id', onDelete: 'CASCADE' });
+BookingGenerator.belongsTo(Product, { foreignKey: 'product_id' });
 
-// 3. Event <-> Registration
-Event.hasMany(Registration, { foreignKey: 'event_id', onDelete: 'CASCADE' });
-Registration.belongsTo(Event, { foreignKey: 'event_id' });
+// 3. Event <-> BookingGenerator
+Event.hasMany(BookingGenerator, { foreignKey: 'event_id', onDelete: 'CASCADE' });
+BookingGenerator.belongsTo(Event, { foreignKey: 'event_id' });
 
-// 4. Registration <-> Payment
-Registration.hasOne(Payment, { foreignKey: 'registration_id', onDelete: 'CASCADE' });
-Payment.belongsTo(Registration, { foreignKey: 'registration_id' });
+// 4. BookingGenerator <-> Payment
+BookingGenerator.hasOne(Payment, { foreignKey: 'booking_generator_id', onDelete: 'CASCADE' });
+Payment.belongsTo(BookingGenerator, { foreignKey: 'booking_generator_id' });
 
-// 5. Registration <-> Pass
-Registration.hasOne(Pass, { foreignKey: 'registration_id', onDelete: 'CASCADE' });
-Pass.belongsTo(Registration, { foreignKey: 'registration_id' });
+// 5. BookingGenerator <-> Pass
+BookingGenerator.hasOne(Pass, { foreignKey: 'booking_generator_id', onDelete: 'CASCADE' });
+Pass.belongsTo(BookingGenerator, { foreignKey: 'booking_generator_id' });
 
 // 6. Pass <-> Attendance
 Pass.hasMany(Attendance, { foreignKey: 'pass_id', onDelete: 'CASCADE' });
@@ -42,7 +42,7 @@ module.exports = {
   Admin,
   Product,
   Event,
-  Registration,
+  BookingGenerator,
   Payment,
   Pass,
   Attendance

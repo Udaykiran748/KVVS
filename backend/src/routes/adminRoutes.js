@@ -7,7 +7,7 @@ const upload = require('../middleware/uploadMiddleware');
 
 // ─── Dashboard Analytics ───────────────────────────────────────
 router.get('/analytics', verifyAdmin, adminController.getDashboardAnalytics);
-router.get('/registrations', verifyAdmin, adminController.getAllRegistrations);
+router.get('/booking-generators', verifyAdmin, adminController.getAllBookingGenerators);
 
 // ─── Gate Scanner ──────────────────────────────────────────────
 router.post('/validate-pass', verifyAdmin, adminController.validatePass);
@@ -21,8 +21,8 @@ router.delete('/users/:id', verifyAdmin, adminController.deleteUser);
 router.get('/payments', verifyAdmin, adminController.getAllPayments);
 router.put('/payments/:id/status', verifyAdmin, adminController.updatePaymentStatus);
 
-// ─── Registration Management ──────────────────────────────────
-router.put('/registrations/:id/cancel', verifyAdmin, adminController.cancelRegistration);
+// ─── Booking Generator Management ──────────────────────────────────
+router.put('/booking-generators/:id/cancel', verifyAdmin, adminController.cancelBookingGenerator);
 
 // ─── Product Management (admin-scoped) ───────────────────────
 router.get('/products', verifyAdmin, productController.getAllProducts);

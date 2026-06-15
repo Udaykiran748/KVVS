@@ -142,7 +142,24 @@ const Register = () => {
           product_id: parseInt(selectedProductId),
           kw_capacity: selectedKw,
           amount: calculatedTotal,
-          event_id: event.id
+          event_id: event.id,
+          customer_name: formData.customerName,
+          mobile_number: formData.mobileNumber,
+          email_address: formData.emailAddress,
+          company_name: formData.companyName,
+          booking_date: formData.bookingDate,
+          start_time: formData.startTime,
+          end_time: formData.endTime,
+          number_of_days: formData.numberOfDays,
+          delivery_address: formData.deliveryAddress,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+          fuel_required: formData.fuelRequired,
+          operator_required: formData.operatorRequired,
+          backup_generator_required: formData.backupGeneratorRequired,
+          special_instructions: formData.specialInstructions,
+          payment_method: formData.paymentMethod
         });
       } catch (err) {
         console.log("Backend logging failed, continuing to payment link...");
@@ -171,7 +188,7 @@ const Register = () => {
 
     try {
       const verifyRes = await bookingsAPI.verify({
-        registration_id: demoOrderData.registration_id,
+        booking_generator_id: demoOrderData.booking_generator_id,
         razorpay_order_id: demoOrderData.order_id,
         razorpay_payment_id: `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
         razorpay_signature: 'demo_simulation_signature'

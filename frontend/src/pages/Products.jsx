@@ -92,7 +92,7 @@ const Products = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-t-[#00f2fe] border-r-transparent border-slate-800 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-t-[#3b82f6] border-r-transparent border-slate-800 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ const Products = () => {
 
       {/* Decorative background graphics */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
-      <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-blue-500/5 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 left-0 w-96 h-96 rounded-full bg-purple-500/5 blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,7 +127,7 @@ const Products = () => {
               placeholder="Search generator models..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 border border-slate-800 rounded-lg text-sm text-black placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 border border-slate-800 rounded-lg text-sm text-black placeholder-slate-500 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors"
             />
           </div>
 

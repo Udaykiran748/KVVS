@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { Registration, Payment, Pass, User, Product, Event, Attendance } = require('../models');
+const { BookingGenerator, Payment, Pass, User, Product, Event, Attendance } = require('../models');
 const { Op } = require('sequelize');
 
 /**
@@ -11,25 +11,26 @@ const getDashboardAnalytics = async (req, res) => {
     const totalUsers = await User.count({ where: { role: 'user' } });
 
     // 2. Booking indicators
-    const confirmedBookings = await Registration.count({ where: { status: 'confirmed' } });
-    const pendingBookings = await Registration.count({ where: { status: 'pending' } });
+    const confirmedBookings = await BookingGenerator.count({ where: { status: 'confirmed' } });
+    const pendingBookings = await BookingGenerator.count({ where: { status: 'pending' } });
 
     // 3. Financial calculations
     const capturedPayments = await Payment.findAll({ where: { status: 'captured' } });
     const totalRevenue = capturedPayments.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
 
-    // 4. Seated slots
+    // 4. Booking Generator Capacity
     const event = await Event.findOne({ order: [['date', 'ASC']] });
-    const totalSlots = event ? event.total_slots : 0;
-    const availableSlots = event ? event.available_slots : 0;
-    const bookedSlots = totalSlots - availableSlots;
+    const totalSlots = 350;
+    const defaultBooked = 100;
+    const bookedSlots = defaultBooked + confirmedBookings;
+    const availableSlots = Math.max(0, totalSlots - bookedSlots);
 
     // 5. Product-wise distribution
     const products = await Product.findAll();
     const productStats = [];
 
     for (const prod of products) {
-      const count = await Registration.count({
+      const count = await BookingGenerator.count({
         where: { product_id: prod.id, status: 'confirmed' }
       });
       productStats.push({
@@ -42,7 +43,7 @@ const getDashboardAnalytics = async (req, res) => {
     }
 
     // 6. Recent bookings list
-    const recentBookings = await Registration.findAll({
+    const recentBookings = await BookingGenerator.findAll({
       include: [User, Product, Event, Payment],
       order: [['createdAt', 'DESC']],
       limit: 5
@@ -68,18 +69,18 @@ const getDashboardAnalytics = async (req, res) => {
 };
 
 /**
- * Fetch registrations grid list.
+ * Fetch booking generators grid list.
  */
-const getAllRegistrations = async (req, res) => {
+const getAllBookingGenerators = async (req, res) => {
   try {
-    const list = await Registration.findAll({
+    const list = await BookingGenerator.findAll({
       include: [User, Product, Event, Payment, Pass],
       order: [['createdAt', 'DESC']]
     });
     return res.json(list);
   } catch (error) {
-    console.error('Fetch Registrations Error:', error);
-    return res.status(500).json({ message: 'Failed to retrieve registrations list.' });
+    console.error('Fetch Booking Generators Error:', error);
+    return res.status(500).json({ message: 'Failed to retrieve booking generators list.' });
   }
 };
 
@@ -100,7 +101,7 @@ const validatePass = async (req, res) => {
       where: { pass_id },
       include: [
         {
-          model: Registration,
+          model: BookingGenerator,
           include: [User, Product, Event]
         }
       ]
@@ -113,9 +114,9 @@ const validatePass = async (req, res) => {
       });
     }
 
-    const registration = pass.Registration;
+    const bookingGenerator = pass.BookingGenerator;
 
-    if (registration.status !== 'confirmed') {
+    if (bookingGenerator.status !== 'confirmed') {
       return res.status(400).json({
         valid: false,
         message: 'INVALID REGISTRATION. Payment for this pass has not been verified.'
@@ -132,10 +133,10 @@ const validatePass = async (req, res) => {
         message: 'DOUBLE ENTRY VIOLATION! Pass already verified at entrance.',
         scan_time: scanDate,
         attendee: {
-          name: registration.User.name,
-          email: registration.User.email,
-          booking_id: registration.booking_id,
-          model: registration.Product.name
+          name: bookingGenerator.User.name,
+          email: bookingGenerator.User.email,
+          booking_id: bookingGenerator.booking_id,
+          model: bookingGenerator.Product.name
         }
       });
     }
@@ -152,12 +153,12 @@ const validatePass = async (req, res) => {
       valid: true,
       message: 'ENTRY PASS CONFIRMED. Welcome to the launch event!',
       attendee: {
-        name: registration.User.name,
-        email: registration.User.email,
-        mobile: registration.User.mobile,
-        booking_id: registration.booking_id,
-        model: registration.Product.name,
-        capacity: registration.Product.kw_capacity,
+        name: bookingGenerator.User.name,
+        email: bookingGenerator.User.email,
+        mobile: bookingGenerator.User.mobile,
+        booking_id: bookingGenerator.booking_id,
+        model: bookingGenerator.Product.name,
+        capacity: bookingGenerator.Product.kw_capacity,
         scanned_at: attendance.scanned_at
       }
     });
@@ -183,8 +184,8 @@ const getAllUsers = async (req, res) => {
 
     // Attach booking count per user
     const usersWithStats = await Promise.all(users.map(async (u) => {
-      const bookingCount = await Registration.count({ where: { user_id: u.id } });
-      const confirmedCount = await Registration.count({ where: { user_id: u.id, status: 'confirmed' } });
+      const bookingCount = await BookingGenerator.count({ where: { user_id: u.id } });
+      const confirmedCount = await BookingGenerator.count({ where: { user_id: u.id, status: 'confirmed' } });
       return { ...u.toJSON(), bookingCount, confirmedCount };
     }));
 
@@ -244,7 +245,7 @@ const getAllPayments = async (req, res) => {
     const payments = await Payment.findAll({
       include: [
         {
-          model: Registration,
+          model: BookingGenerator,
           include: [User, Product, Event]
         }
       ],
@@ -269,7 +270,7 @@ const updatePaymentStatus = async (req, res) => {
     }
 
     const payment = await Payment.findByPk(req.params.id, {
-      include: [{ model: Registration }]
+      include: [{ model: BookingGenerator }]
     });
     if (!payment) return res.status(404).json({ message: 'Payment record not found.' });
 
@@ -278,11 +279,11 @@ const updatePaymentStatus = async (req, res) => {
       transaction_id: transaction_id || payment.transaction_id
     });
 
-    // Sync registration status to match payment
-    if (payment.Registration) {
+    // Sync booking generator status to match payment
+    if (payment.BookingGenerator) {
       const regStatus = status === 'captured' ? 'confirmed' :
-                        status === 'failed' || status === 'refunded' ? 'cancelled' : 'pending';
-      await payment.Registration.update({ status: regStatus });
+        status === 'failed' || status === 'refunded' ? 'cancelled' : 'pending';
+      await payment.BookingGenerator.update({ status: regStatus });
     }
 
     return res.json({ message: `Payment status updated to "${status}".`, payment });
@@ -293,36 +294,36 @@ const updatePaymentStatus = async (req, res) => {
 };
 
 /**
- * Cancel a registration and its associated payment.
+ * Cancel a booking generator and its associated payment.
  */
-const cancelRegistration = async (req, res) => {
+const cancelBookingGenerator = async (req, res) => {
   try {
-    const registration = await Registration.findByPk(req.params.id, {
+    const bookingGenerator = await BookingGenerator.findByPk(req.params.id, {
       include: [Payment]
     });
-    if (!registration) return res.status(404).json({ message: 'Registration not found.' });
+    if (!bookingGenerator) return res.status(404).json({ message: 'Booking generator not found.' });
 
-    await registration.update({ status: 'cancelled' });
-    if (registration.Payment) {
-      await registration.Payment.update({ status: 'refunded' });
+    await bookingGenerator.update({ status: 'cancelled' });
+    if (bookingGenerator.Payment) {
+      await bookingGenerator.Payment.update({ status: 'refunded' });
     }
 
-    return res.json({ message: 'Registration cancelled and payment marked as refunded.' });
+    return res.json({ message: 'Booking generator cancelled and payment marked as refunded.' });
   } catch (error) {
-    console.error('Cancel Registration Error:', error);
-    return res.status(500).json({ message: 'Failed to cancel registration.' });
+    console.error('Cancel Booking Generator Error:', error);
+    return res.status(500).json({ message: 'Failed to cancel booking generator.' });
   }
 };
 
 module.exports = {
   getDashboardAnalytics,
-  getAllRegistrations,
+  getAllBookingGenerators,
   validatePass,
   getAllUsers,
   updateUser,
   deleteUser,
   getAllPayments,
   updatePaymentStatus,
-  cancelRegistration
+  cancelBookingGenerator
 };
 

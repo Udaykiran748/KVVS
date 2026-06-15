@@ -22,7 +22,7 @@ const Home = () => {
   }, []);
 
   const stats = [
-    { icon: <FlameKindling className="w-8 h-8 text-cyan-400" />, value: '0 Liters', label: 'Fuel/Gasoline Required' },
+    { icon: <FlameKindling className="w-8 h-8 text-blue-400" />, value: '0 Liters', label: 'Fuel/Gasoline Required' },
     { icon: <Activity className="w-8 h-8 text-green-400" />, value: '100%', label: 'Clean Carbon-Free Output' },
     { icon: <Award className="w-8 h-8 text-purple-400" />, value: '25+ Yrs', label: 'Continuous Operation Lifespan' },
     { icon: <Landmark className="w-8 h-8 text-yellow-400" />, value: '10x ROI', label: 'Lifetime Energy Cost Savings' }
@@ -190,7 +190,7 @@ const Home = () => {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="glass-panel glass-panel-hover rounded-xl p-8 text-center flex flex-col items-center"
             >
-              <div className="p-4 bg-slate-100 border border-slate-800 rounded-full mb-6 glow-shadow-cyan">
+              <div className="p-4 bg-slate-100 border border-slate-800 rounded-full mb-6 glow-shadow-blue">
                 {stat.icon}
               </div>
               <h3 className="font-orbitron font-extrabold text-3xl text-black mb-2">{stat.value}</h3>
@@ -268,7 +268,7 @@ const Home = () => {
                 className="w-full flex items-center justify-between p-6 text-left font-orbitron text-black hover:text-black font-semibold text-sm sm:text-base focus:outline-none"
               >
                 <span>{faq.q}</span>
-                <ChevronDown className={`w-5 h-5 text-black transition-transform duration-300 ${activeFaq === idx ? 'rotate-180 text-[#00f2fe]' : ''}`} />
+                <ChevronDown className={`w-5 h-5 text-black transition-transform duration-300 ${activeFaq === idx ? 'rotate-180 text-[#3b82f6]' : ''}`} />
               </button>
 
               <div

@@ -42,12 +42,7 @@ const Register = () => {
             kw_capacity: 4,
             price: '6000',
           },
-          {
-            id: 'static-5',
-            name: 'Resources Free Generator - 5KW',
-            kw_capacity: 5,
-            price: '6000',
-          },
+
           {
             id: 'static-1',
             name: 'Resources Free Generator - 6KW',
@@ -210,7 +205,7 @@ const Register = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-t-[#00f2fe] border-r-transparent border-slate-800 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-t-[#3b82f6] border-r-transparent border-slate-800 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -232,7 +227,7 @@ const Register = () => {
           <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Security Clearance Active</p>
 
           <div className="bg-slate-50/80 border border-slate-850 p-6 rounded-xl text-xs sm:text-sm text-left space-y-4 mb-8">
-            <p className="border-b border-slate-900 pb-2">Booking ID: <span className="text-[#00f2fe] font-bold font-orbitron float-right">{successBooking.booking_id}</span></p>
+            <p className="border-b border-slate-900 pb-2">Booking ID: <span className="text-[#3b82f6] font-bold font-orbitron float-right">{successBooking.booking_id}</span></p>
             <p className="border-b border-slate-900 pb-2">VIP Pass Code: <span className="text-black font-bold font-orbitron float-right">{successBooking.pass.pass_id}</span></p>
             <p className="border-b border-slate-900 pb-2">Reserved Generator: <span className="text-black float-right">{selectedProduct.name}</span></p>
             <p>Email Dispatch: <span className="text-black float-right">{user.email}</span></p>
@@ -265,7 +260,7 @@ const Register = () => {
           <h1 className="font-orbitron font-extrabold text-3xl text-black mb-2 tracking-wider">
             RESERVE PASS Clearance
           </h1>
-          <p className="text-[10px] text-[#00f2fe] text-glow-cyan font-orbitron tracking-widest uppercase">Launch Event Priority Checkout</p>
+          <p className="text-[10px] text-[#3b82f6] text-glow-cyan font-orbitron tracking-widest uppercase">Launch Event Priority Checkout</p>
         </div>
 
         {errorMsg && (
@@ -283,7 +278,7 @@ const Register = () => {
             {/* Stage 1: Personal Info Coordinates */}
             <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
               <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-5 flex items-center space-x-2 border-b border-slate-900 pb-3">
-                <User className="w-4 h-4 text-[#00f2fe]" />
+                <User className="w-4 h-4 text-[#3b82f6]" />
                 <span>1. ATTENDEE COORDINATES</span>
               </h3>
 
@@ -306,7 +301,7 @@ const Register = () => {
             {/* Stage 2: Generator Model selection */}
             <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
               <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-5 flex items-center space-x-2 border-b border-slate-900 pb-3">
-                <ShoppingBag className="w-4 h-4 text-[#00f2fe]" />
+                <ShoppingBag className="w-4 h-4 text-[#3b82f6]" />
                 <span>2. SELECT GENERATOR CAPACITY</span>
               </h3>
 
@@ -314,7 +309,7 @@ const Register = () => {
                 {products.map((prod) => (
                   <label
                     key={prod.id}
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${selectedProductId === prod.id.toString() ? 'border-[#00f2fe] bg-cyan-500/5 glow-shadow-cyan' : 'border-slate-800/80 hover:border-slate-700 bg-slate-100/30'}`}
+                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${selectedProductId === prod.id.toString() ? 'border-[#3b82f6] bg-cyan-500/5 glow-shadow-cyan' : 'border-slate-800/80 hover:border-slate-700 bg-slate-100/30'}`}
                   >
                     <div className="flex items-center space-x-3.5">
                       <input
@@ -330,7 +325,7 @@ const Register = () => {
                         <span className="text-[10px] text-black">{prod.kw_capacity} Kilowatt continuous load capability</span>
                       </div>
                     </div>
-                    <span className="font-orbitron text-xs sm:text-sm text-[#00f2fe] font-semibold shrink-0">
+                    <span className="font-orbitron text-xs sm:text-sm text-[#3b82f6] font-semibold shrink-0">
                       Rs. {parseFloat(prod.price).toLocaleString()}
                     </span>
                   </label>
@@ -345,10 +340,10 @@ const Register = () => {
 
             {event && (
               <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent"></div>
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#3b82f6] to-transparent"></div>
 
                 <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-5 flex items-center space-x-2 border-b border-slate-900 pb-3">
-                  <CreditCard className="w-4 h-4 text-[#00f2fe]" />
+                  <CreditCard className="w-4 h-4 text-[#3b82f6]" />
                   <span>3. EVENT DEPOSIT BOOKING</span>
                 </h3>
 
@@ -382,7 +377,7 @@ const Register = () => {
                   </div>
                   <div className="border-t border-slate-800/80 pt-3 flex justify-between font-orbitron font-extrabold text-sm text-black">
                     <span>TOTAL AMOUNT</span>
-                    <span className="text-[#00f2fe] text-glow-cyan">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span>
+                    <span className="text-[#3b82f6] text-glow-cyan">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span>
                   </div>
                 </div>
 
