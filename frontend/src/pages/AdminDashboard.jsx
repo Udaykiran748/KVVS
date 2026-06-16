@@ -290,9 +290,6 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
                     ['Booking Date', viewReg.booking_date],
                     ['Time', viewReg.start_time ? `${viewReg.start_time} - ${viewReg.end_time}` : ''],
                     ['Duration', viewReg.number_of_days ? `${viewReg.number_of_days} Days` : ''],
-                    ['Fuel Required', viewReg.fuel_required],
-                    ['Operator', viewReg.operator_required],
-                    ['Backup Gen', viewReg.backup_generator_required],
                     ['Payment Method', viewReg.payment_method]
                   ].filter(x => x[1]).map(([k, v]) => (
                     <div key={k} className="flex justify-between border-b border-slate-300/50 pb-1">
@@ -302,12 +299,6 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
                   ))}
                 </div>
               </div>
-              {viewReg.special_instructions && (
-                <div className="mt-4">
-                  <h4 className="text-blue-500 font-mono text-xs font-bold border-b border-slate-300 pb-1 mb-2">SPECIAL INSTRUCTIONS</h4>
-                  <p className="text-xs font-mono text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-300">{viewReg.special_instructions}</p>
-                </div>
-              )}
               <button onClick={() => setViewReg(null)} className="mt-6 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 font-bold hover:text-white rounded-xl font-mono text-sm transition">CLOSE</button>
             </motion.div>
           </motion.div>

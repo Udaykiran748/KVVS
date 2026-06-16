@@ -37,10 +37,6 @@ const BookingGenerator = sequelize.define('BookingGenerator', {
   city: { type: DataTypes.STRING, allowNull: true },
   state: { type: DataTypes.STRING, allowNull: true },
   pincode: { type: DataTypes.STRING, allowNull: true },
-  fuel_required: { type: DataTypes.STRING, allowNull: true },
-  operator_required: { type: DataTypes.STRING, allowNull: true },
-  backup_generator_required: { type: DataTypes.STRING, allowNull: true },
-  special_instructions: { type: DataTypes.TEXT, allowNull: true },
   payment_method: { type: DataTypes.STRING, allowNull: true },
   status: {
     type: DataTypes.STRING,

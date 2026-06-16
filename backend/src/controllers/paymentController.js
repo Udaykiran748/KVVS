@@ -45,11 +45,8 @@ const initiateBooking = async (req, res) => {
       city,
       state,
       pincode,
-      fuel_required,
-      operator_required,
-      backup_generator_required,
-      special_instructions,
-      payment_method
+      payment_method,
+      amount
     } = req.body;
     const user_id = req.user.id;
 
@@ -90,10 +87,6 @@ const initiateBooking = async (req, res) => {
       city,
       state,
       pincode,
-      fuel_required,
-      operator_required,
-      backup_generator_required,
-      special_instructions,
       payment_method,
       status: 'pending'
     });
@@ -112,7 +105,7 @@ const initiateBooking = async (req, res) => {
       });
     }
 
-    const bookingAmount = event.ticket_price; // Booking amount
+    const bookingAmount = amount || event.ticket_price; // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
 
     if (!isDemoMode && razorpay) {

@@ -166,6 +166,11 @@ const Register = () => {
         };
 
         const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          console.error('Razorpay payment failed:', response.error);
+          setErrorMsg(`Payment Failed: ${response.error.description}`);
+          setPaying(false);
+        });
         rzp.open();
       }
     } catch (error) {

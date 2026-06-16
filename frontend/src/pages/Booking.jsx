@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { productsAPI, eventAPI, bookingsAPI } from '../services/api';
 import { ShieldCheck, Calendar, MapPin, Zap, User, AlertCircle, ShoppingBag, CreditCard } from 'lucide-react';
 
-const Register = () => {
+const Booking = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -38,10 +38,6 @@ const Register = () => {
     city: '',
     state: '',
     pincode: '',
-    fuelRequired: 'No',
-    operatorRequired: 'No',
-    backupGeneratorRequired: 'No',
-    specialInstructions: '',
     paymentMethod: 'Cash'
   });
 
@@ -120,7 +116,7 @@ const Register = () => {
     }
 
     if (!event) {
-      return setErrorMsg('Launch event booking is currently unavailable.');
+      return setErrorMsg('Booking system is currently unavailable.');
     }
 
     setErrorMsg('');
@@ -136,9 +132,9 @@ const Register = () => {
       const cgst = baseTotal * 0.09;
       const sgst = baseTotal * 0.09;
       const calculatedTotal = baseTotal + cgst + sgst;
-      // Attempt to log booking on backend before redirecting
+      let orderData = null;
       try {
-        await bookingsAPI.initiate({
+        const response = await bookingsAPI.initiate({
           product_id: parseInt(selectedProductId),
           kw_capacity: selectedKw,
           amount: calculatedTotal,
@@ -155,19 +151,72 @@ const Register = () => {
           city: formData.city,
           state: formData.state,
           pincode: formData.pincode,
-          fuel_required: formData.fuelRequired,
-          operator_required: formData.operatorRequired,
-          backup_generator_required: formData.backupGeneratorRequired,
-          special_instructions: formData.specialInstructions,
           payment_method: formData.paymentMethod
         });
+        orderData = response.data;
       } catch (err) {
-        console.log("Backend logging failed, continuing to payment link...");
+        console.log("Backend logging failed:", err);
+        throw new Error('Failed to initiate booking on the backend.');
       }
 
-      // Redirect to specific Razorpay Payment Link
-      const RAZORPAY_PAYMENT_LINK = "https://rzp.io/l/your-payment-link"; // UPDATE THIS WITH YOUR ACTUAL LINK
-      window.location.href = RAZORPAY_PAYMENT_LINK;
+      if (orderData.is_demo) {
+        setDemoOrderData(orderData);
+        setShowDemoModal(true);
+        setPaying(false);
+      } else {
+        const loaded = await loadRazorpayScript();
+        if (!loaded) {
+          setPaying(false);
+          return setErrorMsg('Razorpay payment gateway failed to load. Check your internet connection.');
+        }
+
+        const options = {
+          key: orderData.key_id,
+          amount: Math.round(orderData.amount * 100),
+          currency: 'INR',
+          name: 'Quantum Generator Industries',
+          description: `Generator Booking - ${selectedProduct?.name} (${selectedKw} KW)`,
+          order_id: orderData.order_id,
+          handler: async (payResponse) => {
+            try {
+              const verifyRes = await bookingsAPI.verify({
+                booking_generator_id: orderData.booking_generator_id,
+                razorpay_order_id: payResponse.razorpay_order_id,
+                razorpay_payment_id: payResponse.razorpay_payment_id,
+                razorpay_signature: payResponse.razorpay_signature
+              });
+
+              setSuccessBooking(verifyRes.data);
+            } catch (err) {
+              console.error('Verify error:', err);
+              setErrorMsg('Transaction verification failed. Please contact secure support.');
+            } finally {
+              setPaying(false);
+            }
+          },
+          prefill: {
+            name: formData.customerName,
+            email: formData.emailAddress,
+            contact: formData.mobileNumber
+          },
+          theme: {
+            color: '#030303'
+          },
+          modal: {
+            ondismiss: () => {
+              setPaying(false);
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          console.error('Razorpay payment failed:', response.error);
+          setErrorMsg(`Payment Failed: ${response.error.description}`);
+          setPaying(false);
+        });
+        rzp.open();
+      }
 
     } catch (error) {
       console.error('Checkout error:', error);
@@ -223,24 +272,23 @@ const Register = () => {
           </div>
 
           <h2 className="font-orbitron font-extrabold text-2xl text-green-400 uppercase tracking-widest mb-2">
-            BOARDING PASS ACQUIRED
+            BOOKING CONFIRMED
           </h2>
-          <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Security Clearance Active</p>
+          <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Generator Reserved</p>
 
           <div className="bg-slate-50/80 border border-slate-850 p-6 rounded-xl text-xs sm:text-sm text-left space-y-4 mb-8">
             <p className="border-b border-slate-900 pb-2">Booking ID: <span className="text-[#3b82f6] font-bold font-orbitron float-right">{successBooking.booking_id}</span></p>
-            <p className="border-b border-slate-900 pb-2">VIP Pass Code: <span className="text-black font-bold font-orbitron float-right">{successBooking.pass.pass_id}</span></p>
             <p className="border-b border-slate-900 pb-2">Reserved Generator: <span className="text-black float-right">{selectedProduct.name} ({selectedKw} KW)</span></p>
             <p>Email Dispatch: <span className="text-black float-right">{formData.emailAddress}</span></p>
           </div>
 
           <p className="text-xs text-black leading-relaxed mb-8">
-            Your high-tech downloadable PDF entry ticket with verification QR code has been successfully rendered on the server and emailed to your coordinates. Present it at the entrance scanner check-point.
+            Your generator booking has been confirmed and the invoice has been emailed to you. Our team will contact you shortly regarding delivery and setup.
           </p>
 
           <div className="flex gap-4">
-            <Link to="/history" className="w-full btn-cyber py-3 rounded text-xs flex items-center justify-center font-bold">
-              VIEW MY PASSES
+            <Link to="/" className="w-full btn-cyber py-3 rounded text-xs flex items-center justify-center font-bold">
+              RETURN TO HOME
             </Link>
           </div>
         </div>
@@ -535,5 +583,5 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Booking;
 
