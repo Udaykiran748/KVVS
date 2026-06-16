@@ -11,7 +11,7 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCapacity, setSelectedCapacity] = useState('all');
   const [selectedProductDetails, setSelectedProductDetails] = useState(null);
-  const [playingVideo, setPlayingVideo] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -233,30 +233,58 @@ const Products = () => {
           </div>
         )}
 
-        {/* --- Separate Video Section --- */}
-        <div className="mt-24 max-w-2xl mx-auto">
-          <div className="text-center mb-8">
+        {/* --- Video Demos Section --- */}
+        <div className="mt-24 max-w-5xl mx-auto">
+          <div className="text-center mb-10">
             <h2 className="font-orbitron font-extrabold text-2xl sm:text-3xl text-black tracking-wider mb-3">
-              SEE THE GENERATOR IN ACTION
+              SEE THE GENERATORS IN ACTION
             </h2>
             <p className="text-slate-500 text-sm">
-              Watch our zero-point magnetic electricity generator running flawlessly without external resources.
+              Watch our zero-point magnetic electricity generators running flawlessly without external resources.
             </p>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
-            <div
-              className="relative w-full h-full cursor-pointer group"
-              onClick={() => setPlayingVideo(true)}
-            >
-              <img
-                src="/images/Resources free generator.jpg"
-                alt="Generator Demo"
-                className="w-full h-full object-cover filter brightness-75 group-hover:brightness-50 transition-all duration-500"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-blue-600/80 group-hover:bg-blue-500 rounded-full p-6 shadow-[0_0_30px_rgba(59,130,246,0.6)] backdrop-blur-sm transition-all duration-300 transform group-hover:scale-110">
-                  <Play className="w-10 h-10 text-white fill-white ml-1" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Video 1 */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
+              <div
+                className="relative w-full h-full cursor-pointer group"
+                onClick={() => setPlayingVideo('/images/RFG1 Video.mp4')}
+              >
+                <img
+                  src="/images/Resources free generator.jpg"
+                  alt="RFG Demo"
+                  className="w-full h-full object-cover filter brightness-75 group-hover:brightness-50 transition-all duration-500"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-blue-600/80 group-hover:bg-blue-500 rounded-full p-6 shadow-[0_0_30px_rgba(59,130,246,0.6)] backdrop-blur-sm transition-all duration-300 transform group-hover:scale-110">
+                    <Play className="w-10 h-10 text-white fill-white ml-1" />
+                  </div>
+                </div>
+                <div className="absolute bottom-4 left-4 font-orbitron text-white font-bold tracking-wider drop-shadow-md">
+                  RESOURCES FREE GENERATOR MODEL DEMO
+                </div>
+              </div>
+            </div>
+
+            {/* Video 2 */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
+              <div
+                className="relative w-full h-full cursor-pointer group"
+                onClick={() => setPlayingVideo('/images/EBS1 Video.mp4')}
+              >
+                <img
+                  src="/images/Energy booster.jpg"
+                  alt="EBS Demo"
+                  className="w-full h-full object-cover filter brightness-75 group-hover:brightness-50 transition-all duration-500"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-purple-600/80 group-hover:bg-purple-500 rounded-full p-6 shadow-[0_0_30px_rgba(168,85,247,0.6)] backdrop-blur-sm transition-all duration-300 transform group-hover:scale-110">
+                    <Play className="w-10 h-10 text-white fill-white ml-1" />
+                  </div>
+                </div>
+                <div className="absolute bottom-4 left-4 font-orbitron text-white font-bold tracking-wider drop-shadow-md">
+                  ENERGY BOOSTER SYSTEM MODEL DEMO
                 </div>
               </div>
             </div>
@@ -270,7 +298,7 @@ const Products = () => {
         {playingVideo && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm">
             <button
-              onClick={() => setPlayingVideo(false)}
+              onClick={() => setPlayingVideo(null)}
               className="absolute top-6 right-6 text-white hover:text-slate-300 z-10 p-2 text-3xl"
             >
               ✕
@@ -282,7 +310,7 @@ const Products = () => {
               className="w-full max-w-4xl aspect-video px-4"
             >
               <video
-                src="/images/RFG Video.mp4"
+                src={playingVideo}
                 controls
                 autoPlay
                 className="w-full h-full object-contain rounded-lg shadow-2xl"

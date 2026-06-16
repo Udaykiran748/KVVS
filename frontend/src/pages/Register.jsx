@@ -112,6 +112,7 @@ const Register = () => {
 
       const orderData = response.data; // { registration_id, booking_id, order_id, amount, is_demo, key_id }
 
+      /*
       if (orderData.is_demo) {
         // Fallback to React sandbox modal
         setDemoOrderData(orderData);
@@ -172,6 +173,24 @@ const Register = () => {
           setPaying(false);
         });
         rzp.open();
+      }
+      */
+      
+      // Auto bypass
+      try {
+        const verifyRes = await bookingsAPI.verify({
+          booking_generator_id: orderData.booking_generator_id,
+          razorpay_order_id: orderData.order_id,
+          razorpay_payment_id: `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
+          razorpay_signature: 'auto_bypassed_signature'
+        });
+
+        setSuccessBooking(verifyRes.data);
+      } catch (err) {
+        console.error('Verify error:', err);
+        setErrorMsg('Transaction verification failed. Please contact secure support.');
+      } finally {
+        setPaying(false);
       }
     } catch (error) {
       console.error('Checkout error:', error);

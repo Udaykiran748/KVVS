@@ -222,9 +222,9 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
                 <tr key={i} className="hover:bg-slate-50/30 transition">
                   <td className="py-3 px-5 font-semibold text-slate-900">{reg.booking_id}</td>
                   <td className="py-3 px-5">
-                    <div className="font-semibold text-slate-900">{reg.User?.name}</div>
-                    <div className="text-slate-500 text-[10px]">{reg.User?.email}</div>
-                    <div className="text-slate-500 text-[10px]">{reg.User?.mobile}</div>
+                    <div className="font-semibold text-slate-900">{reg.customer_name || reg.User?.name}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.email_address || reg.User?.email}</div>
+                    <div className="text-slate-500 text-[10px]">{reg.mobile_number || reg.User?.mobile}</div>
                   </td>
                   <td className="py-3 px-5">
                     <div className="text-blue-400 font-semibold">{reg.Product?.name}</div>
@@ -522,6 +522,8 @@ const UsersTab = () => {
   const [confirm, setConfirm] = useState(null);
   const [toast, setToast] = useState(null);
   const [viewUser, setViewUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const showToast = (msg, type = 'success') => { setToast({ msg, type }); setTimeout(() => setToast(null), 3500); };
 
@@ -543,6 +545,20 @@ const UsersTab = () => {
     });
   };
 
+  const handleUpdateUser = async () => {
+    setSaving(true);
+    try {
+      await adminAPI.updateUser(editUser.id, editUser);
+      showToast('User profile updated successfully.');
+      setEditUser(null);
+      fetchUsers();
+    } catch {
+      showToast('Update failed.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filtered = users.filter(u => {
     const q = search.toLowerCase();
     return [u.name, u.email, u.mobile].some(v => v?.toLowerCase().includes(q));
@@ -553,7 +569,7 @@ const UsersTab = () => {
       {confirm && <ConfirmModal message={confirm.msg} onConfirm={confirm.onOk} onCancel={() => setConfirm(null)} />}
       {toast && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-950 border-red-700 text-red-300' : 'bg-emerald-950 border-emerald-700 text-emerald-300'}`}>
+          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           {toast.msg}
         </motion.div>
       )}
@@ -583,6 +599,52 @@ const UsersTab = () => {
                 ))}
               </div>
               <button onClick={() => setViewUser(null)} className="mt-5 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 rounded-xl font-mono text-sm transition">CLOSE</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit User Modal */}
+      <AnimatePresence>
+        {editUser && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="font-bold text-slate-900 font-mono">EDIT USER PROFILE</h3>
+                <button onClick={() => setEditUser(null)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
+              </div>
+              <div className="space-y-4">
+                {[
+                  { label: 'Name', key: 'name' },
+                  { label: 'Mobile', key: 'mobile' },
+                  { label: 'Address', key: 'address' }
+                ].map(f => (
+                  <div key={f.key}>
+                    <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
+                    <input type="text" value={editUser[f.key] || ''} 
+                      onChange={e => setEditUser(p => ({ ...p, [f.key]: e.target.value }))}
+                      className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
+                  </div>
+                ))}
+                <div>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Role</label>
+                  <select value={editUser.role || 'user'} onChange={e => setEditUser(p => ({ ...p, role: e.target.value }))}
+                    className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none cursor-pointer">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button onClick={() => setEditUser(null)} className="flex-1 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-200 transition font-mono text-sm">CANCEL</button>
+                <button onClick={handleUpdateUser} disabled={saving}
+                  className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-400 disabled:opacity-60 text-zinc-950 font-bold rounded-xl font-mono text-sm transition flex items-center justify-center gap-2">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {saving ? 'SAVING...' : 'SAVE'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -637,6 +699,10 @@ const UsersTab = () => {
                       <button onClick={() => setViewUser(u)}
                         className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="View Profile">
                         <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => setEditUser({...u})}
+                        className="p-1.5 rounded-lg border border-slate-300 hover:border-amber-500 hover:text-amber-400 text-slate-500 transition" title="Edit Profile">
+                        <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button onClick={() => handleDelete(u.id, u.name)}
                         className="p-1.5 rounded-lg border border-slate-300 hover:border-red-500 hover:text-red-400 text-slate-500 transition" title="Delete User">
@@ -726,7 +792,7 @@ const PaymentsTab = () => {
       {confirm && <ConfirmModal message={confirm.msg} onConfirm={confirm.onOk} onCancel={() => setConfirm(null)} />}
       {toast && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-950 border-red-700 text-red-300' : 'bg-emerald-950 border-emerald-700 text-emerald-300'}`}>
+          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           {toast.msg}
         </motion.div>
       )}
@@ -744,7 +810,7 @@ const PaymentsTab = () => {
               </div>
               <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-300 font-mono text-xs space-y-1">
                 <div><span className="text-slate-500">Booking: </span><span className="text-slate-900">{statusModal.BookingGenerator?.booking_id}</span></div>
-                <div><span className="text-slate-500">Guest: </span><span className="text-blue-400">{statusModal.BookingGenerator?.User?.name}</span></div>
+                <div><span className="text-slate-500">Guest: </span><span className="text-blue-400">{statusModal.BookingGenerator?.customer_name || statusModal.BookingGenerator?.User?.name}</span></div>
                 <div><span className="text-slate-500">Amount: </span><span className="text-emerald-400 font-bold">₹{parseFloat(statusModal.amount).toLocaleString('en-IN')}</span></div>
                 <div><span className="text-slate-500">Current: </span><StatusBadge status={statusModal.status} /></div>
               </div>
@@ -835,8 +901,8 @@ const PaymentsTab = () => {
                 <tr key={p.id} className="hover:bg-slate-50/30 transition">
                   <td className="py-3 px-5 text-slate-900 font-semibold">{p.BookingGenerator?.booking_id || '—'}</td>
                   <td className="py-3 px-5">
-                    <div className="text-slate-900 font-semibold">{p.BookingGenerator?.User?.name || '—'}</div>
-                    <div className="text-slate-500 text-[10px]">{p.BookingGenerator?.User?.email}</div>
+                    <div className="text-slate-900 font-semibold">{p.BookingGenerator?.customer_name || p.BookingGenerator?.User?.name || '—'}</div>
+                    <div className="text-slate-500 text-[10px]">{p.BookingGenerator?.email_address || p.BookingGenerator?.User?.email}</div>
                   </td>
                   <td className="py-3 px-5">
                     <div className="text-blue-400">{p.BookingGenerator?.Product?.name || '—'}</div>

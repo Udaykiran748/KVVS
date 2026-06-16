@@ -19,6 +19,7 @@ import Login from './pages/Login';
 import Booking from './pages/Booking';
 import BookingHistory from './pages/BookingHistory';
 import Register from './pages/Register';
+import Receipt from './pages/Receipt';
 
 // Protected Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -44,6 +45,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/receipt/:bookingId" element={<Receipt />} />
 
               {/* Attendee Routes */}
               <Route

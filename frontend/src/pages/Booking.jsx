@@ -20,7 +20,6 @@ const Booking = () => {
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [successBooking, setSuccessBooking] = useState(null);
   const [step, setStep] = useState(1);
 
   // Form Details State
@@ -30,15 +29,10 @@ const Booking = () => {
     emailAddress: '',
     companyName: '',
     generatorCapacity: '',
-    bookingDate: '',
-    startTime: '',
-    endTime: '',
-    numberOfDays: '',
-    deliveryAddress: '',
     city: '',
     state: '',
     pincode: '',
-    paymentMethod: 'Cash'
+    paymentMethod: 'RAZORPAY'
   });
 
   const handleInputChange = (e) => {
@@ -143,11 +137,6 @@ const Booking = () => {
           mobile_number: formData.mobileNumber,
           email_address: formData.emailAddress,
           company_name: formData.companyName,
-          booking_date: formData.bookingDate,
-          start_time: formData.startTime,
-          end_time: formData.endTime,
-          number_of_days: formData.numberOfDays,
-          delivery_address: formData.deliveryAddress,
           city: formData.city,
           state: formData.state,
           pincode: formData.pincode,
@@ -156,9 +145,11 @@ const Booking = () => {
         orderData = response.data;
       } catch (err) {
         console.log("Backend logging failed:", err);
-        throw new Error('Failed to initiate booking on the backend.');
+        const backendMsg = err.response?.data?.message || err.response?.data?.error || err.message;
+        throw new Error(`Checkout Error: ${backendMsg}`);
       }
 
+      /*
       if (orderData.is_demo) {
         setDemoOrderData(orderData);
         setShowDemoModal(true);
@@ -174,7 +165,7 @@ const Booking = () => {
           key: orderData.key_id,
           amount: Math.round(orderData.amount * 100),
           currency: 'INR',
-          name: 'Quantum Generator Industries',
+          name: 'KVVSai Electronic',
           description: `Generator Booking - ${selectedProduct?.name} (${selectedKw} KW)`,
           order_id: orderData.order_id,
           handler: async (payResponse) => {
@@ -185,10 +176,15 @@ const Booking = () => {
                 razorpay_payment_id: payResponse.razorpay_payment_id,
                 razorpay_signature: payResponse.razorpay_signature
               });
-
-              setSuccessBooking(verifyRes.data);
+              navigate(`/receipt/${verifyRes.data.booking_id}`, {
+                state: {
+                  successBooking: verifyRes.data,
+                  selectedProduct,
+                  selectedKw,
+                  emailAddress: formData.emailAddress
+                }
+              });
             } catch (err) {
-              console.error('Verify error:', err);
               setErrorMsg('Transaction verification failed. Please contact secure support.');
             } finally {
               setPaying(false);
@@ -217,10 +213,32 @@ const Booking = () => {
         });
         rzp.open();
       }
+      */
+      
+      // Auto bypass
+      try {
+        const verifyRes = await bookingsAPI.verify({
+          booking_generator_id: orderData.booking_generator_id,
+          razorpay_order_id: orderData.order_id,
+          razorpay_payment_id: `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
+          razorpay_signature: 'auto_bypassed_signature'
+        });
+        navigate(`/receipt/${verifyRes.data.booking_id}`, {
+          state: {
+            successBooking: verifyRes.data,
+            selectedProduct,
+            selectedKw,
+            emailAddress: formData.emailAddress
+          }
+        });
+      } catch (err) {
+        setErrorMsg('Transaction verification failed. Please contact secure support.');
+        setPaying(false);
+      }
 
     } catch (error) {
       console.error('Checkout error:', error);
-      setErrorMsg('Error occurred during checkout redirect.');
+      setErrorMsg('Error occurred during checkout redirect: ' + (error.message || JSON.stringify(error)));
       setPaying(false);
     }
   };
@@ -243,7 +261,14 @@ const Booking = () => {
         razorpay_signature: 'demo_simulation_signature'
       });
 
-      setSuccessBooking(verifyRes.data);
+      navigate(`/receipt/${verifyRes.data.booking_id}`, {
+        state: {
+          successBooking: verifyRes.data,
+          selectedProduct,
+          selectedKw,
+          emailAddress: formData.emailAddress
+        }
+      });
     } catch (err) {
       console.error('Demo verify error:', err);
       setErrorMsg('Simulated checkout verification error.');
@@ -256,42 +281,6 @@ const Booking = () => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-t-[#3b82f6] border-r-transparent border-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // --- Success State ---
-  if (successBooking) {
-    return (
-      <div className="relative min-h-screen bg-white flex items-center justify-center pt-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
-        <div className="w-full max-w-xl glass-panel border border-green-500/30 bg-green-500/5 rounded-2xl p-6 sm:p-10 text-center shadow-2xl relative">
-
-          <div className="w-16 h-16 rounded-full bg-slate-100 border border-green-400 shrink-0 flex items-center justify-center mx-auto mb-6 glow-shadow-blue">
-            <ShieldCheck className="w-8 h-8 text-green-400" />
-          </div>
-
-          <h2 className="font-orbitron font-extrabold text-2xl text-green-400 uppercase tracking-widest mb-2">
-            BOOKING CONFIRMED
-          </h2>
-          <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Generator Reserved</p>
-
-          <div className="bg-slate-50/80 border border-slate-850 p-6 rounded-xl text-xs sm:text-sm text-left space-y-4 mb-8">
-            <p className="border-b border-slate-900 pb-2">Booking ID: <span className="text-[#3b82f6] font-bold font-orbitron float-right">{successBooking.booking_id}</span></p>
-            <p className="border-b border-slate-900 pb-2">Reserved Generator: <span className="text-black float-right">{selectedProduct.name} ({selectedKw} KW)</span></p>
-            <p>Email Dispatch: <span className="text-black float-right">{formData.emailAddress}</span></p>
-          </div>
-
-          <p className="text-xs text-black leading-relaxed mb-8">
-            Your generator booking has been confirmed and the invoice has been emailed to you. Our team will contact you shortly regarding delivery and setup.
-          </p>
-
-          <div className="flex gap-4">
-            <Link to="/" className="w-full btn-cyber py-3 rounded text-xs flex items-center justify-center font-bold">
-              RETURN TO HOME
-            </Link>
-          </div>
-        </div>
       </div>
     );
   }
@@ -449,9 +438,6 @@ const Booking = () => {
                   </div>
                 </div>
               </div>
-
-
-
               <div className="pt-4">
                 <button
                   onClick={handleContinueToPayment}

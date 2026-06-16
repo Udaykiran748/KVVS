@@ -22,7 +22,7 @@ const getDashboardAnalytics = async (req, res) => {
     const event = await Event.findOne({ order: [['date', 'ASC']] });
     const totalSlots = 350;
     const defaultBooked = 100;
-    const bookedSlots = defaultBooked + confirmedBookings;
+    const bookedSlots = defaultBooked + confirmedBookings + totalUsers;
     const availableSlots = Math.max(0, totalSlots - bookedSlots);
 
     // 5. Product-wise distribution

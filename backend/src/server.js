@@ -69,7 +69,7 @@ const seedDatabase = async () => {
       launchDate.setDate(launchDate.getDate() + 45); // 45 days from today
 
       await Event.create({
-        title: 'THE QUANTUM DYNAMO: Zero-Fuel Magnetic Generator Global Unveiling',
+        title: 'THE KVVSAI ELECTRONIC: Zero-Fuel Magnetic Generator Global',
         description: 'Prepare to witness the official global launch of the KVVSai electronic Series: magnetic-power electricity generators operating fully without fuel, oil, or combustion. Experience live cell tests, interact with design engineers, and secure early reservation passes at our futuristic showcase event.',
         date: launchDate,
         venue: 'KVVSai electronic Dome Alpha, Aerospace Park Tech Center, Bangalore, KA',
