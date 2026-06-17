@@ -22,9 +22,10 @@ const StatusBadge = ({ status }) => {
     available: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     unavailable: 'bg-red-500/10  text-red-400    border-red-500/20',
   };
+  const displayStatus = status === 'captured' ? 'SUCCESS' : status;
   return (
     <span className={`px-2.5 py-0.5 text-[10px] font-semibold font-mono rounded-full border uppercase ${map[status] || 'bg-zinc-500/10 text-slate-600 border-zinc-500/20'}`}>
-      {status}
+      {displayStatus}
     </span>
   );
 };
@@ -55,7 +56,7 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => (
 
 // ─── TAB: Overview ──────────────────────────────────────────────────────────────
 
-const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
+const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiveTab }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewReg, setViewReg] = useState(null);
@@ -89,10 +90,22 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing }) => {
             purple: 'text-purple-400  border-purple-500/20  bg-purple-950/10',
           };
           const cls = colorMap[card.color].split(' ');
+          const isUserClickable = card.title === 'REGISTERED USERS';
+          const isBookingClickable = card.title === 'CONFIRMED BOOKINGS';
+          const isRevenueClickable = card.title === 'NET REVENUE';
+          const isClickable = isUserClickable || isBookingClickable || isRevenueClickable;
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
-              className={`glass-panel p-5 rounded-xl border ${cls[1]} ${cls[2]} flex justify-between items-start`}>
+              onClick={() => {
+                if (isUserClickable && setActiveTab) setActiveTab('users');
+                else if (isBookingClickable) {
+                  setStatusFilter('confirmed');
+                  document.getElementById('ledger-terminal')?.scrollIntoView({ behavior: 'smooth' });
+                }
+                else if (isRevenueClickable && setActiveTab) setActiveTab('payments');
+              }}
+              className={`glass-panel p-5 rounded-xl border ${cls[1]} ${cls[2]} flex justify-between items-start ${isClickable ? 'cursor-pointer hover:scale-[1.02] transition-transform' : ''}`}>
               <div>
                 <span className="text-slate-500 font-mono text-[10px] uppercase tracking-wider block mb-1">{card.title}</span>
                 <span className={`text-2xl font-bold font-mono ${cls[0]}`}>{card.value}</span>
@@ -413,7 +426,7 @@ const ProductsTab = () => {
               </div>
               <div className="space-y-4">
                 {[
-                  { label: 'Product Name', key: 'name', placeholder: 'e.g. Quantum Pro 5KW Generator' },
+                  { label: 'Product Name', key: 'name', placeholder: 'e.g. KVVSai electronic Pro 5KW Generator' },
                   { label: 'KW Capacity', key: 'kw_capacity', placeholder: 'e.g. 5', type: 'number' },
                   { label: 'Price (₹)', key: 'price', placeholder: 'e.g. 45000', type: 'number' },
                 ].map(f => (
@@ -623,7 +636,7 @@ const UsersTab = () => {
                 ].map(f => (
                   <div key={f.key}>
                     <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
-                    <input type="text" value={editUser[f.key] || ''} 
+                    <input type="text" value={editUser[f.key] || ''}
                       onChange={e => setEditUser(p => ({ ...p, [f.key]: e.target.value }))}
                       className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
                   </div>
@@ -700,7 +713,7 @@ const UsersTab = () => {
                         className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="View Profile">
                         <Eye className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => setEditUser({...u})}
+                      <button onClick={() => setEditUser({ ...u })}
                         className="p-1.5 rounded-lg border border-slate-300 hover:border-amber-500 hover:text-amber-400 text-slate-500 transition" title="Edit Profile">
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -818,7 +831,7 @@ const PaymentsTab = () => {
               <select value={newStatus} onChange={e => setNewStatus(e.target.value)}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none mb-5 cursor-pointer">
                 <option value="pending">Pending</option>
-                <option value="success">Success (Confirm)</option>
+                <option value="captured">SUCCESS (Confirm)</option>
                 <option value="failed">Failed</option>
                 <option value="refunded">Refunded</option>
               </select>
@@ -870,7 +883,7 @@ const PaymentsTab = () => {
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
             className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs focus:border-blue-500 outline-none cursor-pointer">
             <option value="all">ALL</option>
-            <option value="success">SUCCESS</option>
+            <option value="captured">SUCCESS</option>
             <option value="pending">PENDING</option>
             <option value="failed">FAILED</option>
             <option value="refunded">REFUNDED</option>
@@ -1027,7 +1040,7 @@ const AdminDashboard = () => {
           <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
             {activeTab === 'overview' && (
-              <OverviewTab analytics={analytics} registrations={registrations} onRefresh={() => fetchOverview(true)} refreshing={refreshing} />
+              <OverviewTab analytics={analytics} registrations={registrations} onRefresh={() => fetchOverview(true)} refreshing={refreshing} setActiveTab={setActiveTab} />
             )}
             {activeTab === 'products' && <ProductsTab />}
             {activeTab === 'users' && <UsersTab />}

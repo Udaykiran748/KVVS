@@ -66,19 +66,14 @@ const initiateBooking = async (req, res) => {
       user_id = user.id;
     }
 
-    if (!product_id || !event_id) {
-      return res.status(400).json({ message: 'Product ID and Event ID are required to register.' });
+    if (!product_id) {
+      return res.status(400).json({ message: 'Product ID is required to register.' });
     }
 
     const product = await Product.findByPk(product_id);
-    const event = await Event.findByPk(event_id);
 
-    if (!product || !event) {
-      return res.status(404).json({ message: 'Selected generator model or launch event does not exist.' });
-    }
-
-    if (event.available_slots <= 0) {
-      return res.status(400).json({ message: 'Launch event entry slots are fully booked.' });
+    if (!product) {
+      return res.status(404).json({ message: 'Selected generator model does not exist.' });
     }
 
     // Generate unique booking identifier
@@ -119,7 +114,7 @@ const initiateBooking = async (req, res) => {
     }
     */
 
-    const bookingAmount = amount || event.ticket_price; // Booking amount
+    const bookingAmount = amount || (product.price || 0); // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
 
     /*
@@ -236,12 +231,12 @@ const verifyPayment = async (req, res) => {
 
       // Deduct available slots from the launch event
       const event = bookingGenerator.Event;
-      if (event.available_slots > 0) {
+      if (event && event.available_slots > 0) {
         await event.update({ available_slots: event.available_slots - 1 });
       }
 
       // Generate a unique digital pass verification code
-      const pass_id = `PASS-${Math.floor(100000 + Math.random() * 900000)}`;
+      const pass_id = `GENERATOR-${Math.floor(100000 + Math.random() * 900000)}`;
 
       // Generate base64 QR code data URL (encodes the unique Pass ID)
       const qrCodeUrl = await generateQRCode(pass_id);
@@ -257,7 +252,8 @@ const verifyPayment = async (req, res) => {
       const pdfPath = await generatePassPDF({
         user: bookingGenerator.User,
         product: bookingGenerator.Product,
-        event: bookingGenerator.Event,
+        bookingGenerator: bookingGenerator,
+        payment: payment,
         booking_id: bookingGenerator.booking_id,
         pass_id,
         qr_code_url: qrCodeUrl
@@ -274,9 +270,9 @@ const verifyPayment = async (req, res) => {
           booking_id: bookingGenerator.booking_id,
           pass_id,
           product_name: bookingGenerator.Product.name,
-          event_title: bookingGenerator.Event.title,
-          event_date: bookingGenerator.Event.date,
-          event_venue: bookingGenerator.Event.venue
+          event_title: bookingGenerator.Event ? bookingGenerator.Event.title : 'N/A',
+          event_date: bookingGenerator.Event ? bookingGenerator.Event.date : 'N/A',
+          event_venue: bookingGenerator.Event ? bookingGenerator.Event.venue : 'N/A'
         },
         pdfPath
       );

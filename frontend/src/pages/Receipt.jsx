@@ -16,7 +16,7 @@ export default function Receipt() {
   return (
     <div className="relative min-h-screen bg-white flex items-center justify-center pt-24 px-4 overflow-hidden">
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
-      
+
       <div className="w-full max-w-xl glass-panel border border-green-500/30 bg-green-500/5 rounded-2xl p-6 sm:p-10 text-center shadow-2xl relative z-10">
         <div className="w-16 h-16 rounded-full bg-slate-100 border border-green-400 shrink-0 flex items-center justify-center mx-auto mb-6 glow-shadow-blue">
           <ShieldCheck className="w-8 h-8 text-green-400" />
@@ -52,9 +52,9 @@ export default function Receipt() {
 
         <div className="flex flex-col sm:flex-row gap-4 mt-6">
           {successBooking.pass?.pdf_url ? (
-            <a 
-              href={successBooking.pass.pdf_url} 
-              target="_blank" 
+            <a
+              href={successBooking.pass.pdf_url}
+              target="_blank"
               rel="noopener noreferrer"
               download
               className="w-full btn-cyber py-3 rounded text-xs flex items-center justify-center gap-2 font-bold bg-green-500/20 text-green-600 border border-green-500 hover:bg-green-500/30 transition-all"

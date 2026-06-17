@@ -17,7 +17,7 @@ const seedDatabase = async () => {
       await Product.bulkCreate([
 
         {
-          name: 'KVVSai electronic-6 Magnet Generator',
+          name: 'Resources Free Generator-6 Magnet Generator',
           kw_capacity: 6,
           price: 95000.00,
           availability_status: 'available',
@@ -38,7 +38,7 @@ const seedDatabase = async () => {
           ]
         },
         {
-          name: 'KVVSai electronic-40 Magnet Generator',
+          name: 'Energy Booster System-40 Magnet Generator',
           kw_capacity: 40,
           price: 180000.00,
           availability_status: 'available',

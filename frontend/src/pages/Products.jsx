@@ -249,7 +249,7 @@ const Products = () => {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
               <div
                 className="relative w-full h-full cursor-pointer group"
-                onClick={() => setPlayingVideo('/images/RFG1 Video.mp4')}
+                onClick={() => setPlayingVideo('/images/RFG Video.mp4')}
               >
                 <img
                   src="/images/Resources free generator.jpg"

@@ -109,9 +109,7 @@ const Booking = () => {
       return setErrorMsg('Please select a Generator Capacity.');
     }
 
-    if (!event) {
-      return setErrorMsg('Booking system is currently unavailable.');
-    }
+    // No longer checking for event availability
 
     setErrorMsg('');
     setStep(2);
@@ -132,7 +130,7 @@ const Booking = () => {
           product_id: parseInt(selectedProductId),
           kw_capacity: selectedKw,
           amount: calculatedTotal,
-          event_id: event.id,
+          event_id: event?.id || 1,
           customer_name: formData.customerName,
           mobile_number: formData.mobileNumber,
           email_address: formData.emailAddress,
@@ -214,7 +212,7 @@ const Booking = () => {
         rzp.open();
       }
       */
-      
+
       // Auto bypass
       try {
         const verifyRes = await bookingsAPI.verify({
