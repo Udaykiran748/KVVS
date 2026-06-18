@@ -69,10 +69,10 @@ const seedDatabase = async () => {
       launchDate.setDate(launchDate.getDate() + 45); // 45 days from today
 
       await Event.create({
-        title: 'THE KVVSAI ELECTRONIC: Zero-Fuel Magnetic Generator Global',
-        description: 'Prepare to witness the official global launch of the KVVSai electronic Series: magnetic-power electricity generators operating fully without fuel, oil, or combustion. Experience live cell tests, interact with design engineers, and secure early reservation passes at our futuristic showcase event.',
+        title: 'THE KVVSAI ELECTRICALS: Zero-Fuel Magnetic Generator Global',
+        description: 'Prepare to witness the official global launch of the KVVSai electricals Series: magnetic-power electricity generators operating fully without fuel, oil, or combustion. Experience live cell tests, interact with design engineers, and secure early reservation passes at our futuristic showcase event.',
         date: launchDate,
-        venue: 'KVVSai electronic Dome Alpha, Aerospace Park Tech Center, Bangalore, KA',
+        venue: 'KVVSai electricals Dome Alpha, Aerospace Park Tech Center, Bangalore, KA',
         ticket_price: 2500.00, // 2500 INR entry booking amount
         total_slots: 300,
         available_slots: 300
@@ -89,7 +89,7 @@ sequelize.sync({ force: false }) // Preserves existing user profiles and passes
   .then(async () => {
     console.log('Sequelize: Database structure synchronized successfully.');
     await seedDatabase();
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server: Operating smoothly on port ${PORT}`);
     });
   })
@@ -97,3 +97,5 @@ sequelize.sync({ force: false }) // Preserves existing user profiles and passes
     console.error('Sequelize: Failed to synchronize database structure:', error);
     process.exit(1);
   });
+
+// Triggering nodemon restart

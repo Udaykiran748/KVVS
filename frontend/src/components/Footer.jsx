@@ -17,7 +17,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2">
               <img src="/images/Logo Kvvsai.jpg" alt="KVVSai Logo" className="w-16 h-16 object-contain" />
               <span className="font-orbitron font-extrabold text-lg tracking-widest text-black">
-                K V V SAI ELECTRONIC
+                K V V SAI ELECTRICALS
               </span>
             </div>
             <p className="text-black text-sm leading-relaxed">
@@ -65,12 +65,12 @@ const Footer = () => {
         {/* Horizontal Divider */}
         <div className="border-t border-slate-800/80 pt-8 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500">
           <p className="mb-4 sm:mb-0">
-            &copy; 2026 K V V Sai electronic Generator Industries. Perpetual licensing active.
+            &copy; 2026 K V V Sai electricals Generator Industries. Perpetual licensing active.
           </p>
           <div className="flex space-x-4">
-            <span className="hover:text-black cursor-pointer">Security Protocol</span>
+            <Link to="/terms" className="hover:text-black cursor-pointer">Terms & Conditions</Link>
             <span className="hover:text-black cursor-pointer">Data Clearance</span>
-            <span className="hover:text-black cursor-pointer">Magnetic Guidelines</span>
+            <Link to="/about#magnetic-guidelines" className="hover:text-black cursor-pointer">Magnetic Guidelines</Link>
           </div>
         </div>
 

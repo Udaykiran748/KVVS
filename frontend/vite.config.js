@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5000',
         changeOrigin: true,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
@@ -19,20 +19,9 @@ export default defineConfig({
           });
         }
       },
-      '/passes': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
-            if (res && !res.headersSent) {
-               res.writeHead(502, { 'Content-Type': 'application/json' });
-               res.end(JSON.stringify({ error: 'Backend down' }));
-            }
-          });
-        }
-      },
+
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5000',
         changeOrigin: true,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {

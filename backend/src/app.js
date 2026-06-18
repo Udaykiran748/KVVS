@@ -19,7 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve Public Files (Passes PDFs and Uploads)
+// Serve Public Files (Uploads)
 app.use(express.static(path.join(__dirname, '../public')));
 
 // API Mounting Gates

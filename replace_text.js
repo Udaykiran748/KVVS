@@ -18,11 +18,11 @@ filesToEdit.forEach(file => {
     let content = fs.readFileSync(fullPath, 'utf8');
     
     // Handle specific domains and casing
-    content = content.replace(/vortexgenerator\.com/gi, 'kvvsaielectronic.com');
-    content = content.replace(/VORTEX PAY/g, 'K V V SAI ELECTRONIC PAY');
-    
-    // Replace all other Vortex occurrences
-    content = content.replace(/Vortex/g, 'K V V Sai electronic');
+    content = content.replace(/vortexgenerator\.com/gi, 'kvvsaielectricals.com');
+    content = content.replace(/VORTEX PAY/g, 'K V V SAI ELECTRICALS PAY');
+    content = content.replace(/vortex/gi, 'kvvsaielectricals');
+    content = content.replace(/VORTEX/g, 'KVVSAIELECTRICALS');
+    content = content.replace(/Vortex/g, 'K V V Sai electricals');
     
     fs.writeFileSync(fullPath, content);
 });

@@ -21,6 +21,7 @@ const Products = () => {
           id: '1',
           name: 'Resources Free Generator',
           kw_capacity: 6,
+          badge_text: '6KW - 40KW',
           price: '6000',
           image_url: '/images/Resources free generator.jpg',
           benefits: [
@@ -29,7 +30,7 @@ const Products = () => {
             '90% of load guaranteed on the requirement of output energy'
           ],
           specifications: {
-            availability: '6kw to 40kw output power generation',
+            availability: '6KW to 40KW output power generation',
             load_guarantee: '90%',
             applications: 'Agriculture',
             type: 'Resource-Free Generator'
@@ -39,6 +40,7 @@ const Products = () => {
           id: '2',
           name: 'Energy Booster System',
           kw_capacity: 40,
+          badge_text: '40KW - 1MVA',
           price: '6000',
           image_url: '/images/Energy booster.jpg', // Vite serves public directory from root '/'
           benefits: [
@@ -47,9 +49,9 @@ const Products = () => {
             '90% load guaranteed on the requirement of output power'
           ],
           specifications: {
-            availability: '40kw to 1MA output power supply',
-            input: '10 kW from LT',
-            output: '40 kW Load',
+            availability: '40KW to 1MVA output power supply',
+            input: '10 KW from LT',
+            output: '40 KW Load',
             applications: 'Commercial industries, Agricultural'
           }
         }
@@ -113,7 +115,7 @@ const Products = () => {
             PRODUCTS
           </h1>
           <p className="text-black text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-            Browse our K V V Sai electronic Series of commercial-grade zero-point magnetic electricity generators. Secure early priority bookings.
+            Browse our K V V Sai electricals Series of commercial-grade zero-point magnetic electricity generators. Secure early priority bookings.
           </p>
         </div>
 
@@ -170,7 +172,7 @@ const Products = () => {
               {/* Product Badge */}
               <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded bg-white/85 border border-blue-500/40 font-orbitron text-[10px] font-bold tracking-widest text-blue-600 flex items-center space-x-1">
                 <Zap className="w-3 h-3 text-blue-500 fill-blue-500 animate-pulse" />
-                <span>{prod.kw_capacity} KW</span>
+                <span>{prod.badge_text}</span>
               </div>
 
               {/* Product Photo */}
@@ -187,8 +189,8 @@ const Products = () => {
               <div className="p-6 flex-grow flex flex-col justify-between">
                 <div>
                   <h3 className="font-orbitron font-bold text-lg text-black tracking-wide mb-2">{prod.name}</h3>
-                  <div className="flex items-baseline space-x-2 mb-4">
-                    <span className="text-xl font-orbitron font-extrabold text-green-600">Rs. {parseFloat(prod.price).toLocaleString()} Per W</span>
+                  <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1 mb-4">
+                    <span className="text-xl font-orbitron font-extrabold text-green-600 whitespace-nowrap">Rs. {parseFloat(prod.price).toLocaleString()} Per KW</span>
                     <span className="text-[10px] text-slate-500 font-medium">LAUNCH PREORDER BOOKING FEE</span>
                   </div>
 

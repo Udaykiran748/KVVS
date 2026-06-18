@@ -60,10 +60,32 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewReg, setViewReg] = useState(null);
+  const [editReg, setEditReg] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type = 'success') => { setToast({ msg, type }); setTimeout(() => setToast(null), 3500); };
+
+  const handleUpdateReg = async () => {
+    setSaving(true);
+    try {
+      await adminAPI.updateRegistration(editReg.id, editReg);
+      showToast('Booking details updated successfully.');
+      setEditReg(null);
+      if (onRefresh) onRefresh();
+    } catch {
+      showToast('Update failed.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (!analytics) return null;
   const { metrics, productStats, recentBookings } = analytics;
-  const bookingRatio = metrics.totalSlots > 0 ? (metrics.bookedSlots / metrics.totalSlots) * 100 : 0;
+  const displayTotalSlots = metrics?.totalSlots || 350;
+  const displayBookedSlots = metrics?.bookedSlots || 100;
+  const displayAvailableSlots = metrics.availableSlots || 250;
+  const bookingRatio = displayTotalSlots > 0 ? (displayBookedSlots / displayTotalSlots) * 100 : 0;
 
   const filtered = registrations.filter(reg => {
     const q = searchQuery.toLowerCase();
@@ -75,12 +97,19 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
 
   return (
     <div className="space-y-8">
+      {toast && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl font-mono text-sm shadow-xl border ${toast.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
+          {toast.msg}
+        </motion.div>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
           { title: 'REGISTERED USERS', value: metrics.totalUsers, sub: 'total accounts', icon: Users, color: 'blue' },
           { title: 'CONFIRMED BOOKINGS', value: metrics.confirmedBookings, sub: `${metrics.pendingBookings} pending`, icon: CheckCircle, color: 'emerald' },
-          { title: 'CAPACITY', value: `${metrics.bookedSlots}/${metrics.totalSlots}`, sub: `${metrics.availableSlots} slots open`, icon: Calendar, color: 'indigo' },
+          { title: 'CAPACITY', value: `${displayBookedSlots}/${displayTotalSlots}`, sub: `${displayAvailableSlots} slots open`, icon: Calendar, color: 'indigo' },
           { title: 'NET REVENUE', value: `₹${parseFloat(metrics.totalRevenue).toLocaleString('en-IN')}`, sub: 'captured payments', icon: DollarSign, color: 'purple' },
         ].map((card, i) => {
           const colorMap = {
@@ -125,20 +154,20 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="glass-panel p-6 rounded-xl">
             <h2 className="text-sm font-bold font-mono tracking-wide mb-4 text-blue-400 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" /> BOOKING GENERATOR CAPACITY MATRIX
+              <TrendingUp className="w-4 h-4" /> BOOKING GENERATOR CAPACITY MATRIX 100
             </h2>
             <div className="flex justify-between text-xs font-mono mb-2">
               <span className="text-slate-500">CAPACITY RESERVED</span>
-              <span className="text-blue-400 font-semibold">{bookingRatio.toFixed(1)}% SECURED</span>
+              <span className="text-blue-400 font-semibold">{bookingRatio.toFixed(1)}% ALREADY BOOKED</span>
             </div>
             <div className="h-3 w-full bg-slate-50 rounded-full border border-slate-300 p-[1px]">
               <div className="h-full bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500 rounded-full transition-all duration-1000"
                 style={{ width: `${bookingRatio}%` }} />
             </div>
             <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-300/60 text-center font-mono text-xs">
-              <div><span className="text-slate-500 block mb-1">TOTAL SLOTS</span><span className="text-slate-900 font-bold">{metrics.totalSlots}</span></div>
-              <div><span className="text-slate-500 block mb-1">SECURED</span><span className="text-emerald-400 font-bold">{metrics.bookedSlots}</span></div>
-              <div><span className="text-slate-500 block mb-1">OPEN</span><span className="text-blue-400 font-bold">{metrics.availableSlots}</span></div>
+              <div><span className="text-slate-500 block mb-1">TOTAL SLOTS</span><span className="text-slate-900 font-bold">{displayTotalSlots}</span></div>
+              <div><span className="text-slate-500 block mb-1">ALREADY BOOKED</span><span className="text-emerald-400 font-bold">{displayBookedSlots}</span></div>
+              <div><span className="text-slate-500 block mb-1">OPEN</span><span className="text-blue-400 font-bold">{displayAvailableSlots}</span></div>
             </div>
           </motion.div>
 
@@ -253,6 +282,10 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                       className="p-1.5 rounded-lg border border-slate-300 hover:border-blue-500 hover:text-blue-400 text-slate-500 transition" title="View Details">
                       <Eye className="w-3.5 h-3.5" />
                     </button>
+                    <button onClick={() => setEditReg({ ...reg })}
+                      className="p-1.5 rounded-lg border border-slate-300 hover:border-amber-500 hover:text-amber-400 text-slate-500 transition ml-2" title="Edit Booking">
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
                   </td>
                 </tr>
               )) : (
@@ -299,10 +332,12 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                   <h4 className="text-blue-500 font-mono text-xs font-bold border-b border-slate-300 pb-1">GENERATOR REQUIREMENTS</h4>
                   {[
                     ['Model', viewReg.Product?.name],
-                    ['Capacity', viewReg.kw_capacity ? `${viewReg.kw_capacity} KW` : ''],
-                    ['Booking Date', viewReg.booking_date],
-                    ['Time', viewReg.start_time ? `${viewReg.start_time} - ${viewReg.end_time}` : ''],
-                    ['Duration', viewReg.number_of_days ? `${viewReg.number_of_days} Days` : ''],
+                    ['Generator KW', viewReg.generator_kw],
+                    ['Generator HP', viewReg.generator_hp],
+                    ['Generator Others', viewReg.generator_others],
+                    ['Motor Condition', viewReg.motor_condition ? (viewReg.motor_condition === 'new' ? 'New Motor' : viewReg.motor_condition === 'old' ? 'Old Motor' : 'Others') : ''],
+                    ['Motor Age', viewReg.motor_age],
+                    ['Motor HP', viewReg.motor_hp],
                     ['Payment Method', viewReg.payment_method]
                   ].filter(x => x[1]).map(([k, v]) => (
                     <div key={k} className="flex justify-between border-b border-slate-300/50 pb-1">
@@ -313,6 +348,79 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                 </div>
               </div>
               <button onClick={() => setViewReg(null)} className="mt-6 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 font-bold hover:text-white rounded-xl font-mono text-sm transition">CLOSE</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Registration Modal */}
+      <AnimatePresence>
+        {editReg && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="font-bold text-slate-900 font-mono">EDIT BOOKING DETAILS - {editReg.booking_id}</h3>
+                <button onClick={() => setEditReg(null)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <h4 className="text-amber-500 font-mono text-xs font-bold border-b border-slate-300 pb-1">CUSTOMER INFO</h4>
+                  {[
+                    { label: 'Customer Name', key: 'customer_name' },
+                    { label: 'Mobile Number', key: 'mobile_number' },
+                    { label: 'Email Address', key: 'email_address' },
+                    { label: 'Company Name', key: 'company_name' },
+                    { label: 'Delivery Address', key: 'delivery_address' },
+                    { label: 'City', key: 'city' },
+                    { label: 'State', key: 'state' },
+                    { label: 'Pincode', key: 'pincode' }
+                  ].map(f => (
+                    <div key={f.key}>
+                      <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
+                      <input type="text" value={editReg[f.key] || ''}
+                        onChange={e => setEditReg(p => ({ ...p, [f.key]: e.target.value }))}
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-amber-500 font-mono text-xs font-bold border-b border-slate-300 pb-1">GENERATOR REQUIREMENTS</h4>
+                  {[
+                    { label: 'Generator KW', key: 'generator_kw' },
+                    { label: 'Generator HP', key: 'generator_hp' },
+                    { label: 'Generator Others', key: 'generator_others' },
+                    { label: 'Motor Age', key: 'motor_age' },
+                    { label: 'Motor HP', key: 'motor_hp' }
+                  ].map(f => (
+                    <div key={f.key}>
+                      <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
+                      <input type="text" value={editReg[f.key] || ''}
+                        onChange={e => setEditReg(p => ({ ...p, [f.key]: e.target.value }))}
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Motor Condition</label>
+                    <select value={editReg.motor_condition || ''} onChange={e => setEditReg(p => ({ ...p, motor_condition: e.target.value }))}
+                      className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none cursor-pointer">
+                      <option value="">Select Condition</option>
+                      <option value="new">New</option>
+                      <option value="old">Old</option>
+                      <option value="others">Others</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button onClick={() => setEditReg(null)} className="flex-1 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-200 transition font-mono text-sm">CANCEL</button>
+                <button onClick={handleUpdateReg} disabled={saving}
+                  className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-zinc-950 font-bold rounded-xl font-mono text-sm transition flex items-center justify-center gap-2">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {saving ? 'SAVING...' : 'SAVE CHANGES'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -426,7 +534,7 @@ const ProductsTab = () => {
               </div>
               <div className="space-y-4">
                 {[
-                  { label: 'Product Name', key: 'name', placeholder: 'e.g. KVVSai electronic Pro 5KW Generator' },
+                  { label: 'Product Name', key: 'name', placeholder: 'e.g. KVVSai electricals Pro 5KW Generator' },
                   { label: 'KW Capacity', key: 'kw_capacity', placeholder: 'e.g. 5', type: 'number' },
                   { label: 'Price (₹)', key: 'price', placeholder: 'e.g. 45000', type: 'number' },
                 ].map(f => (
@@ -1008,7 +1116,7 @@ const AdminDashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-extrabold tracking-wider text-slate-900">
-              KVVSai electronic Admin Page
+              KVVSai electricals Admin Page
             </h1>
             <p className="text-slate-500 font-mono text-xs mt-1">SECURE LAUNCH EVENT COORDINATION</p>
           </div>

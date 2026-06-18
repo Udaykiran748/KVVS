@@ -96,3 +96,34 @@ CREATE TABLE IF NOT EXISTS attendance (
   FOREIGN KEY (pass_id) REFERENCES passes(id) ON DELETE CASCADE,
   FOREIGN KEY (scanned_by) REFERENCES admins(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS booking_generators (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    event_id INT NOT NULL,
+    booking_id VARCHAR(255) NOT NULL UNIQUE,
+    kw_capacity INT NULL,
+    customer_name VARCHAR(255) NULL,
+    mobile_number VARCHAR(255) NULL,
+    email_address VARCHAR(255) NULL,
+    company_name VARCHAR(255) NULL,
+    booking_date DATE NULL,
+    start_time VARCHAR(255) NULL,
+    end_time VARCHAR(255) NULL,
+    number_of_days INT NULL,
+    delivery_address TEXT NULL,
+    city VARCHAR(255) NULL,
+    state VARCHAR(255) NULL,
+    pincode VARCHAR(255) NULL,
+    payment_method VARCHAR(255) NULL,
+    motor_condition VARCHAR(255) NULL,
+    motor_age VARCHAR(255) NULL,
+    motor_hp VARCHAR(255) NULL,
+    generator_kw VARCHAR(255) NULL,
+    generator_hp VARCHAR(255) NULL,
+    generator_others VARCHAR(255) NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL
+);

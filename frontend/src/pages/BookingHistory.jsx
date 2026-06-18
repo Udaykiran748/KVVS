@@ -18,35 +18,148 @@ const BookingHistory = () => {
     e.preventDefault();
     const doc = new jsPDF();
 
-    doc.setFontSize(18);
-    doc.text('KVVS GENERATOR BOOKING RECEIPT', 105, 20, null, null, 'center');
+    doc.setDrawColor(0, 0, 255);
+    doc.setLineWidth(1);
+    doc.rect(10, 10, 190, 277);
+    doc.setLineWidth(1.5);
+    doc.line(10, 20, 10, 10); doc.line(10, 10, 20, 10);
+    doc.line(200, 20, 200, 10); doc.line(200, 10, 190, 10);
+    doc.line(10, 277, 10, 287); doc.line(10, 287, 20, 287);
+    doc.line(200, 277, 200, 287); doc.line(200, 287, 190, 287);
 
-    doc.setFontSize(12);
-    doc.text(`Booking Reference: ${book.booking_id}`, 20, 40);
-    doc.text(`Status: ${book.status.toUpperCase()}`, 20, 50);
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(22);
+    doc.text('KVVSAI ELECTRICALS', 105, 25, null, null, 'center');
 
+    doc.setTextColor(85, 85, 85);
+    doc.setFontSize(8);
+    doc.text('Company Address: 123 Electronic City, Phase 1, Bangalore - 560100', 105, 32, null, null, 'center');
+    doc.text('Contact: +91 9876543210 | Email: support@kvvsaielectricals.com', 105, 36, null, null, 'center');
+    doc.text('GST No: 29ABCDE1234F1Z5', 105, 40, null, null, 'center');
+
+    doc.setTextColor(51, 51, 51);
+    doc.setFontSize(10);
+    doc.text('BOOKING GENERATOR CONFIRMED RECEIPT', 105, 48, null, null, 'center');
+
+    doc.setDrawColor(204, 204, 204);
+    doc.setLineWidth(0.5);
+    doc.line(15, 52, 195, 52);
+
+    doc.setFillColor(224, 231, 255);
+    doc.rect(15, 57, 180, 12, 'F');
+    doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
-    doc.text('CUSTOMER & EVENT DETAILS', 20, 70);
-    doc.setFontSize(12);
-    doc.text(`Name/Event: ${book.Event.title}`, 20, 80);
-    doc.text(`Date: ${new Date(book.Event.date).toLocaleString()}`, 20, 90);
-    doc.text(`Venue: ${book.Event.venue}`, 20, 100);
+    doc.text('OFFICIAL BOOKING RECEIPT', 105, 65, null, null, 'center');
 
-    doc.setFontSize(14);
-    doc.text('GENERATOR SPECIFICATIONS', 20, 120);
-    doc.setFontSize(12);
-    doc.text(`Generator: ${book.Product.name}`, 20, 130);
-    doc.text(`Capacity: ${book.Product.kw_capacity} KW`, 20, 140);
-    doc.text(`Base Rate: Rs. ${book.Product.price}/KW`, 20, 150);
+    // User Details
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(11);
+    doc.text('USER DETAILS', 20, 85);
+    doc.line(20, 88, 100, 88);
 
-    doc.setFontSize(14);
-    doc.text('PAYMENT TRANSACTION', 20, 170);
-    doc.setFontSize(12);
-    doc.text(`Payment Method: ${book.Payment.payment_method}`, 20, 180);
-    doc.text(`Total Amount Paid: Rs. ${book.Payment.amount}`, 20, 190);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(`Name: ${book.customer_name || 'Guest User'}`, 20, 95);
+    doc.text(`Email: ${book.email_address || 'N/A'}`, 20, 102);
+    doc.text(`Mobile: ${book.mobile_number || 'N/A'}`, 20, 109);
+    const fullAddress = book.delivery_address || (book.city ? `${book.city}, ${book.state} - ${book.pincode}` : '');
+    doc.text(`Address: ${fullAddress}`, 20, 116);
+    if (book.company_name) {
+      doc.text(`Company: ${book.company_name}`, 20, 123);
+    }
 
-    doc.setFontSize(14);
-    doc.text('Thank you for choosing KVVS!', 105, 220, null, null, 'center');
+    // Booking Details
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(11);
+    doc.text('BOOKING DETAILS', 110, 85);
+    doc.line(110, 88, 190, 88);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(`Model: ${book.Product?.name || 'Generator'}`, 110, 95);
+    doc.text(`KW Capacity: ${book.kw_capacity || book.Product?.kw_capacity || ''} KW`, 110, 102);
+    doc.text(`Booking ID: ${book.booking_id}`, 110, 109);
+    doc.text(`Status: Confirmed`, 110, 116);
+
+    // Payment Details
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(11);
+    doc.text('PAYMENT & BILLING DETAILS', 20, 140);
+    doc.line(20, 143, 190, 143);
+
+    const rawAmount = book.Payment?.amount || 0;
+    const baseAmount = rawAmount / 1.18;
+    const cgst = baseAmount * 0.09;
+    const sgst = baseAmount * 0.09;
+
+    const formatCurrency = (val) => parseFloat(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const currentDate = new Date();
+    const billingPeriod = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.text(`Description: ${book.Product?.name || 'Generator'}`, 20, 150);
+    doc.text(`Billing Period: ${billingPeriod}`, 20, 156);
+
+    doc.text('Amount:', 20, 164);
+    doc.text(`Rs. ${formatCurrency(baseAmount)}`, 70, 164);
+    doc.text('CGST (9%):', 20, 170);
+    doc.text(`Rs. ${formatCurrency(cgst)}`, 70, 170);
+    doc.text('SGST (9%):', 20, 176);
+    doc.text(`Rs. ${formatCurrency(sgst)}`, 70, 176);
+
+    doc.setDrawColor(59, 130, 246);
+    doc.line(20, 180, 100, 180);
+    doc.text('Total Amount Paid:', 20, 186);
+    doc.text(`Rs. ${formatCurrency(rawAmount)}`, 70, 186);
+    doc.line(20, 190, 100, 190);
+
+    doc.text(`Transaction ID: ${book.Payment?.transaction_id || 'pay_mock_' + Math.random().toString(36).substring(2, 9)}`, 110, 150);
+    doc.text(`Payment Method: ${book.Payment?.payment_method || 'RAZORPAY'}`, 110, 156);
+
+    // Generator Details
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(11);
+    doc.text('GENERATOR WORKING DETAILS', 20, 205);
+    doc.setDrawColor(204, 204, 204);
+    doc.line(20, 208, 190, 208);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.text('• Technology: 100% fuel-free magnetic power generation principle.', 20, 215);
+    doc.text('• Operation: Utilizes advanced neodymium magnetic arrays for continuous output.', 20, 221);
+    doc.text('• Benefits: Zero emissions, silent operation, and no recurring fuel costs.', 20, 227);
+    doc.text('• Maintenance: Minimal upkeep required. Follow setup instructions upon delivery.', 20, 233);
+
+    // Signature
+    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}:${currentDate.getSeconds().toString().padStart(2, '0')}`;
+    doc.setDrawColor(59, 130, 246);
+    doc.rect(125, 238, 65, 20, 'S');
+
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(8);
+    doc.text('DIGITALLY SIGNED', 157.5, 243, null, null, 'center');
+    doc.setTextColor(0, 0, 0);
+    doc.text('KVVSAI ELECTRICALS', 157.5, 248, null, null, 'center');
+    doc.setTextColor(85, 85, 85);
+    doc.text(formattedDate, 157.5, 253, null, null, 'center');
+
+    doc.setTextColor(51, 51, 51);
+    doc.setFontSize(9);
+    doc.text('Authorized Signatory', 157.5, 263, null, null, 'center');
+
+    // Footer
+    doc.setDrawColor(204, 204, 204);
+    doc.line(20, 270, 190, 270);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(8);
+    doc.text('This is a computer-generated receipt and does not require a physical signature.', 105, 275, null, null, 'center');
+    doc.text('Thank you for your business!', 105, 280, null, null, 'center');
+
+    doc.setTextColor(85, 85, 85);
+    doc.setFontSize(7);
+    doc.text(`KVVSAI ELECTRICALS © ${currentDate.getFullYear()}. All Rights Reserved.`, 105, 290, null, null, 'center');
 
     const pdfBlob = doc.output('blob');
     const url = URL.createObjectURL(pdfBlob);
@@ -75,7 +188,7 @@ const BookingHistory = () => {
             BOOKING HISTORY
           </h1>
           <p className="text-sm text-slate-500 font-medium mb-6">
-            View all your reservations, generator details, and download passes
+            View all your reservations, generator details, and download it
           </p>
 
           <div className="inline-flex items-center gap-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">

@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const Razorpay = require('razorpay');
 const { BookingGenerator, Payment, Pass, User, Product, Event } = require('../models');
 const { generateQRCode } = require('../services/qrService');
-const { generatePassPDF } = require('../services/pdfService');
+
 const { sendPassEmail } = require('../services/emailService');
 require('dotenv').config();
 
@@ -43,9 +43,15 @@ const initiateBooking = async (req, res) => {
       state,
       pincode,
       payment_method,
+      motor_condition,
+      motor_age,
+      motor_hp,
+      generator_kw,
+      generator_hp,
+      generator_others,
       amount
     } = req.body;
-    
+
     let user_id = req.user?.id;
     if (!user_id) {
       // Guest Checkout - Find or Create User
@@ -56,10 +62,10 @@ const initiateBooking = async (req, res) => {
           email: email_address,
           mobile: mobile_number || '0000000000',
           password: await bcrypt.hash('guest123', 10),
-          address: delivery_address || 'Guest Address',
-          city: city || 'Guest City',
-          state: state || 'Guest State',
-          pincode: pincode || '000000',
+          address: delivery_address || '',
+          city: city || '',
+          state: state || '',
+          pincode: pincode || '',
           role: 'user'
         });
       }
@@ -90,16 +96,22 @@ const initiateBooking = async (req, res) => {
       mobile_number,
       email_address,
       company_name,
+      delivery_address,
       city,
       state,
       pincode,
       payment_method,
+      motor_condition,
+      motor_age,
+      motor_hp,
+      generator_kw,
+      generator_hp,
+      generator_others,
       status: 'pending'
     });
 
-    // Prevent overwriting the master User profile on every checkout
-    // so each booking can have independent guest details.
-    /*
+    // Update the master User profile on checkout
+    // so the latest booking details are saved.
     const user = await User.findByPk(user_id);
     if (user) {
       await user.update({
@@ -112,7 +124,6 @@ const initiateBooking = async (req, res) => {
         pincode: pincode || user.pincode
       });
     }
-    */
 
     const bookingAmount = amount || (product.price || 0); // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -216,7 +227,7 @@ const verifyPayment = async (req, res) => {
       }
     }
     */
-    
+
     // Auto bypass
     isVerified = true;
     await payment.update({
@@ -248,19 +259,8 @@ const verifyPayment = async (req, res) => {
         qr_code_url: qrCodeUrl
       });
 
-      // Generate PDF pass on server
-      const pdfPath = await generatePassPDF({
-        user: bookingGenerator.User,
-        product: bookingGenerator.Product,
-        bookingGenerator: bookingGenerator,
-        payment: payment,
-        booking_id: bookingGenerator.booking_id,
-        pass_id,
-        qr_code_url: qrCodeUrl
-      });
-
-      // Update pass with path to PDF
-      await newPass.update({ pdf_url: pdfPath });
+      // Update pass with null pdf_url since we generate it on frontend
+      await newPass.update({ pdf_url: null });
 
       // Dispatch Email with pass attachment via Nodemailer
       await sendPassEmail(
@@ -273,13 +273,29 @@ const verifyPayment = async (req, res) => {
           event_title: bookingGenerator.Event ? bookingGenerator.Event.title : 'N/A',
           event_date: bookingGenerator.Event ? bookingGenerator.Event.date : 'N/A',
           event_venue: bookingGenerator.Event ? bookingGenerator.Event.venue : 'N/A'
-        },
-        pdfPath
+        }
       );
 
       return res.json({
         message: 'Transaction captured and boarding pass processed successfully.',
         booking_id: bookingGenerator.booking_id,
+        customer_name: bookingGenerator.customer_name,
+        mobile_number: bookingGenerator.mobile_number,
+        email_address: bookingGenerator.email_address,
+        company_name: bookingGenerator.company_name,
+        delivery_address: bookingGenerator.delivery_address,
+        city: bookingGenerator.city,
+        state: bookingGenerator.state,
+        pincode: bookingGenerator.pincode,
+        payment_method: bookingGenerator.payment_method,
+        motor_condition: bookingGenerator.motor_condition,
+        motor_hp: bookingGenerator.motor_hp,
+        generator_kw: bookingGenerator.generator_kw,
+        generator_hp: bookingGenerator.generator_hp,
+        generator_others: bookingGenerator.generator_others,
+        kw_capacity: bookingGenerator.kw_capacity,
+        amount: payment.amount,
+        transaction_id: payment.transaction_id,
         pass: {
           id: newPass.id,
           pass_id: newPass.pass_id,

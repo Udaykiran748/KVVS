@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Compass, Sparkles, Cpu, GitFork } from 'lucide-react';
 
 const About = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.getElementById(location.hash.slice(1));
+      if (element) {
+        setTimeout(() => element.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+
   const steps = [
     { icon: <Cpu className="w-6 h-6 text-blue-400" />, title: 'ASYMMETRICAL ROTORS', desc: 'Custom stator geometry ensures permanent polar repulsion that overrides standard magnetic locking, allowing rotor spin loops to continue infinitely.' },
     { icon: <Compass className="w-6 h-6 text-purple-400" />, title: 'FLUX COMPRESSORS', desc: 'Inductive copper conduits squeeze high-speed magnetic flux lines, focusing force directly onto rotor coils to minimize torque losses.' },
@@ -34,14 +48,14 @@ const About = () => {
             animate={{ opacity: 1 }}
             className="font-orbitron font-extrabold text-3xl sm:text-5xl text-black mb-6"
           >
-            THE K V V SAI ELECTRONIC REVOLUTION
+            THE K V V SAI ELECTRICALS REVOLUTION
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-black text-sm sm:text-base max-w-2xl mx-auto leading-relaxed"
           >
-            Dismantling global resource combustion since 3026. Discover how we harness the fundamental magnetism of Samarium-Cobalt arrays to supply continuous clean power.
+            Dismantling global resource combustion since 2026. Discover how we harness the fundamental magnetism of Samarium-Cobalt arrays to supply continuous clean power.
           </motion.p>
         </div>
 
@@ -96,6 +110,57 @@ const About = () => {
                   <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
                   <p>
                     In conclusion, the magnetic field is the fundamental element that makes electricity generation possible. By providing the magnetic flux required for electromagnetic induction, it allows mechanical energy to be converted into electrical energy efficiently and continuously. The interaction between the rotating armature and the magnetic field forms the basis of generator operation and remains one of the most important principles in electrical engineering and power generation.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* --- Magnetic Guidelines Section --- */}
+        <div id="magnetic-guidelines" className="grid grid-cols-1 gap-12 mb-20 pt-20 -mt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <div className="text-center mb-10">
+              <h4 className="font-orbitron font-bold text-xl sm:text-3xl text-blue-600 leading-tight mb-4">
+                Magnetic Guidelines
+              </h4>
+            </div>
+
+            <div className="bg-white/50 backdrop-blur-sm border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+              <div className="space-y-6 text-black text-sm sm:text-base leading-relaxed text-justify">
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    Magnetic guidelines are the fundamental principles used in the design and operation of generators that rely on magnetic fields for electricity generation. In any generator system, magnets play a crucial role in creating the magnetic flux required for electromagnetic induction. The proper selection, positioning, and alignment of magnets ensure that the magnetic field remains strong and stable throughout operation. A well-designed magnetic system helps improve efficiency, increase power output, and reduce energy losses within the generator.
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    One of the most important magnetic guidelines is the arrangement of magnetic poles. Magnets are typically placed in an alternating North-South configuration around the rotor to create a continuously changing magnetic field. As the rotor spins, the magnetic field cuts across the stator coils, inducing an electrical current. Proper pole spacing and alignment ensure smooth operation and prevent fluctuations in voltage generation. This arrangement also helps maintain balanced rotation and reduces mechanical stress on the system.
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    Another key guideline is maintaining an optimal air gap between the magnets and the stator coils. The air gap is the distance through which the magnetic field travels before reaching the coils. A smaller and uniform air gap increases magnetic coupling and improves the efficiency of power generation. However, sufficient clearance must be maintained to prevent physical contact between rotating and stationary components. Proper air gap management contributes significantly to the overall performance and reliability of the generator.
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    Magnetic flux management is also essential for efficient generator operation. Materials such as soft iron or laminated steel cores are often used to guide and concentrate magnetic flux through the coils. This reduces magnetic leakage and ensures that a greater portion of the magnetic field contributes to electricity generation. Additionally, minimizing losses caused by eddy currents, hysteresis, and friction helps improve energy conversion efficiency and prolongs the lifespan of the generator components.
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <span className="text-black text-xl leading-none shrink-0 mt-0.5">•</span>
+                  <p>
+                    Finally, temperature control and maintenance are important aspects of magnetic guidelines. Excessive heat can weaken magnetic materials and reduce generator performance over time. Proper cooling systems, ventilation, and regular inspections help maintain magnetic strength and operational stability. By following these magnetic guidelines, generators can achieve higher efficiency, reliable performance, reduced energy losses, and a longer service life, making them suitable for various industrial and commercial applications.
                   </p>
                 </div>
               </div>

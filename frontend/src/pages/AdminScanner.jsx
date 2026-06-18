@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  QrCode, 
-  ArrowLeft, 
-  Wifi, 
-  ShieldCheck, 
-  ShieldAlert, 
-  Camera, 
-  History, 
-  Keyboard, 
-  CheckCircle2, 
+import {
+  QrCode,
+  ArrowLeft,
+  Wifi,
+  ShieldCheck,
+  ShieldAlert,
+  Camera,
+  History,
+  Keyboard,
+  CheckCircle2,
   AlertTriangle,
   Play
 } from 'lucide-react';
@@ -25,7 +25,7 @@ const AdminScanner = () => {
   const [validationLoading, setValidationLoading] = useState(false);
   const [scanHistory, setScanHistory] = useState([]);
   const [validationResult, setValidationResult] = useState(null);
-  
+
   const qrCodeInstanceRef = useRef(null);
   const audioContextRef = useRef(null);
 
@@ -51,7 +51,7 @@ const AdminScanner = () => {
       osc2.type = 'sine';
 
       // Futuristic major chord beep
-      osc1.frequency.setValueAtTime(880, ctx.currentTime); 
+      osc1.frequency.setValueAtTime(880, ctx.currentTime);
       osc2.frequency.setValueAtTime(1109.73, ctx.currentTime); // C#6
 
       gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
@@ -174,7 +174,7 @@ const AdminScanner = () => {
 
     try {
       const response = await adminAPI.validatePass(trimmedCode);
-      
+
       // Successfully checked in!
       playSuccessChime();
       const payload = {
@@ -261,14 +261,14 @@ const AdminScanner = () => {
   return (
     <div className="min-h-screen bg-white grid-bg text-black pt-24 pb-16 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-transparent to-[#030303] pointer-events-none" />
-      
+
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3">
-              <Link 
-                to="/admin" 
+              <Link
+                to="/admin"
                 onClick={stopScanner}
                 className="p-2 border border-slate-800 hover:border-slate-700 bg-slate-50/80 rounded transition"
               >
@@ -284,7 +284,7 @@ const AdminScanner = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2 font-mono text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/35 text-emerald-400">
             <Wifi className="w-3.5 h-3.5 animate-pulse" />
             SECURE LINK ACTIVE
@@ -293,31 +293,31 @@ const AdminScanner = () => {
 
         {/* Central Core Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* LEFT CONTAINER: Visual Scanner Viewport */}
           <div className="lg:col-span-7 space-y-6">
-            
+
             <div className="glass-panel p-6 rounded-lg border border-slate-800 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-blue-400" />
               <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-blue-400" />
               <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-blue-400" />
               <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-blue-400" />
-              
+
               <div className="flex justify-between items-center mb-4">
                 <span className="font-mono text-xs font-semibold tracking-widest text-black flex items-center gap-1.5">
                   <Camera className="w-3.5 h-3.5 text-blue-400" />
                   OPTICAL SCANNING VIEWPORT
                 </span>
-                
+
                 {isScanning ? (
-                  <button 
+                  <button
                     onClick={stopScanner}
                     className="font-mono text-[10px] text-red-400 hover:underline"
                   >
                     DISABLE STREAM
                   </button>
                 ) : (
-                  <button 
+                  <button
                     onClick={startScanner}
                     className="font-mono text-[10px] text-blue-400 hover:underline flex items-center gap-1"
                   >
@@ -351,7 +351,7 @@ const AdminScanner = () => {
                         <p className="text-slate-500 text-xs mt-0.5 font-mono">Stream was suspended. Click Re-enable above.</p>
                       )}
                     </div>
-                    <button 
+                    <button
                       onClick={startScanner}
                       className="px-4 py-2 bg-blue-900/20 border border-blue-500/40 text-blue-400 text-xs font-mono font-bold rounded hover:bg-blue-900/40 transition"
                     >
@@ -368,9 +368,9 @@ const AdminScanner = () => {
                 <Keyboard className="w-3.5 h-3.5 text-blue-400" />
                 MANUAL ATTENDEE BYPASS OVERRIDE
               </h3>
-              
+
               <form onSubmit={handleManualSubmit} className="flex gap-2">
-                <input 
+                <input
                   type="text"
                   placeholder="Enter alphanumeric pass ID code (e.g. QP-XXXXX)..."
                   value={manualCode}
@@ -390,7 +390,7 @@ const AdminScanner = () => {
 
           {/* RIGHT CONTAINER: Verification Status & History Logs */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Live Scan Result Banner */}
             <div className="glass-panel p-6 rounded-lg min-h-[220px] flex flex-col justify-between relative overflow-hidden">
               <span className="font-mono text-[10px] text-slate-500 block mb-4 tracking-widest uppercase">
@@ -489,7 +489,7 @@ const AdminScanner = () => {
                     )}
 
                     <div className="pt-2 border-t border-slate-900 text-center">
-                      <button 
+                      <button
                         onClick={() => {
                           setValidationResult(null);
                           setScanResult(null);
@@ -523,7 +523,7 @@ const AdminScanner = () => {
               <div className="space-y-3 flex-1 overflow-y-auto pr-1">
                 {scanHistory.length > 0 ? (
                   scanHistory.map((log, idx) => (
-                    <div 
+                    <div
                       key={idx}
                       className="p-3 border border-slate-900 bg-slate-50/20 rounded flex justify-between items-center font-mono text-xs"
                     >
@@ -541,13 +541,12 @@ const AdminScanner = () => {
                       </div>
 
                       <div className="text-right flex flex-col items-end gap-1">
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                          log.status === 'success' 
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/10' 
-                            : log.status === 'duplicate'
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${log.status === 'success'
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/10'
+                          : log.status === 'duplicate'
                             ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                             : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                        }`}>
+                          }`}>
                           {log.msg}
                         </span>
                         <span className="text-[9px] text-slate-500">{log.timestamp}</span>

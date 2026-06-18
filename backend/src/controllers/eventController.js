@@ -23,8 +23,12 @@ const getActiveEvent = async (req, res) => {
         available_slots: 500
       });
     }
+    const { BookingGenerator } = require('../models');
+    const confirmedBookings = await BookingGenerator.count({ where: { status: 'confirmed' } });
+    const eventData = event ? event.toJSON() : {};
+    eventData.bookedSlots = 100 + confirmedBookings;
 
-    return res.json(event);
+    return res.json(eventData);
   } catch (error) {
     console.error('Fetch Event Error:', error);
     return res.status(500).json({ message: 'Failed to retrieve launch event parameters.' });

@@ -8,10 +8,8 @@ require('dotenv').config();
  * @param {string} toEmail - Recipient email
  * @param {string} toName - Recipient name
  * @param {Object} passDetails - Pass and booking details
- * @param {string} pdfRelativePath - Relative file path to the PDF ticket
  */
-const sendPassEmail = async (toEmail, toName, passDetails, pdfRelativePath) => {
-  const pdfFullPath = path.join(__dirname, '../../public', pdfRelativePath);
+const sendPassEmail = async (toEmail, toName, passDetails) => {
 
   // Check if SMTP is configured
   const hasSMTP = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
@@ -25,7 +23,6 @@ const sendPassEmail = async (toEmail, toName, passDetails, pdfRelativePath) => {
     console.log(`Pass Code: ${passDetails.pass_id}`);
     console.log(`Reserved Model: ${passDetails.product_name}`);
     console.log(`Venue: ${passDetails.event_venue}`);
-    console.log(`PDF Ticket Attachment: ${pdfFullPath}`);
     console.log('---------------------------------\n');
     return true;
   }
@@ -83,7 +80,7 @@ const sendPassEmail = async (toEmail, toName, passDetails, pdfRelativePath) => {
           </div>
 
           <p style="font-size: 14px; color: #94a3b8; line-height: 1.5; text-align: center; margin: 25px 0;">
-            <strong>Important:</strong> Your digital event pass with embedded QR verification code has been attached to this email as a PDF. Please download and present it upon arrival at the gate check-in point.
+            <strong>Important:</strong> Your digital event pass with embedded QR verification code can be downloaded from your booking receipt portal. Please present it upon arrival at the gate check-in point.
           </p>
 
           <div style="border-top: 1px solid #1e293b; padding-top: 20px; text-align: center; color: #475569; font-size: 11px;">
@@ -91,14 +88,7 @@ const sendPassEmail = async (toEmail, toName, passDetails, pdfRelativePath) => {
             Zero-Fuel Zero-Emission Zero-Point Magnetic Power Technology.
           </div>
         </div>
-      `,
-      attachments: [
-        {
-          filename: `Launch_Pass_${passDetails.booking_id}.pdf`,
-          path: pdfFullPath,
-          contentType: 'application/pdf'
-        }
-      ]
+      `
     };
 
     const info = await transporter.sendMail(mailOptions);

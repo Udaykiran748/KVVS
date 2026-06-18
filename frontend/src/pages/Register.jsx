@@ -57,7 +57,7 @@ const Register = () => {
           }
         ];
 
-        const apiProducts = (prodRes.data || []).filter(p => !p.name.includes('K V V Sai electronic'));
+        const apiProducts = (prodRes.data || []).filter(p => !p.name.includes('K V V Sai electricals'));
         const allProducts = [...hardcodedProducts, ...apiProducts];
 
         setProducts(allProducts);
@@ -175,7 +175,7 @@ const Register = () => {
         rzp.open();
       }
       */
-      
+
       // Auto bypass
       try {
         const verifyRes = await bookingsAPI.verify({
@@ -441,7 +441,7 @@ const Register = () => {
             </div>
 
             <h3 className="font-orbitron font-extrabold text-lg text-cyan-400 tracking-wide text-glow-cyan mb-2">
-              K V V SAI ELECTRONIC PAY SANDBOX
+              K V V SAI ELECTRICALS PAY SANDBOX
             </h3>
             <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Demo checkout Simulation Active</p>
 

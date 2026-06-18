@@ -21,6 +21,7 @@ const Booking = () => {
   const [paying, setPaying] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [step, setStep] = useState(1);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Form Details State
   const [formData, setFormData] = useState({
@@ -29,10 +30,17 @@ const Booking = () => {
     emailAddress: '',
     companyName: '',
     generatorCapacity: '',
+    deliveryAddress: '',
     city: '',
     state: '',
     pincode: '',
-    paymentMethod: 'RAZORPAY'
+    paymentMethod: 'RAZORPAY',
+    motorCondition: '',
+    motorAge: '',
+    motorHp: '',
+    generatorKw: '',
+    generatorHp: '',
+    generatorOthers: ''
   });
 
   const handleInputChange = (e) => {
@@ -50,7 +58,7 @@ const Booking = () => {
         {
           id: '1',
           name: 'Resources Free Generator',
-          min_kw: 6,
+          min_kw: 5,
           max_kw: 40,
           base_price_per_kw: 6000
         },
@@ -100,13 +108,13 @@ const Booking = () => {
     });
   };
 
-  const handleContinueToPayment = () => {
+  const handleContinueToTerms = () => {
     if (!formData.customerName || !formData.emailAddress || !formData.mobileNumber) {
       return setErrorMsg('Please fill out all required customer details (Name, Email, Mobile).');
     }
 
-    if (!selectedKw) {
-      return setErrorMsg('Please select a Generator Capacity.');
+    if (!formData.generatorKw && !formData.generatorHp && !formData.generatorOthers) {
+      return setErrorMsg('Please select a Generator Capacity (KW, HP, or Others).');
     }
 
     // No longer checking for event availability
@@ -115,12 +123,22 @@ const Booking = () => {
     setStep(2);
   };
 
+  const handleContinueToPayment = () => {
+    if (!acceptedTerms) {
+      return setErrorMsg('Please accept the Terms & Conditions to proceed.');
+    }
+    setErrorMsg('');
+    setStep(3);
+  };
+
   const handleCheckout = async () => {
     setErrorMsg('');
     setPaying(true);
 
     try {
-      const baseTotal = (selectedProduct?.base_price_per_kw || 6000) * selectedKw;
+      const capacityStr = formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0';
+      const parsedKw = parseFloat(capacityStr) || 0;
+      const baseTotal = (selectedProduct?.base_price_per_kw || 6000) * parsedKw;
       const cgst = baseTotal * 0.09;
       const sgst = baseTotal * 0.09;
       const calculatedTotal = baseTotal + cgst + sgst;
@@ -128,17 +146,24 @@ const Booking = () => {
       try {
         const response = await bookingsAPI.initiate({
           product_id: parseInt(selectedProductId),
-          kw_capacity: selectedKw,
+          kw_capacity: parsedKw,
           amount: calculatedTotal,
           event_id: event?.id || 1,
           customer_name: formData.customerName,
           mobile_number: formData.mobileNumber,
           email_address: formData.emailAddress,
           company_name: formData.companyName,
+          delivery_address: formData.deliveryAddress,
           city: formData.city,
           state: formData.state,
           pincode: formData.pincode,
-          payment_method: formData.paymentMethod
+          payment_method: formData.paymentMethod,
+          motor_condition: formData.motorCondition,
+          motor_age: formData.motorAge,
+          motor_hp: formData.motorHp,
+          generator_kw: formData.generatorKw,
+          generator_hp: formData.generatorHp,
+          generator_others: formData.generatorOthers
         });
         orderData = response.data;
       } catch (err) {
@@ -163,7 +188,7 @@ const Booking = () => {
           key: orderData.key_id,
           amount: Math.round(orderData.amount * 100),
           currency: 'INR',
-          name: 'KVVSai Electronic',
+          name: 'KVVSai Electricals',
           description: `Generator Booking - ${selectedProduct?.name} (${selectedKw} KW)`,
           order_id: orderData.order_id,
           handler: async (payResponse) => {
@@ -362,50 +387,325 @@ const Booking = () => {
                         <div className="flex-1 flex justify-between items-center">
                           <div>
                             <span className="font-orbitron font-bold text-xs sm:text-sm text-black block">{prod.name}</span>
-                            <span className="text-[10px] text-slate-500">Range: {prod.min_kw} KW - {prod.max_kw === 1000 ? '1 MW' : prod.max_kw + ' KW'}</span>
+                            <span className="text-[10px] text-slate-500">Range: {prod.id === '1' ? '5 HP - 40 HP | 6 KW - 40 KW' : '5 HP - 100 HP | 40 KW - 1MVA'}</span>
                           </div>
                         </div>
                       </div>
                     </label>
                   ))}
 
-                  {selectedProduct && (
-                    <div className="mt-6 p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
-                      <label className="block text-xs font-orbitron font-bold text-black mb-2">
-                        SELECT DESIRED CAPACITY (KW)
-                      </label>
-                      <select
-                        value={selectedKw}
-                        onChange={(e) => setSelectedKw(Number(e.target.value))}
-                        className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
-                      >
-                        <option value="" disabled hidden>Select Watts</option>
-                        {selectedProduct.min_kw === 6 ? (
-                          <>
-                            {Array.from({ length: 35 }, (_, i) => i + 6).map(val => (
-                              <option key={val} value={val}>{val} KW</option>
-                            ))}
-                          </>
-                        ) : (
-                          <>
-                            <option value="40">40 KW</option>
-                            <option value="50">50 KW</option>
-                            <option value="100">100 KW</option>
-                            <option value="200">200 KW</option>
-                            <option value="300">300 KW</option>
-                            <option value="400">400 KW</option>
-                            <option value="500">500 KW</option>
-                            <option value="750">750 KW</option>
-                            <option value="1000">1 MW</option>
-                          </>
+                  {selectedProduct && selectedProduct.id === '1' ? (
+                    <div className="mt-6 space-y-4">
+                      {/* Field 1: KW Range */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                          SELECT CAPACITY (KW)
+                        </label>
+                        <select
+                          name="generatorKw"
+                          value={formData.generatorKw}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                        >
+                          <option value="" disabled hidden>Select KW Range</option>
+                          {Array.from({ length: 35 }, (_, i) => i + 6).map(val => (
+                            <option key={`kw-${val}`} value={`${val} KW`}>{val} KW</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Field 2: HP Range */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                          SELECT CAPACITY (HP)
+                        </label>
+                        <select
+                          name="generatorHp"
+                          value={formData.generatorHp}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                        >
+                          <option value="" disabled hidden>Select HP Range</option>
+                          {Array.from({ length: 36 }, (_, i) => i + 5).map(val => (
+                            <option key={`hp-${val}`} value={`${val} HP`}>{val} HP</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Field 3: User Motor Model */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-3">
+                          USER MOTOR MODEL
+                        </label>
+                        <div className="flex gap-4 mb-3">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="new"
+                              checked={formData.motorCondition === 'new'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">New Motor</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="old"
+                              checked={formData.motorCondition === 'old'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">Old Motor</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="others"
+                              checked={formData.motorCondition === 'others'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">Others</span>
+                          </label>
+                        </div>
+
+                        {formData.motorCondition && formData.motorCondition !== 'others' && (
+                          <div className="mt-3 space-y-4">
+                            <div>
+                              <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                                SELECT MOTOR AGE ({formData.motorCondition === 'new' ? 'NEW' : 'OLD'})
+                              </label>
+                              <select
+                                name="motorAge"
+                                value={formData.motorAge}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                              >
+                                <option value="" disabled hidden>Select Motor Age</option>
+                                <option value="Less than 1 year">Less than 1 year</option>
+                                <option value="1 - 3 years">1 - 3 years</option>
+                                <option value="3 - 5 years">3 - 5 years</option>
+                                <option value="5 - 10 years">5 - 10 years</option>
+                                <option value="More than 10 years">More than 10 years</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                                SELECT MOTOR HP ({formData.motorCondition === 'new' ? 'NEW' : 'OLD'})
+                              </label>
+                              <select
+                                name="motorHp"
+                                value={formData.motorHp}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                              >
+                                <option value="" disabled hidden>Select Motor HP</option>
+                                {Array.from({ length: 96 }, (_, i) => i + 5).map(val => (
+                                  <option key={`user-motor-${val}`} value={`${val} HP`}>{val} HP</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
                         )}
-                      </select>
-                      <div className="mt-2 text-[10px] text-slate-500 flex justify-between">
-                        <span>Min: {selectedProduct.min_kw} KW</span>
-                        <span>Max: {selectedProduct.max_kw === 1000 ? '1 MW' : selectedProduct.max_kw + ' KW'}</span>
+                        {formData.motorCondition === 'others' && (
+                          <div className="mt-3">
+                            <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                              OTHERS (TYPE CAPACITY)
+                            </label>
+                            <input
+                              type="text"
+                              name="motorHpOther"
+                              value={formData.motorHpOther || ''}
+                              onChange={handleInputChange}
+                              placeholder="Type Customer Special Requirements"
+                              className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Field 4: Special Requirements */}
+                      <div className="p-4 border border-slate-800/80 rounded-xl bg-slate-50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2 text-center">
+                          ANY SPECIAL REQUIREMENTS
+                        </label>
+                        <p className="text-[10px] text-black font-semibold text-center mt-2">
+                          Please contact us for special requirements:<br />
+                          <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
+                        </p>
                       </div>
                     </div>
-                  )}
+                  ) : selectedProduct && selectedProduct.id === '2' ? (
+                    <div className="mt-6 space-y-4">
+                      {/* Field 1: KW Range */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                          SELECT CAPACITY (KW)
+                        </label>
+                        <select
+                          name="generatorKw"
+                          value={formData.generatorKw}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                        >
+                          <option value="" disabled hidden>Select KW Range</option>
+                          <option value="40 KW">40 KW</option>
+                          <option value="50 KW">50 KW</option>
+                          <option value="100 KW">100 KW</option>
+                          <option value="200 KW">200 KW</option>
+                          <option value="300 KW">300 KW</option>
+                          <option value="400 KW">400 KW</option>
+                          <option value="500 KW">500 KW</option>
+                          <option value="750 KW">750 KW</option>
+                          <option value="1000 KW">1 MVA</option>
+                        </select>
+                      </div>
+
+                      {/* Field 2: HP Range */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                          SELECT CAPACITY (HP)
+                        </label>
+                        <select
+                          name="generatorHp"
+                          value={formData.generatorHp}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                        >
+                          <option value="" disabled hidden>Select HP Range</option>
+                          {Array.from({ length: 96 }, (_, i) => i + 5).map(val => (
+                            <option key={`hp-${val}`} value={`${val} HP`}>{val} HP</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Field 3: Others Input */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                          OTHERS (TYPE CAPACITY)
+                        </label>
+                        <input
+                          type="text"
+                          name="generatorOthers"
+                          value={formData.generatorOthers}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                          placeholder="Type capacity here (e.g., 500 KW)"
+                        />
+                      </div>
+
+                      {/* Field 4: User Motor Model */}
+                      <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-3">
+                          USER MOTOR MODEL
+                        </label>
+                        <div className="flex gap-4 mb-3">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="new"
+                              checked={formData.motorCondition === 'new'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">New Motor</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="old"
+                              checked={formData.motorCondition === 'old'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">Old Motor</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="motorCondition"
+                              value="others"
+                              checked={formData.motorCondition === 'others'}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-800 focus:ring-0"
+                            />
+                            <span className="text-xs text-black font-semibold">Others</span>
+                          </label>
+                        </div>
+
+                        {formData.motorCondition && formData.motorCondition !== 'others' && (
+                          <div className="mt-3 space-y-4">
+                            <div>
+                              <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                                SELECT MOTOR AGE ({formData.motorCondition === 'new' ? 'NEW' : 'OLD'})
+                              </label>
+                              <select
+                                name="motorAge"
+                                value={formData.motorAge}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                              >
+                                <option value="" disabled hidden>Select Motor Age</option>
+                                <option value="Less than 1 year">Less than 1 year</option>
+                                <option value="1 - 3 years">1 - 3 years</option>
+                                <option value="3 - 5 years">3 - 5 years</option>
+                                <option value="5 - 10 years">5 - 10 years</option>
+                                <option value="More than 10 years">More than 10 years</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                                SELECT MOTOR HP ({formData.motorCondition === 'new' ? 'NEW' : 'OLD'})
+                              </label>
+                              <select
+                                name="motorHp"
+                                value={formData.motorHp}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                              >
+                                <option value="" disabled hidden>Select Motor HP</option>
+                                {Array.from({ length: 96 }, (_, i) => i + 5).map(val => (
+                                  <option key={`user-motor-2-${val}`} value={`${val} HP`}>{val} HP</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        {formData.motorCondition === 'others' && (
+                          <div className="mt-3">
+                            <label className="block text-xs font-orbitron font-bold text-black mb-2">
+                              OTHERS (TYPE CAPACITY)
+                            </label>
+                            <input
+                              type="text"
+                              name="motorHpOther"
+                              value={formData.motorHpOther || ''}
+                              onChange={handleInputChange}
+                              placeholder="Type capacity here (e.g., 500 HP)"
+                              className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Field 5: Special Requirements */}
+                      <div className="p-4 border border-slate-800/80 rounded-xl bg-slate-50">
+                        <label className="block text-xs font-orbitron font-bold text-black mb-2 text-center">
+                          ANY SPECIAL REQUIREMENTS
+                        </label>
+                        <p className="text-[10px] text-black font-semibold text-center mt-2">
+                          Please contact us for special requirements:<br />
+                          <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -438,10 +738,10 @@ const Booking = () => {
               </div>
               <div className="pt-4">
                 <button
-                  onClick={handleContinueToPayment}
+                  onClick={handleContinueToTerms}
                   className="w-full btn-cyber py-4 rounded text-xs flex items-center justify-center font-bold tracking-wider"
                 >
-                  <span>CONTINUE TO PAYMENT</span>
+                  <span>CONTINUE TO TERMS</span>
                 </button>
               </div>
             </>
@@ -449,36 +749,103 @@ const Booking = () => {
 
           {step === 2 && (
             <>
+              {/* Terms and Conditions */}
+              <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
+                <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-5 flex items-center space-x-2 border-b border-slate-900 pb-3">
+                  <ShieldCheck className="w-4 h-4 text-[#3b82f6]" />
+                  <span>4. TERMS & CONDITIONS</span>
+                </h3>
+
+                <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-900 mb-6 text-xs text-slate-600 h-64 overflow-y-auto space-y-4">
+                  <div className="flex items-center gap-2 mb-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <p className="m-0 font-semibold">
+                      CRITICAL NOTICE: The generator models provided under this agreement are strictly licensed and distributed for agricultural use only.
+                    </p>
+                  </div>
+
+                  <h4 className="font-orbitron font-bold text-sm text-black">1. USE OF EQUIPMENT</h4>
+                  <p>
+                    The K V V Sai electricals Generator ("Equipment") is leased, sold, or distributed exclusively for agricultural and farming applications. This includes powering irrigation systems, greenhouse climate control, farm machinery, and rural agricultural facilities. Any commercial, industrial (non-agricultural), or residential use outside of a farming context is strictly prohibited unless explicitly authorized in writing.
+                  </p>
+
+                  <h4 className="font-orbitron font-bold text-sm text-black mt-4">2. PROHIBITION OF RESALE & TRANSFER</h4>
+                  <p>
+                    The Equipment is provided to the registered farmer or agricultural entity and may not be resold, sub-leased, or transferred to any third party without prior authorization from K V V Sai electricals. The agricultural subsidies and pricing applied are non-transferable.
+                  </p>
+
+                  <h4 className="font-orbitron font-bold text-sm text-black mt-4">3. COMPLIANCE WITH AGRICULTURAL STANDARDS</h4>
+                  <p>
+                    The user agrees to operate the Equipment in compliance with all local and national agricultural and environmental regulations. The zero-emission nature of the Equipment supports sustainable farming practices.
+                  </p>
+                </div>
+
+                <label className="flex items-start space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="mt-1 w-4 h-4 text-blue-500 bg-slate-100 border-slate-850 rounded focus:ring-0 focus:ring-offset-0 shrink-0"
+                  />
+                  <span className="text-xs text-black font-semibold">
+                    I have read and agree to the Terms & Conditions and confirm that the generator will be used for agricultural purposes only.
+                  </span>
+                </label>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4 space-y-4">
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="w-1/3 py-4 rounded font-orbitron border border-slate-800 bg-slate-100/50 text-slate-500 hover:text-black hover:bg-slate-200 transition-colors text-xs font-bold tracking-wider"
+                  >
+                    BACK
+                  </button>
+                  <button
+                    onClick={handleContinueToPayment}
+                    disabled={!acceptedTerms}
+                    className={`w-2/3 py-4 rounded text-xs flex items-center justify-center font-bold tracking-wider transition-colors ${acceptedTerms ? 'btn-cyber' : 'bg-slate-300 text-slate-500 cursor-not-allowed border border-slate-400'}`}
+                  >
+                    CONTINUE TO PAYMENT
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
               {/* Payment Details */}
               <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
                 <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-5 flex items-center space-x-2 border-b border-slate-900 pb-3">
                   <CreditCard className="w-4 h-4 text-[#3b82f6]" />
-                  <span>4. PAYMENT DETAILS</span>
+                  <span>5. PAYMENT DETAILS</span>
                 </h3>
 
                 <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-900 space-y-3 mb-6 text-xs text-black">
                   <div className="flex justify-between">
-                    <span>Selected Capacity ({selectedKw} KW)</span>
+                    <span>Selected Capacity ({formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0'})</span>
                     <span className="text-black">
-                      Rs. {parseFloat(selectedKw * (selectedProduct?.base_price_per_kw || 6000)).toLocaleString()}
+                      Rs. {(parseFloat(formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0') * (selectedProduct?.base_price_per_kw || 6000)).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>CGST (9%)</span>
                     <span className="text-black">
-                      Rs. {parseFloat(selectedKw * (selectedProduct?.base_price_per_kw || 6000) * 0.09).toLocaleString()}
+                      Rs. {(parseFloat(formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0') * (selectedProduct?.base_price_per_kw || 6000) * 0.09).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>SGST (9%)</span>
                     <span className="text-black">
-                      Rs. {parseFloat(selectedKw * (selectedProduct?.base_price_per_kw || 6000) * 0.09).toLocaleString()}
+                      Rs. {(parseFloat(formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0') * (selectedProduct?.base_price_per_kw || 6000) * 0.09).toLocaleString()}
                     </span>
                   </div>
                   <div className="border-t border-slate-800/80 pt-3 flex justify-between font-orbitron font-extrabold text-sm text-black">
                     <span>TOTAL AMOUNT</span>
                     <span className="text-[#3b82f6] text-glow-blue">
-                      Rs. {parseFloat(selectedKw * (selectedProduct?.base_price_per_kw || 6000) * 1.18).toLocaleString()}
+                      Rs. {(parseFloat(formData.generatorKw || formData.generatorHp || formData.generatorOthers || '0') * (selectedProduct?.base_price_per_kw || 6000) * 1.18).toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -488,7 +855,7 @@ const Booking = () => {
               <div className="pt-4 space-y-4">
                 <div className="flex gap-4">
                   <button
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(2)}
                     className="w-1/3 py-4 rounded font-orbitron border border-slate-800 bg-slate-100/50 text-slate-500 hover:text-black hover:bg-slate-200 transition-colors text-xs font-bold tracking-wider"
                   >
                     BACK
@@ -529,7 +896,7 @@ const Booking = () => {
             </div>
 
             <h3 className="font-orbitron font-extrabold text-lg text-blue-400 tracking-wide text-glow-blue mb-2">
-              K V V SAI ELECTRONIC PAY SANDBOX
+              K V V SAI ELECTRICALS PAY SANDBOX
             </h3>
             <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Demo checkout Simulation Active</p>
 

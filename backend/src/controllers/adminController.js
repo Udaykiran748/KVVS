@@ -21,8 +21,7 @@ const getDashboardAnalytics = async (req, res) => {
     // 4. Booking Generator Capacity
     const event = await Event.findOne({ order: [['date', 'ASC']] });
     const totalSlots = 350;
-    const defaultBooked = 100;
-    const bookedSlots = defaultBooked + confirmedBookings + totalUsers;
+    const bookedSlots = 100 + confirmedBookings;
     const availableSlots = Math.max(0, totalSlots - bookedSlots);
 
     // 5. Product-wise distribution
@@ -315,6 +314,23 @@ const cancelBookingGenerator = async (req, res) => {
   }
 };
 
+/**
+ * Update a booking generator details
+ */
+const updateBookingGenerator = async (req, res) => {
+  try {
+    const bookingGenerator = await BookingGenerator.findByPk(req.params.id);
+    if (!bookingGenerator) return res.status(404).json({ message: 'Booking generator not found.' });
+
+    await bookingGenerator.update(req.body);
+
+    return res.json({ message: 'Booking generator updated successfully.', bookingGenerator });
+  } catch (error) {
+    console.error('Update Booking Generator Error:', error);
+    return res.status(500).json({ message: 'Failed to update booking generator.' });
+  }
+};
+
 module.exports = {
   getDashboardAnalytics,
   getAllBookingGenerators,
@@ -324,6 +340,6 @@ module.exports = {
   deleteUser,
   getAllPayments,
   updatePaymentStatus,
-  cancelBookingGenerator
+  cancelBookingGenerator,
+  updateBookingGenerator
 };
-

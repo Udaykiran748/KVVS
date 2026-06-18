@@ -84,6 +84,7 @@ export const adminAPI = {
 
   // Registrations
   cancelRegistration: (id) => API.put(`/admin/booking-generators/${id}/cancel`),
+  updateRegistration: (id, data) => API.put(`/admin/booking-generators/${id}`, data),
 
   // Products (admin-scoped)
   getAllProducts: () => API.get('/admin/products'),

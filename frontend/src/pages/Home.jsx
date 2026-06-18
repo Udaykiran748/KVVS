@@ -31,15 +31,15 @@ const Home = () => {
   const faqs = [
     {
       q: 'How does a magnetic-power generator generate electricity without fuel?',
-      a: 'The K V V Sai electronic Generator operates using zero-point permanent neodymium magnet arrays arranged in an asynchronous stator structure. This configuration establishes a perpetual magnetic torque cycle that spins the internal rotor, converting kinetic magnetic flux into alternating current (AC) electricity through copper coils—completely free of diesel, solar rays, or combustion.'
+      a: 'The K V V Sai electricals Generator operates using zero-point permanent neodymium magnet arrays arranged in an asynchronous stator structure. This configuration establishes a perpetual magnetic torque cycle that spins the internal rotor, converting kinetic magnetic flux into alternating current (AC) electricity through copper coils—completely free of diesel, solar rays, or combustion.'
     },
     {
       q: 'Does it make noise during operation?',
-      a: 'No. The K V V Sai electronic Generator employs superconducting liquid convection bearings and a vaccum-sealed core, dampening mechanical vibrations. The entire device operates silently below 15 decibels, making it quieter than standard ambient refrigerator cycles.'
+      a: 'No. The K V V Sai electricals Generator employs superconducting liquid convection bearings and a vaccum-sealed core, dampening mechanical vibrations. The entire device operates silently below 15 decibels, making it quieter than standard ambient refrigerator cycles.'
     },
     {
       q: 'What KW models are available, and how do I select one?',
-      a: 'We offer three base models designed for various loads: the K V V Sai electronic-2 (2KW) for cabins, apartments, and essential appliances; the K V V Sai electronic-5 (5KW) which completely powers standard residential houses; and the K V V Sai electronic-10 (10KW) tailored for commercial estates, charging cells, or light factories.'
+      a: 'We offer three base models designed for various loads: the K V V Sai electricals-2 (2KW) for cabins, apartments, and essential appliances; the K V V Sai electricals-5 (5KW) which completely powers standard residential houses; and the K V V Sai electricals-10 (10KW) tailored for commercial estates, charging cells, or light factories.'
     },
     {
       q: 'Why is there a launch event booking fee?',
@@ -101,9 +101,40 @@ const Home = () => {
             <span>BOOKING GENERATOR</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
+
           <Link to="/about" className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
             EXPLORE THE SCIENCE
           </Link>
+
+        </motion.div>
+
+        {/* --- CAPACITY STATUS --- */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.45 }}
+          className="w-full max-w-xl mx-auto mb-12 bg-white/50 backdrop-blur-md border border-blue-500/30 rounded-2xl p-6 shadow-[0_0_20px_rgba(59,130,246,0.1)] relative overflow-hidden"
+        >
+          <div className="flex justify-between items-end mb-2">
+            <div className="text-left">
+              <p className="font-orbitron text-xs text-green-600 tracking-wider mb-1">ALREADY BOOKED</p>
+              <p className="font-orbitron font-bold text-2xl text-green-600">
+                {event?.bookedSlots || 100}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-orbitron text-xs text-blue-600 tracking-wider mb-1">GENERATOR BOOKING CAPACITY</p>
+              <p className="font-orbitron font-bold text-2xl text-black">350 <span className="text-sm font-normal text-slate-500">Total Bookings</span></p>
+            </div>
+          </div>
+          <div className="w-full bg-slate-200 rounded-full h-3 mt-4 relative overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${((event?.bookedSlots || 100) / 350) * 100}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-blue-500 to-green-500"
+            ></motion.div>
+          </div>
         </motion.div>
 
         {/* Hero Machine Diagram UI */}
@@ -208,7 +239,7 @@ const Home = () => {
             MAGNETIC STATORS
           </h2>
           <p className="text-black text-sm sm:text-base leading-relaxed mb-6">
-            Unlike wind or solar modules which depend on external weather currents, the K V V Sai electronic series relies entirely on the spin forces of high-coercivity Neodymium arrays.
+            Unlike wind or solar modules which depend on external weather currents, the K V V Sai electricals series relies entirely on the spin forces of high-coercivity Neodymium arrays.
           </p>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">

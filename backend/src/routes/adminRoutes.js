@@ -22,6 +22,7 @@ router.get('/payments', verifyAdmin, adminController.getAllPayments);
 router.put('/payments/:id/status', verifyAdmin, adminController.updatePaymentStatus);
 
 // ─── Booking Generator Management ──────────────────────────────────
+router.put('/booking-generators/:id', verifyAdmin, adminController.updateBookingGenerator);
 router.put('/booking-generators/:id/cancel', verifyAdmin, adminController.cancelBookingGenerator);
 
 // ─── Product Management (admin-scoped) ───────────────────────

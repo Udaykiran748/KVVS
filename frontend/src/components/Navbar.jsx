@@ -46,7 +46,7 @@ const Navbar = () => {
               <img src="/images/Logo Kvvsai.jpg" alt="KVVSai Logo" className="w-16 h-16 object-contain" />
             </div>
             <span className="font-orbitron font-extrabold text-xl tracking-widest text-black">
-              K V V SAI ELECTRONIC
+              K V V SAI ELECTRICALS
             </span>
           </Link>
 
