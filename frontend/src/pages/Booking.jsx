@@ -51,6 +51,7 @@ const Booking = () => {
     customerName: '',
     mobileNumber: '',
     emailAddress: '',
+    password: '',
     companyName: '',
     generatorCapacity: '',
     deliveryAddress: '',
@@ -132,8 +133,8 @@ const Booking = () => {
   };
 
   const handleContinueToTerms = () => {
-    if (!formData.customerName || !formData.emailAddress || !formData.mobileNumber) {
-      return setErrorMsg('Please fill out all required customer details (Name, Email, Mobile).');
+    if (!formData.customerName || !formData.emailAddress || !formData.mobileNumber || (!user && !formData.password)) {
+      return setErrorMsg('Please fill out all required customer details (Name, Email, Mobile' + (!user ? ', Password' : '') + ').');
     }
 
     if (!formData.generatorKw && !formData.generatorHp && !formData.generatorOthers) {
@@ -187,7 +188,8 @@ const Booking = () => {
           generator_kw: formData.generatorKw,
           generator_hp: formData.generatorHp,
           generator_others: formData.generatorOthers,
-          user_description: formData.userDescription
+          user_description: formData.userDescription,
+          password: formData.password
         });
         orderData = response.data;
       } catch (err) {
@@ -377,6 +379,12 @@ const Booking = () => {
                     <span className="text-slate-500 block mb-1">Email Address *</span>
                     <input type="email" name="emailAddress" value={formData.emailAddress} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Email Address" required />
                   </div>
+                  {!user && (
+                    <div>
+                      <span className="text-slate-500 block mb-1">Password *</span>
+                      <input type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Enter Your Password" required />
+                    </div>
+                  )}
                   <div>
                     <span className="text-slate-500 block mb-1">Company Name (Optional)</span>
                     <input type="text" name="companyName" value={formData.companyName} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Company Name" />
@@ -567,7 +575,7 @@ const Booking = () => {
                         ></textarea>
                         <p className="text-[10px] text-black font-semibold text-center mt-2">
                           Please contact us for special requirements:<br />
-                          <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
+                          <span className="text-blue-600">+91 9035121902 | <a href="mailto:Kvvsaielectricals@gmail.com" className="hover:underline">Kvvsaielectricals@gmail.com</a></span>
                         </p>
                       </div>
                     </div>
@@ -741,7 +749,7 @@ const Booking = () => {
                         ></textarea>
                         <p className="text-[10px] text-black font-semibold text-center mt-2">
                           Please contact us for special requirements:<br />
-                          <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
+                          <span className="text-blue-600">+91 9035121902 | <a href="mailto:Kvvsaielectricals@gmail.com" className="hover:underline">Kvvsaielectricals@gmail.com</a></span>
                         </p>
                       </div>
                     </div>

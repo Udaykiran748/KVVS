@@ -207,10 +207,39 @@ const adminForgotPassword = async (req, res) => {
   }
 };
 
+/**
+ * User Forgot Password (direct update)
+ */
+const forgotPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: 'Email and new password are required.' });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User account with this email not found.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await user.update({ password: hashedPassword });
+
+    return res.json({ message: 'Password updated successfully. You can now login.' });
+  } catch (error) {
+    console.error('User Forgot Password Error:', error);
+    return res.status(500).json({ message: 'Internal server error during password reset.' });
+  }
+};
+
 module.exports = {
   register,
   login,
   adminLogin,
   getMe,
-  adminForgotPassword
+  adminForgotPassword,
+  forgotPassword
 };

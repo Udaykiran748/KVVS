@@ -94,13 +94,7 @@ const EventDetails = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-3">
-                    <Ticket className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-black text-xs font-orbitron">ENTRY BOOKING FEE</p>
-                      <p className="text-green-600 font-bold text-base mt-1">Rs. {parseFloat(event.ticket_price).toLocaleString()}</p>
-                    </div>
-                  </div>
+
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-slate-800/60 text-center">
@@ -110,30 +104,7 @@ const EventDetails = () => {
                 </div>
               </div>
 
-              {/* Slot Counter details */}
-              <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
-                <h3 className="font-orbitron font-bold text-xs text-black tracking-wider mb-4 flex items-center space-x-1.5">
-                  <Users className="w-4 h-4 text-blue-600" />
-                  <span>BOOKING CAPACITIES </span>
-                </h3>
 
-                <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="text-slate-500"> Booking Events</span>
-                  <span className="text-black font-bold">{event.total_slots - event.available_slots} / {event.total_slots}</span>
-                </div>
-
-                {/* Progress bar */}
-                <div className="w-full bg-slate-100 border border-slate-800 rounded-full h-2.5 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-blue-600 to-blue-500 h-full rounded-full"
-                    style={{ width: `${((event.total_slots - event.available_slots) / event.total_slots) * 100}%` }}
-                  ></div>
-                </div>
-
-                <p className="text-[10px] text-black mt-4 text-center">
-                  Only <span className="text-blue-600 font-bold">{event.available_slots}</span> clearance boarding tickets remain before catalog closes.
-                </p>
-              </div>
             </div>
 
             {/* Right Columns: Technical schedule & Speakers */}

@@ -102,6 +102,10 @@ const Home = () => {
             <ArrowRight className="w-4 h-4" />
           </Link>
 
+          <Link to="/history" className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
+            VIEW BOOKING HISTORY
+          </Link>
+
           <Link to="/about" className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
             EXPLORE THE SCIENCE
           </Link>

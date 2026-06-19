@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, AlertCircle, Shield, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { authAPI } from '../services/api';

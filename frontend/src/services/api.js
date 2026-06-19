@@ -40,6 +40,7 @@ API.interceptors.response.use(
 export const authAPI = {
   signup: (userData) => API.post('/auth/register', userData),
   login: (credentials) => API.post('/auth/login', credentials),
+  forgotPassword: (data) => API.post('/auth/forgot-password', data),
   adminLogin: (credentials) => API.post('/auth/admin/login', credentials),
   adminForgotPassword: (data) => API.post('/auth/admin/forgot-password', data),
   getMe: () => API.get('/auth/me')
@@ -65,7 +66,8 @@ export const eventAPI = {
 export const bookingsAPI = {
   initiate: (bookingData) => API.post('/payments/initiate', bookingData),
   verify: (paymentDetails) => API.post('/payments/verify', paymentDetails),
-  getHistory: () => API.get('/bookings/history')
+  getHistory: () => API.get('/bookings/history'),
+  search: (query) => API.post('/bookings/search', { query })
 };
 
 export const adminAPI = {

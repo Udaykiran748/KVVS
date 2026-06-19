@@ -92,7 +92,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-orbitron text-black text-[10px] tracking-wider uppercase">ENCRYPTED EMAIL</h4>
-                    <p className="text-black font-semibold mt-1">Kvvsaielectricals@gmail.com</p>
+                    <a href="mailto:Kvvsaielectricals@gmail.com" className="text-black font-semibold mt-1 hover:underline">Kvvsaielectricals@gmail.com</a>
                   </div>
                 </div>
 

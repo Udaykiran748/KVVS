@@ -1,18 +1,77 @@
 import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, Calendar, MapPin, Download, QrCode, AlertTriangle, ShieldCheck, DollarSign, Zap, Eye } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Download, QrCode, AlertTriangle, ShieldCheck, DollarSign, Zap, Eye, EyeOff, Search } from 'lucide-react';
+import { bookingsAPI, authAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const BookingHistory = () => {
+  const { user, login } = useAuth();
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState('');
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
-    // Setting to empty initially.
-    setBookings([]);
-    setLoading(false);
-  }, []);
+    if (user) {
+      const fetchUserBookings = async () => {
+        setLoading(true);
+        try {
+          const response = await bookingsAPI.getHistory();
+          setBookings(response.data || []);
+        } catch (error) {
+          console.error('Failed to fetch user bookings', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUserBookings();
+    }
+  }, [user]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoginSuccess('');
+
+    if (isForgotPassword) {
+      if (!email || !password || !confirmPassword) {
+        setLoginError('All fields are required.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setLoginError('Passwords do not match.');
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await authAPI.forgotPassword({ email, newPassword: password });
+        setLoginSuccess(res.data.message || 'Password updated successfully. You can now login.');
+        setIsForgotPassword(false);
+        setPassword('');
+        setConfirmPassword('');
+      } catch (err) {
+        setLoginError(err.response?.data?.message || 'Failed to update password.');
+      }
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const result = await login(email, password);
+    if (!result.success) {
+      setLoginError(result.message);
+      setLoading(false);
+    }
+  };
 
   const handleDownloadReceipt = (e, book) => {
     e.preventDefault();
@@ -191,93 +250,186 @@ const BookingHistory = () => {
             View all your reservations, generator details, and download it
           </p>
 
-          <div className="inline-flex items-center gap-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <div className="text-center px-4">
-              <p className="text-xs text-slate-500 font-orbitron font-bold tracking-wider mb-1">CUSTOMERS BOOKED</p>
-              <p className="text-2xl font-bold text-black">100</p>
+
+
+          {!user && (
+            <div className="max-w-md mx-auto mt-8 bg-white p-6 rounded-2xl shadow-xl border border-slate-200 text-left">
+              <h2 className="text-xl font-bold text-center mb-4 text-slate-800">
+                {isForgotPassword ? 'Reset Password' : 'Login to View Your Bookings'}
+              </h2>
+              {loginError && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm text-center">{loginError}</div>}
+              {loginSuccess && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm text-center">{loginSuccess}</div>}
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-[#B8860B] focus:border-[#B8860B] text-sm"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    {isForgotPassword ? 'New Password' : 'Password'}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg focus:ring-[#B8860B] focus:border-[#B8860B] text-sm"
+                      placeholder={isForgotPassword ? "Enter new password" : "Enter your password"}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+                {isForgotPassword && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg focus:ring-[#B8860B] focus:border-[#B8860B] text-sm"
+                        placeholder="Confirm new password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      >
+                        {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {!isForgotPassword && (
+                  <div className="flex justify-end mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(true);
+                        setLoginError('');
+                        setLoginSuccess('');
+                      }}
+                      className="text-xs text-[#B8860B] hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-[#B8860B] transition-colors shadow-md disabled:opacity-70"
+                >
+                  {loading ? (isForgotPassword ? 'Updating...' : 'Verifying...') : (isForgotPassword ? 'Update Password' : 'View History')}
+                </button>
+
+                {isForgotPassword && (
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotPassword(false)}
+                    className="w-full py-3 mt-3 rounded text-sm flex items-center justify-center font-bold text-slate-500 hover:text-black border border-slate-300 transition-all"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </form>
             </div>
-            <div className="w-px h-12 bg-slate-200"></div>
-            <div className="text-center px-4">
-              <p className="text-xs text-slate-500 font-orbitron font-bold tracking-wider mb-1">BOOKING GENERATOR CAPACITY</p>
-              <p className="text-2xl font-bold text-[#B8860B]">350 Bookings</p>
-            </div>
-          </div>
+          )}
         </div>
 
-        <div className="max-w-7xl mx-auto overflow-x-auto bg-white rounded-2xl shadow-xl border border-slate-200">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-bold">
-                <th className="p-4">Ref ID</th>
-                <th className="p-4">Customer</th>
-                <th className="p-4">Generator & KW</th>
-                <th className="p-4">Total Amount</th>
-                <th className="p-4">Payment Method</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {bookings.length > 0 ? (
-                bookings.map((book) => (
-                  <tr key={book.id} className="hover:bg-slate-50 transition-colors text-xs">
-                    <td className="p-3 font-mono font-bold text-slate-800">{book.booking_id}</td>
-                    <td className="p-3">
-                      <p className="font-bold text-slate-800">{book.Event.title.replace('Rental for ', '')}</p>
-                      <p className="text-[10px] text-slate-500 flex items-center gap-1 mt-1">
-                        <MapPin className="w-3 h-3" /> {book.Event.venue}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <p className="font-bold text-slate-800">{book.Product.name}</p>
-                      <p className="text-[10px] text-slate-500">{book.Product.kw_capacity} KW</p>
-                    </td>
-                    <td className="p-3 font-mono font-bold text-slate-800">
-                      ₹{book.Payment.amount}
-                    </td>
-                    <td className="p-3 font-bold uppercase text-[#3395ff]">
-                      {book.Payment.payment_method}
-                    </td>
-                    <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${book.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                        book.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
-                        {book.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => setSelectedBooking(book)}
-                          className="p-2 bg-white border border-slate-200 rounded-md text-slate-600 hover:border-[#B8860B] hover:text-[#B8860B] transition-all"
-                          title="View Booking Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={(e) => handleDownloadReceipt(e, book)}
-                          className="p-2 rounded-md text-white transition-all bg-slate-900 hover:bg-[#B8860B]"
-                          title="Download Receipt"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                      </div>
+        {user && (
+          <div className="max-w-7xl mx-auto overflow-x-auto bg-white rounded-2xl shadow-xl border border-slate-200">
+            <table className="w-full text-left border-collapse min-w-[1000px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-bold">
+                  <th className="p-4">Ref ID</th>
+                  <th className="p-4">Customer</th>
+                  <th className="p-4">Generator & KW</th>
+                  <th className="p-4">Total Amount</th>
+                  <th className="p-4">Payment Method</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {bookings.length > 0 ? (
+                  bookings.map((book) => (
+                    <tr key={book.id} className="hover:bg-slate-50 transition-colors text-xs">
+                      <td className="p-3 font-mono font-bold text-slate-800">{book.booking_id}</td>
+                      <td className="p-3">
+                        <p className="font-bold text-slate-800">{book.customer_name || 'Guest User'}</p>
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1 mt-1">
+                          {book.email_address}
+                        </p>
+                      </td>
+                      <td className="p-3">
+                        <p className="font-bold text-slate-800">{book.Product.name}</p>
+                        <p className="text-[10px] text-slate-500">{book.Product.kw_capacity} KW</p>
+                      </td>
+                      <td className="p-3 font-mono font-bold text-slate-800">
+                        ₹{book.Payment.amount}
+                      </td>
+                      <td className="p-3 font-bold uppercase text-[#3395ff]">
+                        RAZORPAY
+                      </td>
+                      <td className="p-3">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${book.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                          book.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                          {book.status}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => setSelectedBooking(book)}
+                            className="p-2 bg-white border border-slate-200 rounded-md text-slate-600 hover:border-[#B8860B] hover:text-[#B8860B] transition-all"
+                            title="View Booking Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDownloadReceipt(e, book)}
+                            className="p-2 rounded-md text-white transition-all bg-slate-900 hover:bg-[#B8860B]"
+                            title="Download Receipt"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="p-8 text-center">
+                      <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                      <h3 className="font-orbitron font-bold text-lg text-slate-800 mb-1">No Bookings Found</h3>
+                      <p className="text-sm text-slate-500">You haven't made any reservations yet.</p>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="p-8 text-center">
-                    <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <h3 className="font-orbitron font-bold text-lg text-slate-800 mb-1">No Bookings Found</h3>
-                    <p className="text-sm text-slate-500">You haven't made any reservations yet.</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* View Booking Details Modal */}
@@ -312,8 +464,25 @@ const BookingHistory = () => {
               </div>
 
               <div className="space-y-4">
+
+
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Generator Information</h4>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">User Details</h4>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs text-slate-600">
+                    <p className="font-bold text-slate-800">{selectedBooking.customer_name || 'Guest User'}</p>
+                    <p>Email: <span className="font-medium text-slate-800">{selectedBooking.email_address}</span></p>
+                    <p>Mobile: <span className="font-medium text-slate-800">{selectedBooking.mobile_number}</span></p>
+                    {(selectedBooking.delivery_address || selectedBooking.city) && (
+                      <p className="flex items-start gap-1.5 mt-1 pt-1 border-t border-slate-200">
+                        <MapPin className="w-3.5 h-3.5 text-[#B8860B] mt-0.5 shrink-0" />
+                        <span>{selectedBooking.delivery_address} {selectedBooking.city ? `, ${selectedBooking.city}` : ''} {selectedBooking.state ? `, ${selectedBooking.state}` : ''} {selectedBooking.pincode}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Generator Details</h4>
                   <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
                     <p className="font-bold text-slate-800">{selectedBooking.Product.name}</p>
                     <div className="flex justify-between mt-1.5 text-slate-600">
@@ -324,16 +493,7 @@ const BookingHistory = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Event & Customer</h4>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs text-slate-600">
-                    <p className="font-bold text-slate-800">{selectedBooking.Event.title}</p>
-                    <p className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#B8860B]" /> {new Date(selectedBooking.Event.date).toLocaleString()}</p>
-                    <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#B8860B]" /> {selectedBooking.Event.venue}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Payment Transaction</h4>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Payment Details</h4>
                   <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs text-slate-600">
                     <div className="flex justify-between">
                       <span>Status:</span>
@@ -343,7 +503,7 @@ const BookingHistory = () => {
                     </div>
                     <div className="flex justify-between">
                       <span>Method:</span>
-                      <strong className="text-[#3395ff] uppercase">{selectedBooking.Payment.payment_method}</strong>
+                      <strong className="text-[#3395ff] uppercase">RAZORPAY</strong>
                     </div>
                     <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
                       <span className="font-bold">Total Amount Paid:</span>

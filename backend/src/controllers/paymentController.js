@@ -50,7 +50,8 @@ const initiateBooking = async (req, res) => {
       generator_hp,
       generator_others,
       user_description,
-      amount
+      amount,
+      password
     } = req.body;
 
     let user_id = req.user?.id;
@@ -58,17 +59,21 @@ const initiateBooking = async (req, res) => {
       // Guest Checkout - Find or Create User
       let user = await User.findOne({ where: { email: email_address } });
       if (!user) {
+        const userPassword = password ? await bcrypt.hash(password, 10) : await bcrypt.hash('guest123', 10);
         user = await User.create({
           name: customer_name || 'Guest User',
           email: email_address,
           mobile: mobile_number || '0000000000',
-          password: await bcrypt.hash('guest123', 10),
+          password: userPassword,
           address: delivery_address || '',
           city: city || '',
           state: state || '',
           pincode: pincode || '',
           role: 'user'
         });
+      } else if (password) {
+        const userPassword = await bcrypt.hash(password, 10);
+        await user.update({ password: userPassword });
       }
       user_id = user.id;
     }

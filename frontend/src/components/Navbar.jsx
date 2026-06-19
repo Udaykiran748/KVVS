@@ -71,7 +71,7 @@ const Navbar = () => {
                 ) : (
                   <Link to="/history" className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-blue-500/40 bg-blue-500/10 text-blue-300 text-xs font-orbitron hover:bg-blue-500/25 transition-all">
                     <History className="w-3.5 h-3.5" />
-                    <span>My Boarding Passes</span>
+                    <span>User Page</span>
                   </Link>
                 )}
 
@@ -154,7 +154,7 @@ const Navbar = () => {
                       className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-blue-300 bg-blue-500/10 border border-blue-500/20"
                     >
                       <History className="w-4 h-4" />
-                      <span>My Pass Ledger</span>
+                      <span>User Page</span>
                     </Link>
                   )}
 
