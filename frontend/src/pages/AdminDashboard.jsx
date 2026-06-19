@@ -6,7 +6,7 @@ import {
   Package, CreditCard, BarChart3, Plus, Edit2, Trash2, X, Save,
   AlertTriangle, CheckCheck, Ban, Eye, ChevronDown, Upload, Loader2
 } from 'lucide-react';
-import { adminAPI } from '../services/api';
+import { adminAPI, eventAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 
 // ─── Shared helpers ────────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
   const { metrics, productStats, recentBookings } = analytics;
   const displayTotalSlots = metrics?.totalSlots || 350;
   const displayBookedSlots = metrics?.bookedSlots || 100;
-  const displayAvailableSlots = metrics.availableSlots || 250;
+  const displayAvailableSlots = displayTotalSlots - displayBookedSlots;
   const bookingRatio = displayTotalSlots > 0 ? (displayBookedSlots / displayTotalSlots) * 100 : 0;
 
   const filtered = registrations.filter(reg => {
@@ -105,12 +105,11 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {[
           { title: 'REGISTERED USERS', value: metrics.totalUsers, sub: 'total accounts', icon: Users, color: 'blue' },
           { title: 'CONFIRMED BOOKINGS', value: metrics.confirmedBookings, sub: `${metrics.pendingBookings} pending`, icon: CheckCircle, color: 'emerald' },
           { title: 'CAPACITY', value: `${displayBookedSlots}/${displayTotalSlots}`, sub: `${displayAvailableSlots} slots open`, icon: Calendar, color: 'indigo' },
-          { title: 'NET REVENUE', value: `₹${parseFloat(metrics.totalRevenue).toLocaleString('en-IN')}`, sub: 'captured payments', icon: DollarSign, color: 'purple' },
         ].map((card, i) => {
           const colorMap = {
             blue: 'text-blue-400   border-blue-500/20   bg-blue-950/10',
@@ -121,8 +120,7 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
           const cls = colorMap[card.color].split(' ');
           const isUserClickable = card.title === 'REGISTERED USERS';
           const isBookingClickable = card.title === 'CONFIRMED BOOKINGS';
-          const isRevenueClickable = card.title === 'NET REVENUE';
-          const isClickable = isUserClickable || isBookingClickable || isRevenueClickable;
+          const isClickable = isUserClickable || isBookingClickable;
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
@@ -132,7 +130,6 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                   setStatusFilter('confirmed');
                   document.getElementById('ledger-terminal')?.scrollIntoView({ behavior: 'smooth' });
                 }
-                else if (isRevenueClickable && setActiveTab) setActiveTab('payments');
               }}
               className={`glass-panel p-5 rounded-xl border ${cls[1]} ${cls[2]} flex justify-between items-start ${isClickable ? 'cursor-pointer hover:scale-[1.02] transition-transform' : ''}`}>
               <div>
@@ -183,7 +180,6 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                   <p className="text-[10px] text-blue-400 font-mono mb-3">{item.kw} KW</p>
                   <div className="flex justify-between border-t border-slate-300 pt-2 font-mono text-xs">
                     <div><span className="text-slate-500 block text-[10px]">BOOKINGS</span><span className="font-bold text-slate-900">{item.bookings}</span></div>
-                    <div className="text-right"><span className="text-slate-500 block text-[10px]">REVENUE</span><span className="font-bold text-emerald-400">₹{parseFloat(item.revenue).toLocaleString('en-IN')}</span></div>
                   </div>
                 </div>
               ))}
@@ -338,6 +334,7 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                     ['Motor Condition', viewReg.motor_condition ? (viewReg.motor_condition === 'new' ? 'New Motor' : viewReg.motor_condition === 'old' ? 'Old Motor' : 'Others') : ''],
                     ['Motor Age', viewReg.motor_age],
                     ['Motor HP', viewReg.motor_hp],
+                    ['Description', viewReg.user_description],
                     ['Payment Method', viewReg.payment_method]
                   ].filter(x => x[1]).map(([k, v]) => (
                     <div key={k} className="flex justify-between border-b border-slate-300/50 pb-1">
@@ -392,7 +389,8 @@ const OverviewTab = ({ analytics, registrations, onRefresh, refreshing, setActiv
                     { label: 'Generator HP', key: 'generator_hp' },
                     { label: 'Generator Others', key: 'generator_others' },
                     { label: 'Motor Age', key: 'motor_age' },
-                    { label: 'Motor HP', key: 'motor_hp' }
+                    { label: 'Motor HP', key: 'motor_hp' },
+                    { label: 'Description', key: 'user_description' }
                   ].map(f => (
                     <div key={f.key}>
                       <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">{f.label}</label>
@@ -1081,6 +1079,11 @@ const AdminDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
+  // Terms State
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsText, setTermsText] = useState('');
+  const [savingTerms, setSavingTerms] = useState(false);
+
   const fetchOverview = async (silent = false) => {
     if (!silent) setLoading(true); else setRefreshing(true);
     try {
@@ -1088,6 +1091,9 @@ const AdminDashboard = () => {
       const [ar, rr] = await Promise.all([adminAPI.getAnalytics(), adminAPI.getRegistrations()]);
       setAnalytics(ar.data);
       setRegistrations(rr.data);
+      if (ar.data.event && ar.data.event.terms_and_conditions) {
+        setTermsText(ar.data.event.terms_and_conditions);
+      }
     } catch (err) {
       setError('Failed to fetch secure analytics. Check backend connection.');
     } finally {
@@ -1112,6 +1118,48 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-white text-slate-900 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+        {/* Terms and Conditions Modal */}
+        <AnimatePresence>
+          {showTermsModal && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm p-4">
+              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+                className="bg-slate-100 border border-slate-300 rounded-2xl p-6 w-full max-w-3xl shadow-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-slate-900 font-mono">EDIT TERMS & CONDITIONS</h3>
+                  <button onClick={() => setShowTermsModal(false)}><X className="w-5 h-5 text-slate-500 hover:text-slate-900 transition" /></button>
+                </div>
+                <p className="text-xs text-slate-500 mb-4 font-mono uppercase">Update the terms and conditions displayed on the booking page. Use blank lines to separate paragraphs.</p>
+                <textarea
+                  value={termsText}
+                  onChange={e => setTermsText(e.target.value)}
+                  rows={15}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-sans text-sm focus:border-blue-500 outline-none resize-y mb-4"
+                />
+                <div className="flex justify-end gap-3">
+                  <button onClick={() => setShowTermsModal(false)} className="px-5 py-2.5 border border-slate-300 text-slate-600 hover:bg-slate-200 rounded-xl font-mono text-sm transition">CANCEL</button>
+                  <button onClick={async () => {
+                    setSavingTerms(true);
+                    try {
+                      await eventAPI.update(analytics.event.id, { terms_and_conditions: termsText });
+                      setShowTermsModal(false);
+                      fetchOverview(true);
+                    } catch (err) {
+                      console.error(err);
+                    } finally {
+                      setSavingTerms(false);
+                    }
+                  }} disabled={savingTerms}
+                    className="px-6 py-2.5 bg-blue-500 hover:bg-blue-400 disabled:opacity-60 text-zinc-950 font-bold rounded-xl font-mono text-sm transition flex items-center gap-2">
+                    {savingTerms ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {savingTerms ? 'SAVING...' : 'SAVE TERMS'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
@@ -1120,7 +1168,9 @@ const AdminDashboard = () => {
             </h1>
             <p className="text-slate-500 font-mono text-xs mt-1">SECURE LAUNCH EVENT COORDINATION</p>
           </div>
-
+          <button onClick={() => setShowTermsModal(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg font-mono text-sm shadow-md hover:bg-blue-400 flex items-center gap-2 transition">
+            <Edit2 className="w-4 h-4" /> Edit Terms & Conditions
+          </button>
         </div>
 
         {error && (

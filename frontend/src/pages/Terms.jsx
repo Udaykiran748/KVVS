@@ -1,68 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Leaf, ShieldAlert } from 'lucide-react';
+import { eventAPI } from '../services/api';
 
 const Terms = () => {
+  const [termsParagraphs] = useState([
+    "By accessing and using this website, you agree to comply with and be bound by these Terms and Conditions. The website is intended to provide information about our products, services, events, and booking facilities. Users must ensure that all information provided during registration, booking, or payment is accurate, complete, and up to date. Any misuse of the website may result in the suspension or termination of access.",
+    "All bookings made through the website are subject to availability and confirmation. Users are responsible for reviewing the details of their booking before completing the payment process. Once a booking is confirmed, changes or cancellations may be subject to company policies. The company reserves the right to refuse or cancel any booking if inaccurate information, fraudulent activity, or policy violations are detected.",
+    "Payments made through the website must be completed using approved payment methods. All transactions are processed through secure payment gateways to protect customer information. The company is not responsible for delays, technical failures, or interruptions caused by third-party payment service providers. Users are advised to retain payment receipts and booking confirmations for future reference.",
+    "All content available on this website, including text, images, logos, designs, videos, and software, is the property of the company and is protected by applicable intellectual property laws. Users may not copy, reproduce, distribute, modify, or use any content from the website without prior written permission from the company. Unauthorized use of website content may result in legal action.",
+    "The company reserves the right to modify, update, or discontinue any part of the website, products, services, or these Terms and Conditions at any time without prior notice. While reasonable efforts are made to ensure the accuracy of information provided on the website, the company does not guarantee that all content will always be error-free or uninterrupted. Continued use of the website after any changes indicates acceptance of the revised Terms and Conditions."
+  ]);
+  const [loading, setLoading] = useState(false);
   return (
     <div className="relative min-h-screen bg-slate-50 pt-28 pb-20 overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-green-500/10 text-green-700 border border-green-500/20 mb-6"
-          >
-            <Leaf className="w-5 h-5" />
-            <span className="font-bold text-sm tracking-widest uppercase">Agricultural Purpose Only</span>
-          </motion.div>
-          
-          <h1 className="font-orbitron font-extrabold text-3xl sm:text-4xl text-black mb-4">
-            TERMS & CONDITIONS
-          </h1>
-          <p className="text-slate-600 text-sm">
-            Please read these terms carefully before using the K V V Sai electricals Generator for your farming operations.
-          </p>
-        </div>
+        <h1 className="font-bold text-2xl text-black mb-6">Terms and Conditions</h1>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 sm:p-12 prose max-w-none"
+          className="bg-white rounded-xl shadow-md border border-slate-200 p-8 sm:p-12 prose max-w-none"
         >
-          <div className="flex items-center gap-3 mb-6 text-red-600 bg-red-50 p-4 rounded-xl border border-red-100">
-            <ShieldAlert className="w-6 h-6 shrink-0" />
-            <p className="m-0 text-sm font-semibold">
-              CRITICAL NOTICE: The generator models provided under this agreement are strictly licensed and distributed for agricultural use only.
-            </p>
-          </div>
 
-          <h3 className="font-orbitron font-bold text-lg text-black mt-8 mb-4 border-b border-slate-100 pb-2">1. USE OF EQUIPMENT</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            The K V V Sai electricals Generator ("Equipment") is leased, sold, or distributed exclusively for agricultural and farming applications. This includes powering irrigation systems, greenhouse climate control, farm machinery, and rural agricultural facilities. Any commercial, industrial (non-agricultural), or residential use outside of a farming context is strictly prohibited unless explicitly authorized in writing.
-          </p>
+          {loading ? (
+            <div className="text-center py-10">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-r-blue-500/30 border-b-blue-500/10 border-l-blue-500/50 rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-sm text-slate-500 font-mono tracking-widest uppercase">Loading terms...</p>
+            </div>
+          ) : termsParagraphs.length > 0 ? (
+            termsParagraphs.map((paragraph, index) => (
+              <div key={index} className="mb-6">
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {paragraph}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-slate-500 py-10">
+              No specific terms have been configured yet.
+            </div>
+          )}
 
-          <h3 className="font-orbitron font-bold text-lg text-black mt-8 mb-4 border-b border-slate-100 pb-2">2. PROHIBITION OF RESALE & TRANSFER</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            The Equipment is provided to the registered farmer or agricultural entity and may not be resold, sub-leased, or transferred to any third party without prior authorization from K V V Sai electricals. The agricultural subsidies and pricing applied are non-transferable.
-          </p>
 
-          <h3 className="font-orbitron font-bold text-lg text-black mt-8 mb-4 border-b border-slate-100 pb-2">3. COMPLIANCE WITH AGRICULTURAL STANDARDS</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            The user agrees to operate the Equipment in compliance with all local and national agricultural and environmental regulations. The zero-emission nature of the Equipment supports sustainable farming practices.
-          </p>
-
-          <h3 className="font-orbitron font-bold text-lg text-black mt-8 mb-4 border-b border-slate-100 pb-2">4. MAINTENANCE & MODIFICATIONS</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            No unauthorized modifications may be made to the permanent magnetic core or the superconducting matrices. Maintenance must be performed by certified K V V Sai electricals technicians or authorized agricultural service partners.
-          </p>
-
-          <h3 className="font-orbitron font-bold text-lg text-black mt-8 mb-4 border-b border-slate-100 pb-2">5. LIABILITY LIMITATION</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            While the Equipment provides continuous, zero-fuel power, K V V Sai electricals is not liable for crop loss or damages resulting from improper installation, misuse, or extreme force majeure events that disrupt operation.
-          </p>
-          
           <div className="mt-12 pt-6 border-t border-slate-200 text-xs text-slate-500 text-center">
             <p>Last Updated: June 2026</p>
             <p>© 2026 K V V Sai electricals Generator Industries.</p>

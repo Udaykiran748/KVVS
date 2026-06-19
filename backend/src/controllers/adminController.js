@@ -55,9 +55,9 @@ const getDashboardAnalytics = async (req, res) => {
         pendingBookings,
         totalRevenue,
         totalSlots,
-        availableSlots,
         bookedSlots
       },
+      event,
       productStats,
       recentBookings
     });

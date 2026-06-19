@@ -40,6 +40,7 @@ const BookingGenerator = sequelize.define('BookingGenerator', {
   generator_hp: { type: DataTypes.STRING, allowNull: true },
   generator_others: { type: DataTypes.STRING, allowNull: true },
   motor_age: { type: DataTypes.STRING, allowNull: true },
+  user_description: { type: DataTypes.TEXT, allowNull: true },
   status: {
     type: DataTypes.STRING,
     defaultValue: 'pending' // pending, confirmed, cancelled

@@ -40,7 +40,7 @@ const getActiveEvent = async (req, res) => {
  */
 const updateActiveEvent = async (req, res) => {
   try {
-    const { title, description, date, venue, ticket_price, total_slots, available_slots } = req.body;
+    const { title, description, date, venue, ticket_price, total_slots, available_slots, terms_and_conditions } = req.body;
     let event = await Event.findByPk(req.params.id);
 
     if (!event) {
@@ -54,7 +54,8 @@ const updateActiveEvent = async (req, res) => {
       venue: venue || event.venue,
       ticket_price: ticket_price ? parseFloat(ticket_price) : event.ticket_price,
       total_slots: total_slots ? parseInt(total_slots) : event.total_slots,
-      available_slots: available_slots ? parseInt(available_slots) : event.available_slots
+      available_slots: available_slots ? parseInt(available_slots) : event.available_slots,
+      terms_and_conditions: terms_and_conditions !== undefined ? terms_and_conditions : event.terms_and_conditions
     });
 
     return res.json({

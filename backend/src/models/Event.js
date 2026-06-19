@@ -34,6 +34,10 @@ const Event = sequelize.define('Event', {
   available_slots: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  terms_and_conditions: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   tableName: 'events',

@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS attendance (
   FOREIGN KEY (scanned_by) REFERENCES admins(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 9. Booking Generators Tables
 CREATE TABLE IF NOT EXISTS booking_generators (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -123,6 +124,7 @@ CREATE TABLE IF NOT EXISTS booking_generators (
     generator_kw VARCHAR(255) NULL,
     generator_hp VARCHAR(255) NULL,
     generator_others VARCHAR(255) NULL,
+    user_description TEXT NULL,
     status VARCHAR(50) DEFAULT 'pending',
     createdAt DATETIME NOT NULL,
     updatedAt DATETIME NOT NULL

@@ -58,7 +58,8 @@ export const productsAPI = {
 };
 
 export const eventAPI = {
-  getActive: () => API.get('/events')
+  getActive: () => API.get('/events'),
+  update: (id, data) => API.put(`/events/${id}`, data)
 };
 
 export const bookingsAPI = {

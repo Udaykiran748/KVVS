@@ -194,7 +194,6 @@ const Home = () => {
 
             <div className="mt-8 pt-6 border-t border-slate-800/80 text-xs sm:text-sm text-black flex flex-col sm:flex-row items-center justify-between gap-4">
               <p>VENUE: <span className="text-blue-600 font-semibold">Plot No. Q8, Building No. 44/1 & 64, E J Hosalli, Hosalli Sindhanur Hobli, Raichur–Koppal Road, Near Industrial Estate, Sindhanur, Raichur, Karnataka – 584128, india.</span></p>
-              <p>RESERVATION VALUE: <span className="text-green-600 font-bold">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span></p>
             </div>
           </motion.div>
         )}

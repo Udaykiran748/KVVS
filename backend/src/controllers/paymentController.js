@@ -49,6 +49,7 @@ const initiateBooking = async (req, res) => {
       generator_kw,
       generator_hp,
       generator_others,
+      user_description,
       amount
     } = req.body;
 
@@ -107,6 +108,7 @@ const initiateBooking = async (req, res) => {
       generator_kw,
       generator_hp,
       generator_others,
+      user_description,
       status: 'pending'
     });
 
@@ -293,6 +295,7 @@ const verifyPayment = async (req, res) => {
         generator_kw: bookingGenerator.generator_kw,
         generator_hp: bookingGenerator.generator_hp,
         generator_others: bookingGenerator.generator_others,
+        user_description: bookingGenerator.user_description,
         kw_capacity: bookingGenerator.kw_capacity,
         amount: payment.amount,
         transaction_id: payment.transaction_id,

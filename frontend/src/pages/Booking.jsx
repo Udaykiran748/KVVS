@@ -22,6 +22,29 @@ const Booking = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [step, setStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [termsParagraphs] = useState([
+    "By accessing and using this website, you agree to comply with and be bound by these Terms and Conditions. The website is intended to provide information about our products, services, events, and booking facilities. Users must ensure that all information provided during registration, booking, or payment is accurate, complete, and up to date. Any misuse of the website may result in the suspension or termination of access.",
+    "All bookings made through the website are subject to availability and confirmation. Users are responsible for reviewing the details of their booking before completing the payment process. Once a booking is confirmed, changes or cancellations may be subject to company policies. The company reserves the right to refuse or cancel any booking if inaccurate information, fraudulent activity, or policy violations are detected.",
+    "Payments made through the website must be completed using approved payment methods. All transactions are processed through secure payment gateways to protect customer information. The company is not responsible for delays, technical failures, or interruptions caused by third-party payment service providers. Users are advised to retain payment receipts and booking confirmations for future reference.",
+    "All content available on this website, including text, images, logos, designs, videos, and software, is the property of the company and is protected by applicable intellectual property laws. Users may not copy, reproduce, distribute, modify, or use any content from the website without prior written permission from the company. Unauthorized use of website content may result in legal action.",
+    "The company reserves the right to modify, update, or discontinue any part of the website, products, services, or these Terms and Conditions at any time without prior notice. While reasonable efforts are made to ensure the accuracy of information provided on the website, the company does not guarantee that all content will always be error-free or uninterrupted. Continued use of the website after any changes indicates acceptance of the revised Terms and Conditions."
+  ]);
+  const [termChecks, setTermChecks] = useState(Array(5).fill(false));
+
+  const handleTermCheck = (index) => {
+    setTermChecks(prev => {
+      const next = [...prev];
+      next[index] = !next[index];
+      setAcceptedTerms(next.every(Boolean));
+      return next;
+    });
+  };
+
+  const handleMasterCheckboxChange = (e) => {
+    const checked = e.target.checked;
+    setAcceptedTerms(checked);
+    setTermChecks(Array(termsParagraphs.length).fill(checked));
+  };
 
   // Form Details State
   const [formData, setFormData] = useState({
@@ -40,7 +63,8 @@ const Booking = () => {
     motorHp: '',
     generatorKw: '',
     generatorHp: '',
-    generatorOthers: ''
+    generatorOthers: '',
+    userDescription: ''
   });
 
   const handleInputChange = (e) => {
@@ -87,7 +111,6 @@ const Booking = () => {
         setEvent(eventRes.data);
       } catch (error) {
         console.error('Failed to load booking parameters:', error);
-        // setErrorMsg('Failed to synchronize launch event parameters.');
       } finally {
         setLoading(false);
       }
@@ -163,7 +186,8 @@ const Booking = () => {
           motor_hp: formData.motorHp,
           generator_kw: formData.generatorKw,
           generator_hp: formData.generatorHp,
-          generator_others: formData.generatorOthers
+          generator_others: formData.generatorOthers,
+          user_description: formData.userDescription
         });
         orderData = response.data;
       } catch (err) {
@@ -533,6 +557,14 @@ const Booking = () => {
                         <label className="block text-xs font-orbitron font-bold text-black mb-2 text-center">
                           ANY SPECIAL REQUIREMENTS
                         </label>
+                        <textarea
+                          name="userDescription"
+                          value={formData.userDescription}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                          placeholder="Type your special requirements or description here"
+                          rows="3"
+                        ></textarea>
                         <p className="text-[10px] text-black font-semibold text-center mt-2">
                           Please contact us for special requirements:<br />
                           <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
@@ -699,6 +731,14 @@ const Booking = () => {
                         <label className="block text-xs font-orbitron font-bold text-black mb-2 text-center">
                           ANY SPECIAL REQUIREMENTS
                         </label>
+                        <textarea
+                          name="userDescription"
+                          value={formData.userDescription}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black text-xs"
+                          placeholder="Type your special requirements or description here"
+                          rows="3"
+                        ></textarea>
                         <p className="text-[10px] text-black font-semibold text-center mt-2">
                           Please contact us for special requirements:<br />
                           <span className="text-blue-600">+91 9035121902 | Kvvsaielectricals@gmail.com</span>
@@ -757,38 +797,37 @@ const Booking = () => {
                 </h3>
 
                 <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-900 mb-6 text-xs text-slate-600 h-64 overflow-y-auto space-y-4">
-                  <div className="flex items-center gap-2 mb-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
-                    <AlertCircle className="w-5 h-5 shrink-0" />
-                    <p className="m-0 font-semibold">
-                      CRITICAL NOTICE: The generator models provided under this agreement are strictly licensed and distributed for agricultural use only.
-                    </p>
-                  </div>
 
-                  <h4 className="font-orbitron font-bold text-sm text-black">1. USE OF EQUIPMENT</h4>
-                  <p>
-                    The K V V Sai electricals Generator ("Equipment") is leased, sold, or distributed exclusively for agricultural and farming applications. This includes powering irrigation systems, greenhouse climate control, farm machinery, and rural agricultural facilities. Any commercial, industrial (non-agricultural), or residential use outside of a farming context is strictly prohibited unless explicitly authorized in writing.
-                  </p>
-
-                  <h4 className="font-orbitron font-bold text-sm text-black mt-4">2. PROHIBITION OF RESALE & TRANSFER</h4>
-                  <p>
-                    The Equipment is provided to the registered farmer or agricultural entity and may not be resold, sub-leased, or transferred to any third party without prior authorization from K V V Sai electricals. The agricultural subsidies and pricing applied are non-transferable.
-                  </p>
-
-                  <h4 className="font-orbitron font-bold text-sm text-black mt-4">3. COMPLIANCE WITH AGRICULTURAL STANDARDS</h4>
-                  <p>
-                    The user agrees to operate the Equipment in compliance with all local and national agricultural and environmental regulations. The zero-emission nature of the Equipment supports sustainable farming practices.
-                  </p>
+                  {termsParagraphs.length > 0 ? termsParagraphs.map((paragraph, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        className="mt-1 w-4 h-4 text-blue-500 bg-slate-100 border-slate-300 rounded focus:ring-0 shrink-0 cursor-pointer"
+                        checked={termChecks[index] || false}
+                        onChange={() => handleTermCheck(index)}
+                      />
+                      <div>
+                        <p className="text-sm text-black">
+                          {paragraph}
+                        </p>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="text-center text-slate-500">
+                      No specific terms have been configured yet.
+                    </div>
+                  )}
                 </div>
 
                 <label className="flex items-start space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-blue-500 bg-slate-100 border-slate-850 rounded focus:ring-0 focus:ring-offset-0 shrink-0"
+                    onChange={handleMasterCheckboxChange}
+                    className="mt-1 w-4 h-4 text-blue-500 bg-slate-100 border-slate-850 rounded focus:ring-0 focus:ring-offset-0 shrink-0 cursor-pointer"
                   />
                   <span className="text-xs text-black font-semibold">
-                    I have read and agree to the Terms & Conditions and confirm that the generator will be used for agricultural purposes only.
+                    I have read and agree to all the Terms & Conditions above and confirm that the generator will be used for agricultural purposes only.
                   </span>
                 </label>
               </div>
