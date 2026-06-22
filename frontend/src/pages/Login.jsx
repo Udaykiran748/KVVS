@@ -151,11 +151,6 @@ const Login = () => {
                   {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </button>
               </div>
-              {isAdminLogin && !isForgotPassword && (
-                <p className="text-[10px] text-slate-500 mt-2">
-                  Demo credentials: admin@gmail.com / admin123
-                </p>
-              )}
             </div>
 
             {isForgotPassword && (
