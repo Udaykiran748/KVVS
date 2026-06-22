@@ -39,7 +39,7 @@ const Home = () => {
     },
     {
       q: 'What KW models are available, and how do I select one?',
-      a: 'We offer three base models designed for various loads: the K V V Sai electricals-2 (2KW) for cabins, apartments, and essential appliances; the K V V Sai electricals-5 (5KW) which completely powers standard residential houses; and the K V V Sai electricals-10 (10KW) tailored for commercial estates, charging cells, or light factories.'
+      a: 'We offer three base models designed for various loads: the K V V Sai electricals-6 (6KW) for cabins, apartments, and essential appliances; which completely powers standard residential houses; and the K V V Sai electricals-40 (40KW) tailored for commercial estates, charging cells, or light factories.'
     },
     {
       q: 'Why is there a launch event booking fee?',

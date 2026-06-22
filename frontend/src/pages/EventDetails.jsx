@@ -25,14 +25,13 @@ const EventDetails = () => {
   const agenda = [
     { time: '09:30 AM', title: 'Security Clearances & Registration Check-in', desc: 'Verify VIP QR boarding passes at entrance security checkpoints. Level-1 badge issuance.' },
     { time: '10:30 AM', title: 'Keynote: Engineering Perpetual Neodymium Stators', desc: 'Zero-point energy physics seminar by leading researchers. Highlighting K V V Sai electricals polar repulsion equations.' },
-    { time: '11:45 AM', title: 'Live Unveiling: 2KW, 5KW & 10KW K V V Sai electricals Series', desc: 'First live public demonstration of magnetic generator cores powering continuous residential loads without external fuels.' },
+    { time: '11:45 AM', title: 'Live Unveiling: 6KW & 40KW K V V Sai electricals Series', desc: 'First live public demonstration of magnetic generator cores powering continuous residential loads without external fuels.' },
     { time: '01:00 PM', title: 'Laboratory Cell Access & Hands-On Testing', desc: 'Attendees visit active thermal cells and review real-time electrical flux analytics and convection loops.' },
     { time: '02:30 PM', title: 'Preorder Reservations Priority Queueing', desc: 'Exclusive booking priority desk registers confirmed attendees to priority production-run queue slots.' }
   ];
 
   const speakers = [
-    { name: 'Dr. Evelyn Carter', role: 'Chief of Quantum Magnetic Dynamics', institution: 'MIT Clean Energy Lab' },
-    { name: 'Rohan Sharma', role: 'K V V Sai electricals System Stator Architect', institution: 'Quantum Power Industries' }
+    { name: 'KRISHNARAO LILAVENKATA KATTROJ', role: 'K V V Sai electricals System Stator Architect', institution: 'K V V Sai electricals Generator Industries' }
   ];
 
   if (loading) {

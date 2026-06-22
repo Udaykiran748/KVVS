@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { productsAPI, eventAPI, bookingsAPI } from '../services/api';
-import { ShieldCheck, Calendar, MapPin, Zap, User, AlertCircle, ShoppingBag, CreditCard } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Zap, User, AlertCircle, ShoppingBag, CreditCard, Eye, EyeOff } from 'lucide-react';
 
 const Booking = () => {
   const { user } = useAuth();
@@ -47,6 +47,7 @@ const Booking = () => {
   };
 
   // Form Details State
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     customerName: '',
     mobileNumber: '',
@@ -198,7 +199,6 @@ const Booking = () => {
         throw new Error(`Checkout Error: ${backendMsg}`);
       }
 
-      /*
       if (orderData.is_demo) {
         setDemoOrderData(orderData);
         setShowDemoModal(true);
@@ -262,8 +262,8 @@ const Booking = () => {
         });
         rzp.open();
       }
-      */
 
+      /*
       // Auto bypass
       try {
         const verifyRes = await bookingsAPI.verify({
@@ -284,6 +284,7 @@ const Booking = () => {
         setErrorMsg('Transaction verification failed. Please contact secure support.');
         setPaying(false);
       }
+      */
 
     } catch (error) {
       console.error('Checkout error:', error);
@@ -382,7 +383,24 @@ const Booking = () => {
                   {!user && (
                     <div>
                       <span className="text-slate-500 block mb-1">Password *</span>
-                      <input type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Enter Your Password" required />
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black pr-10"
+                          placeholder="Enter Your Password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-700 focus:outline-none"
+                        >
+                          {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
                   )}
                   <div>

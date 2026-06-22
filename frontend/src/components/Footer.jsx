@@ -65,11 +65,10 @@ const Footer = () => {
         {/* Horizontal Divider */}
         <div className="border-t border-slate-800/80 pt-8 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500">
           <p className="mb-4 sm:mb-0">
-            &copy; 2026 K V V Sai electricals Generator Industries. Perpetual licensing active.
+            &copy; 2026 K V V Sai electricals Generator Industries.
           </p>
           <div className="flex space-x-4">
             <Link to="/terms" className="hover:text-black cursor-pointer">Terms & Conditions</Link>
-            <span className="hover:text-black cursor-pointer">Data Clearance</span>
             <Link to="/about#magnetic-guidelines" className="hover:text-black cursor-pointer">Magnetic Guidelines</Link>
           </div>
         </div>

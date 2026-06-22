@@ -135,7 +135,6 @@ const initiateBooking = async (req, res) => {
     const bookingAmount = amount || (product.price || 0); // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
 
-    /*
     if (!isDemoMode && razorpay) {
       // Create real Razorpay order (amount in paise)
       const options = {
@@ -147,7 +146,6 @@ const initiateBooking = async (req, res) => {
       const order = await razorpay.orders.create(options);
       order_id = order.id;
     }
-    */
 
     // Save pending payment record in DB
     const payment = await Payment.create({
@@ -198,7 +196,6 @@ const verifyPayment = async (req, res) => {
 
     let isVerified = false;
 
-    /*
     if (isDemoMode) {
       // Bypass standard verification in Demo Mode
       isVerified = true;
@@ -233,8 +230,8 @@ const verifyPayment = async (req, res) => {
         return res.status(400).json({ message: 'Payment validation signature signature mismatch. Rejected.' });
       }
     }
-    */
 
+    /*
     // Auto bypass
     isVerified = true;
     await payment.update({
@@ -242,6 +239,7 @@ const verifyPayment = async (req, res) => {
       status: 'captured',
       signature: razorpay_signature || 'auto_bypassed_signature'
     });
+    */
 
     if (isVerified) {
       // Update registration status to confirmed
