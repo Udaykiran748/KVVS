@@ -58,46 +58,8 @@ CREATE TABLE IF NOT EXISTS events (
   updatedAt DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 6. Payments Table
-CREATE TABLE IF NOT EXISTS payments (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  registration_id INT NOT NULL,
-  transaction_id VARCHAR(255) NULL, -- Razorpay Payment ID
-  order_id VARCHAR(255) NOT NULL, -- Razorpay Order ID
-  amount DECIMAL(10, 2) NOT NULL,
-  status VARCHAR(50) DEFAULT 'pending', -- pending, captured, failed
-  signature VARCHAR(255) NULL, -- Verification signature
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (registration_id) REFERENCES registrations(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 7. Passes Table (Generated Launch Event Tickets)
-CREATE TABLE IF NOT EXISTS passes (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  registration_id INT NOT NULL,
-  pass_id VARCHAR(100) NOT NULL UNIQUE, -- Unique alphanumeric Pass Code
-  qr_code_url TEXT NOT NULL, -- Data URL of the QR code
-  pdf_url VARCHAR(255) NULL, -- Local relative or cloud path to downloadable PDF
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (registration_id) REFERENCES registrations(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 8. Attendance Table (Gate Verification Logs)
-CREATE TABLE IF NOT EXISTS attendance (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  pass_id INT NOT NULL,
-  scanned_by INT NOT NULL, -- Admin ID who scanned
-  scanned_at DATETIME NOT NULL,
-  status VARCHAR(50) DEFAULT 'checked_in',
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (pass_id) REFERENCES passes(id) ON DELETE CASCADE,
-  FOREIGN KEY (scanned_by) REFERENCES admins(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 9. Booking Generators Tables
+-- 5. Booking Generators Tables
+-- Note: Moved up so payments and passes can safely reference it via foreign keys.
 CREATE TABLE IF NOT EXISTS booking_generators (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -127,5 +89,47 @@ CREATE TABLE IF NOT EXISTS booking_generators (
     user_description TEXT NULL,
     status VARCHAR(50) DEFAULT 'pending',
     createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL
-);
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. Payments Table
+CREATE TABLE IF NOT EXISTS payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  booking_generator_id INT NOT NULL,
+  transaction_id VARCHAR(255) NULL, -- Razorpay Payment ID
+  order_id VARCHAR(255) NOT NULL, -- Razorpay Order ID
+  amount DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending', -- pending, captured, failed
+  signature VARCHAR(255) NULL, -- Verification signature
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NOT NULL,
+  FOREIGN KEY (booking_generator_id) REFERENCES booking_generators(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 7. Passes Table (Generated Launch Event Tickets)
+CREATE TABLE IF NOT EXISTS passes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  booking_generator_id INT NOT NULL,
+  pass_id VARCHAR(100) NOT NULL UNIQUE, -- Unique alphanumeric Pass Code
+  qr_code_url TEXT NOT NULL, -- Data URL of the QR code
+  pdf_url VARCHAR(255) NULL, -- Local relative or cloud path to downloadable PDF
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NOT NULL,
+  FOREIGN KEY (booking_generator_id) REFERENCES booking_generators(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 8. Attendance Table (Gate Verification Logs)
+CREATE TABLE IF NOT EXISTS attendance (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pass_id INT NOT NULL,
+  scanned_by INT NOT NULL, -- Admin ID who scanned
+  scanned_at DATETIME NOT NULL,
+  status VARCHAR(50) DEFAULT 'checked_in',
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NOT NULL,
+  FOREIGN KEY (pass_id) REFERENCES passes(id) ON DELETE CASCADE,
+  FOREIGN KEY (scanned_by) REFERENCES admins(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

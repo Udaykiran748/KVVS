@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create central Axios instance (handled via proxy in vite.config.js during dev)
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://api-kvvs.ssquareg.tech/api',
   headers: {
     'Content-Type': 'application/json'
   }
