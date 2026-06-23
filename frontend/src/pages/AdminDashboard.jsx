@@ -6,7 +6,7 @@ import {
   Package, CreditCard, BarChart3, Plus, Edit2, Trash2, X, Save,
   AlertTriangle, CheckCheck, Ban, Eye, ChevronDown, Upload, Loader2
 } from 'lucide-react';
-import { adminAPI, eventAPI } from '../services/api';
+import { adminAPI, eventAPI, getImageUrl } from '../services/api';
 import { Link } from 'react-router-dom';
 
 // ─── Shared helpers ────────────────────────────────────────────────────────────
@@ -597,7 +597,7 @@ const ProductsTab = () => {
               className="glass-panel border border-slate-300 rounded-xl overflow-hidden hover:border-slate-300 transition group">
               <div className="h-48 bg-white flex items-center justify-center relative overflow-hidden border-b border-slate-200">
                 {p.image_url && !p.image_url.includes('placeholder') ? (
-                  <img src={p.image_url} alt={p.name} className="h-full w-full object-contain p-4 group-hover:scale-105 transition duration-500" />
+                  <img src={getImageUrl(p.image_url)} alt={p.name} className="h-full w-full object-contain p-4 group-hover:scale-105 transition duration-500" />
                 ) : (
                   <Zap className="w-12 h-12 text-slate-300" />
                 )}

@@ -104,4 +104,14 @@ export const adminAPI = {
   deleteProduct: (id) => API.delete(`/admin/products/${id}`)
 };
 
+export const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+  const host = baseUrl.endsWith('/api') ? baseUrl.slice(0, -4) : baseUrl;
+  return `${host}${url}`;
+};
+
 export default API;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { productsAPI, eventAPI } from '../services/api';
+import { productsAPI, eventAPI, getImageUrl } from '../services/api';
 import { Search, SlidersHorizontal, Zap, Shield, HelpCircle, HardDrive, RefreshCw, Play } from 'lucide-react';
 
 const Products = () => {
@@ -182,7 +182,7 @@ const Products = () => {
               {/* Product Photo */}
               <div className="relative bg-slate-100 overflow-hidden border-b border-slate-800/80">
                 <img
-                  src={prod.image_url}
+                  src={getImageUrl(prod.image_url)}
                   alt={prod.name}
                   className="w-full h-auto object-contain filter brightness-90 hover:scale-105 transition-transform duration-500"
                 />
