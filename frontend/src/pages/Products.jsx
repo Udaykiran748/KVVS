@@ -60,8 +60,12 @@ const Products = () => {
       try {
         const prodRes = await productsAPI.getAll();
 
-        // Only display the 2 hardcoded products, ignore API products
-        setProducts(hardcodedProducts);
+        // Use products from database, fallback to hardcoded if none available
+        if (prodRes.data && prodRes.data.length > 0) {
+          setProducts(prodRes.data);
+        } else {
+          setProducts(hardcodedProducts);
+        }
 
         const eventRes = await eventAPI.getActive();
         setEvent(eventRes.data);
@@ -172,7 +176,7 @@ const Products = () => {
               {/* Product Badge */}
               <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded bg-white/85 border border-blue-500/40 font-orbitron text-[10px] font-bold tracking-widest text-blue-600 flex items-center space-x-1">
                 <Zap className="w-3 h-3 text-blue-500 fill-blue-500 animate-pulse" />
-                <span>{prod.badge_text}</span>
+                <span>{prod.badge_text || (prod.availability_status ? prod.availability_status.toUpperCase() : `${prod.kw_capacity}KW`)}</span>
               </div>
 
               {/* Product Photo */}
@@ -196,7 +200,7 @@ const Products = () => {
 
                   {/* Highlights benefits */}
                   <ul className="space-y-2 mb-6 text-xs text-black">
-                    {prod.benefits.slice(0, 3).map((benefit, i) => (
+                    {(Array.isArray(prod.benefits) ? prod.benefits : []).slice(0, 3).map((benefit, i) => (
                       <li key={i} className="flex items-start space-x-2">
                         <Shield className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
                         <span>{benefit}</span>
@@ -360,7 +364,7 @@ const Products = () => {
 
               {/* Grid of specs */}
               <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-8 text-xs">
-                {Object.entries(selectedProductDetails.specifications).map(([key, val]) => (
+                {Object.entries(selectedProductDetails.specifications || {}).map(([key, val]) => (
                   <div key={key} className="p-3 bg-slate-100/50 border border-slate-800/80 rounded-lg">
                     <span className="text-slate-500 font-orbitron block capitalize mb-1">{key.replace('_', ' ')}</span>
                     <span className="text-black font-semibold">{val}</span>

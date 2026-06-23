@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS events (
   ticket_price DECIMAL(10, 2) NOT NULL,
   total_slots INT NOT NULL,
   available_slots INT NOT NULL,
+  terms_and_conditions TEXT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
