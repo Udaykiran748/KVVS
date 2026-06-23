@@ -43,23 +43,17 @@ const BookingHistory = () => {
     setLoginSuccess('');
 
     if (isForgotPassword) {
-      if (!email || !password || !confirmPassword) {
-        setLoginError('All fields are required.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        setLoginError('Passwords do not match.');
+      if (!email) {
+        setLoginError('Email is required.');
         return;
       }
       setLoading(true);
       try {
-        const res = await authAPI.forgotPassword({ email, newPassword: password });
-        setLoginSuccess(res.data.message || 'Password updated successfully. You can now login.');
+        const res = await authAPI.forgotPassword({ email });
+        setLoginSuccess(res.data.message || 'Reset link sent. Check your email.');
         setIsForgotPassword(false);
-        setPassword('');
-        setConfirmPassword('');
       } catch (err) {
-        setLoginError(err.response?.data?.message || 'Failed to update password.');
+        setLoginError(err.response?.data?.message || 'Failed to send reset link.');
       }
       setLoading(false);
       return;
@@ -138,7 +132,8 @@ const BookingHistory = () => {
     doc.text(`Model: ${book.Product?.name || 'Generator'}`, 110, 95);
     doc.text(`KW Capacity: ${book.kw_capacity || book.Product?.kw_capacity || ''} KW`, 110, 102);
     doc.text(`Booking ID: ${book.booking_id}`, 110, 109);
-    doc.text(`Status: Confirmed`, 110, 116);
+    const bookingStatus = book.status ? book.status.charAt(0).toUpperCase() + book.status.slice(1) : 'Confirmed';
+    doc.text(`Status: ${bookingStatus}`, 110, 116);
 
     // Payment Details
     doc.setTextColor(0, 0, 255);
@@ -175,6 +170,8 @@ const BookingHistory = () => {
 
     doc.text(`Transaction ID: ${book.Payment?.transaction_id || 'pay_mock_' + Math.random().toString(36).substring(2, 9)}`, 110, 150);
     doc.text(`Payment Method: ${book.Payment?.payment_method || 'RAZORPAY'}`, 110, 156);
+    const paymentStatus = book.Payment?.status ? book.Payment.status.toUpperCase() : 'COMPLETED';
+    doc.text(`Payment Status: ${paymentStatus}`, 110, 162);
 
     // Generator Details
     doc.setTextColor(0, 0, 255);
@@ -271,50 +268,31 @@ const BookingHistory = () => {
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    {isForgotPassword ? 'New Password' : 'Password'}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg focus:ring-[#B8860B] focus:border-[#B8860B] text-sm"
-                      placeholder={isForgotPassword ? "Enter new password" : "Enter your password"}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
-                    >
-                      {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-                {isForgotPassword && (
+                {!isForgotPassword && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Password
+                    </label>
                     <div className="relative">
                       <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg focus:ring-[#B8860B] focus:border-[#B8860B] text-sm"
-                        placeholder="Confirm new password"
-                        required
+                        placeholder="Enter your password"
+                        required={!isForgotPassword}
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
                       >
-                        {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                        {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                       </button>
                     </div>
                   </div>
                 )}
+                {/* Removed inline confirm password fields */}
 
                 {!isForgotPassword && (
                   <div className="flex justify-end mt-1">
@@ -337,7 +315,7 @@ const BookingHistory = () => {
                   disabled={loading}
                   className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-[#B8860B] transition-colors shadow-md disabled:opacity-70"
                 >
-                  {loading ? (isForgotPassword ? 'Updating...' : 'Verifying...') : (isForgotPassword ? 'Update Password' : 'View History')}
+                  {loading ? (isForgotPassword ? 'Sending...' : 'Verifying...') : (isForgotPassword ? 'Send Reset Link' : 'View History')}
                 </button>
 
                 {isForgotPassword && (

@@ -23,29 +23,55 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const resetToken = searchParams.get('token');
+  const isResetPassword = !!resetToken;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
 
     if (isForgotPassword) {
-      if (!email || !password || !confirmPassword) {
-        setErrorMsg('All fields are required.');
+      if (!email) {
+        setErrorMsg('Email field is required.');
+        return;
+      }
+
+      setLoading(true);
+      try {
+        let res;
+        if (isAdminLogin) {
+          res = await authAPI.adminForgotPassword({ email });
+        } else {
+          res = await authAPI.forgotPassword({ email });
+        }
+        setSuccessMsg(res.data.message || 'Email sent successfully. Please check your inbox and spam.');
+        setIsForgotPassword(false);
+      } catch (err) {
+        setErrorMsg(err.response?.data?.message || 'Failed to send reset link.');
+      }
+      setLoading(false);
+      return;
+    }
+
+    if (isResetPassword) {
+      if (!password || !confirmPassword) {
+        setErrorMsg('Please enter and confirm your new password.');
         return;
       }
       if (password !== confirmPassword) {
         setErrorMsg('Passwords do not match.');
         return;
       }
+
       setLoading(true);
       try {
-        const res = await authAPI.adminForgotPassword({ email, newPassword: password });
-        setSuccessMsg(res.data.message || 'Password updated successfully. You can now login.');
-        setIsForgotPassword(false);
-        setPassword('');
-        setConfirmPassword('');
+        const res = await authAPI.resetPassword({ token: resetToken, newPassword: password });
+        setSuccessMsg(res.data.message || 'Password reset successful. You can now login.');
+        // clear the token from url
+        navigate('/login', { replace: true });
       } catch (err) {
-        setErrorMsg(err.response?.data?.message || 'Failed to update password.');
+        setErrorMsg(err.response?.data?.message || 'Failed to reset password.');
       }
       setLoading(false);
       return;
@@ -96,10 +122,10 @@ const Login = () => {
               )}
             </div>
             <h1 className="font-orbitron font-extrabold text-2xl text-black tracking-wider mb-2">
-              {isAdminLogin ? 'ADMIN PORTAL' : 'USER LOGIN'}
+              {isResetPassword ? 'RESET PASSWORD' : (isAdminLogin ? 'ADMIN PORTAL' : 'USER LOGIN')}
             </h1>
             <p className={`text-[10px] font-orbitron tracking-widest uppercase ${isAdminLogin ? 'text-[#3b82f6] text-glow-blue' : 'text-slate-500'}`}>
-              {isAdminLogin ? 'Secure Access Clearance Required' : 'Access your account'}
+              {isResetPassword ? 'Enter new secure key' : (isAdminLogin ? 'Secure Access Clearance Required' : 'Access your account')}
             </p>
           </div>
 
@@ -118,44 +144,50 @@ const Login = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">Email Coordinate</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50/50 border border-slate-800 rounded-lg px-4 py-3 text-sm text-black focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors outline-none"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">
-                {isForgotPassword ? 'New Access Key' : 'Access Key'}
-              </label>
-              <div className="relative">
+            {!isResetPassword && (
+              <div>
+                <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">Email Coordinate</label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-800 rounded-lg px-4 py-3 pr-12 text-sm text-black focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors outline-none"
-                  placeholder={isForgotPassword ? "Enter new password" : "Enter your password"}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-800 rounded-lg px-4 py-3 text-sm text-black focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors outline-none"
+                  placeholder="Enter your email"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
-                >
-                  {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                </button>
               </div>
-            </div>
+            )}
 
-            {isForgotPassword && (
+            {(!isForgotPassword || isResetPassword) && (
               <div>
-                <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">Confirm Access Key</label>
+                <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">
+                  {isResetPassword ? 'New Access Key' : 'Access Key'}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-slate-50/50 border border-slate-800 rounded-lg px-4 py-3 pr-12 text-sm text-black focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors outline-none"
+                    placeholder={isResetPassword ? "Enter new password" : "Enter your password"}
+                    required={!isForgotPassword || isResetPassword}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  >
+                    {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isResetPassword && (
+              <div>
+                <label className="block text-xs font-orbitron font-bold text-slate-500 mb-2">
+                  Confirm Access Key
+                </label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
@@ -176,7 +208,9 @@ const Login = () => {
               </div>
             )}
 
-            {isAdminLogin && !isForgotPassword && (
+            {/* Removed inline confirm password fields since they go to a link now */}
+
+            {!isForgotPassword && !isResetPassword && (
               <div className="flex justify-end mt-1">
                 <button
                   type="button"
@@ -200,11 +234,11 @@ const Login = () => {
               {loading ? (
                 <div className="w-4 h-4 border-2 border-t-white border-r-transparent border-slate-700 rounded-full animate-spin"></div>
               ) : (
-                <span>{isForgotPassword ? 'UPDATE PASSWORD' : (isAdminLogin ? 'ADMIN LOGIN' : 'AUTHENTICATE')}</span>
+                <span>{isResetPassword ? 'RESET PASSWORD' : (isForgotPassword ? 'SEND RESET LINK' : (isAdminLogin ? 'ADMIN LOGIN' : 'AUTHENTICATE'))}</span>
               )}
             </button>
 
-            {isForgotPassword && (
+            {isForgotPassword && !isResetPassword && (
               <button
                 type="button"
                 onClick={() => setIsForgotPassword(false)}
@@ -213,7 +247,7 @@ const Login = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> CANCEL
               </button>
             )}
-            {!isAdminLogin && (
+            {!isAdminLogin && !isResetPassword && (
               <div className="text-center mt-4">
                 <p className="text-xs text-slate-500">
                   Don't have an account?{' '}

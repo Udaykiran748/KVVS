@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { productsAPI, eventAPI, bookingsAPI } from '../services/api';
+import { productsAPI, eventAPI, bookingsAPI, authAPI } from '../services/api';
 import { ShieldCheck, Calendar, MapPin, Zap, User, AlertCircle, ShoppingBag, CreditCard, Eye, EyeOff } from 'lucide-react';
 
 const Booking = () => {
@@ -20,6 +20,8 @@ const Booking = () => {
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [mobileError, setMobileError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [step, setStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [termsParagraphs] = useState([
@@ -71,7 +73,105 @@ const Booking = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'mobileNumber') {
+      let sanitizedValue = value.replace(/\D/g, '');
+      sanitizedValue = sanitizedValue.replace(/^[^6-9]+/, '');
+      if (sanitizedValue.length > 10) {
+        sanitizedValue = sanitizedValue.slice(0, 10);
+      }
+      setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
+      
+      if (sanitizedValue.length === 10 && /^(\d)\1{9}$/.test(sanitizedValue)) {
+        setMobileError('Mobile number cannot be all same digits');
+      } else if (sanitizedValue.length > 0 && sanitizedValue.length < 10) {
+        setMobileError('Please enter 10 digit mobile number');
+      } else {
+        setMobileError('');
+      }
+      return;
+    }
+
+    if (name === 'emailAddress') {
+      setEmailError('');
+      let sanitizedEmail = value.toLowerCase().replace(/\s/g, '');
+      setFormData(prev => ({ ...prev, [name]: sanitizedEmail }));
+      return;
+    }
+
+    if (name === 'pincode') {
+      let sanitizedValue = value.replace(/\D/g, '');
+      if (sanitizedValue.length > 6) {
+        sanitizedValue = sanitizedValue.slice(0, 6);
+      }
+      setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
+      return;
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEmailBlur = async () => {
+    const email = formData.emailAddress;
+    if (!email) return;
+
+    if (!email.includes('@')) {
+      setEmailError('please include an "@" in the email address.');
+      return;
+    }
+
+    const [localPart, domainPart, ...rest] = email.split('@');
+    if (rest.length > 0) {
+      setEmailError('please enter a valid email address.');
+      return;
+    }
+
+    if (!domainPart || !domainPart.includes('.')) {
+      setEmailError('please include a "." in the email address.');
+      return;
+    }
+
+    if (domainPart !== 'gmail.com') {
+      setEmailError('Only @gmail.com email addresses in lowercase are accepted.');
+      return;
+    }
+
+    if (!/^[a-z0-9]+$/.test(localPart)) {
+      setEmailError('Special characters are not allowed. Only small letters and numbers are accepted before @gmail.com.');
+      return;
+    }
+
+    try {
+      const res = await authAPI.checkEmail(email);
+      if (res.data.exists) {
+        setEmailError(res.data.message || 'this email is already used please use another email');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleMobileBlur = async () => {
+    if (!formData.mobileNumber) return;
+
+    if (formData.mobileNumber.length < 10) {
+      setMobileError('Please enter 10 digit mobile number');
+      return;
+    }
+
+    if (/^(\d)\1{9}$/.test(formData.mobileNumber)) {
+      setMobileError('Mobile number cannot be all same digits');
+      return;
+    }
+
+    try {
+      const res = await authAPI.checkMobile(formData.mobileNumber);
+      if (res.data.exists) {
+        setMobileError(res.data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Demo pay modal states
@@ -136,6 +236,10 @@ const Booking = () => {
   const handleContinueToTerms = () => {
     if (!formData.customerName || !formData.emailAddress || !formData.mobileNumber || (!user && !formData.password)) {
       return setErrorMsg('Please fill out all required customer details (Name, Email, Mobile' + (!user ? ', Password' : '') + ').');
+    }
+
+    if (mobileError || emailError) {
+      return setErrorMsg('Please resolve the customer detail errors before proceeding.');
     }
 
     if (!formData.generatorKw && !formData.generatorHp && !formData.generatorOthers) {
@@ -248,14 +352,31 @@ const Booking = () => {
             color: '#030303'
           },
           modal: {
-            ondismiss: () => {
+            ondismiss: async () => {
+              try {
+                await bookingsAPI.fail({
+                  booking_generator_id: orderData.booking_generator_id,
+                  razorpay_order_id: orderData.order_id
+                });
+              } catch (e) {
+                console.error('Failed to update status on dismiss', e);
+              }
+              setErrorMsg('Payment is failed. You cancelled the transaction.');
               setPaying(false);
             }
           }
         };
 
         const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response) {
+        rzp.on('payment.failed', async function (response) {
+          try {
+            await bookingsAPI.fail({
+              booking_generator_id: orderData.booking_generator_id,
+              razorpay_order_id: orderData.order_id
+            });
+          } catch (e) {
+            console.error('Failed to update status on payment failure', e);
+          }
           console.error('Razorpay payment failed:', response.error);
           setErrorMsg(`Payment Failed: ${response.error.description}`);
           setPaying(false);
@@ -374,11 +495,13 @@ const Booking = () => {
                   </div>
                   <div>
                     <span className="text-slate-500 block mb-1">Mobile Number *</span>
-                    <input type="text" name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Mobile Number" required />
+                    <input type="text" name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} onBlur={handleMobileBlur} className={`w-full px-3 py-2 bg-slate-100 border ${mobileError ? 'border-red-500 focus:border-red-500' : 'border-slate-800 focus:border-blue-500'} rounded focus:outline-none text-black`} placeholder="Mobile Number" required />
+                    {mobileError && <p className="text-red-500 text-[10px] mt-1 font-bold">{mobileError}</p>}
                   </div>
                   <div>
                     <span className="text-slate-500 block mb-1">Email Address *</span>
-                    <input type="email" name="emailAddress" value={formData.emailAddress} onChange={handleInputChange} className="w-full px-3 py-2 bg-slate-100 border border-slate-800 rounded focus:outline-none focus:border-blue-500 text-black" placeholder="Email Address" required />
+                    <input type="email" name="emailAddress" value={formData.emailAddress} onChange={handleInputChange} onBlur={handleEmailBlur} className={`w-full px-3 py-2 bg-slate-100 border ${emailError ? 'border-red-500 focus:border-red-500' : 'border-slate-800 focus:border-blue-500'} rounded focus:outline-none text-black`} placeholder="Email Address" required />
+                    {emailError && <p className="text-red-500 text-[10px] mt-1 font-bold">{emailError}</p>}
                   </div>
                   {!user && (
                     <div>

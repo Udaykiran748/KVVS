@@ -85,7 +85,8 @@ export default function Receipt() {
     doc.text(`Model: ${selectedProduct?.name || 'Generator'}`, 110, 95);
     doc.text(`KW Capacity: ${selectedKw || successBooking.kw_capacity || ''} KW`, 110, 102);
     doc.text(`Booking ID: ${successBooking.booking_id || bookingId}`, 110, 109);
-    doc.text(`Status: Confirmed`, 110, 116);
+    const bookingStatus = successBooking.status ? successBooking.status.charAt(0).toUpperCase() + successBooking.status.slice(1) : 'Confirmed';
+    doc.text(`Status: ${bookingStatus}`, 110, 116);
 
     // Payment Details
     doc.setTextColor(0, 0, 255);
@@ -122,6 +123,8 @@ export default function Receipt() {
 
     doc.text(`Transaction ID: ${successBooking.transaction_id || 'pay_mock_' + Math.random().toString(36).substring(2, 9)}`, 110, 150);
     doc.text(`Payment Method: ${successBooking.payment_method || 'RAZORPAY'}`, 110, 156);
+    const paymentStatus = successBooking.payment_status ? successBooking.payment_status.toUpperCase() : 'COMPLETED';
+    doc.text(`Payment Status: ${paymentStatus}`, 110, 162);
 
     // Generator Details
     doc.setTextColor(0, 0, 255);
@@ -196,6 +199,12 @@ export default function Receipt() {
           <p className="border-b border-slate-900 pb-2 flex justify-between">
             <span className="text-slate-600">Booking ID:</span>
             <span className="text-[#3b82f6] font-bold font-orbitron">{successBooking.booking_id || bookingId}</span>
+          </p>
+          <p className="border-b border-slate-900 pb-2 flex justify-between">
+            <span className="text-slate-600">Status:</span>
+            <span className={`font-bold uppercase tracking-wider ${successBooking.status === 'failed' ? 'text-red-500' : successBooking.status === 'pending' ? 'text-yellow-500' : 'text-green-500'}`}>
+              {successBooking.status || 'Confirmed'}
+            </span>
           </p>
           {selectedProduct && (
             <p className="border-b border-slate-900 pb-2 flex justify-between">

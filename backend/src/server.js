@@ -85,7 +85,7 @@ const seedDatabase = async () => {
 };
 
 // Database connection & listener activation
-sequelize.sync({ force: false }) // Preserves existing user profiles and passes
+sequelize.sync({ alter: true }) // Preserves existing user profiles and passes
   .then(async () => {
     console.log('Sequelize: Database structure synchronized successfully.');
     await seedDatabase();
@@ -98,4 +98,4 @@ sequelize.sync({ force: false }) // Preserves existing user profiles and passes
     process.exit(1);
   });
 
-// Triggering nodemon restart
+// Triggering nodemon restart!

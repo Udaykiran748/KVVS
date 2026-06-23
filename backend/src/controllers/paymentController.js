@@ -135,10 +135,15 @@ const initiateBooking = async (req, res) => {
     const bookingAmount = amount || (product.price || 0); // Booking amount
     let order_id = `order_mock_${Math.random().toString(36).substring(2, 11)}`;
 
+    let razorpayAmount = bookingAmount;
     if (!isDemoMode && razorpay) {
       // Create real Razorpay order (amount in paise)
+      // Cap at Razorpay test mode maximum of 5,00,000 INR
+      if (razorpayAmount > 499999) {
+        razorpayAmount = 499999;
+      }
       const options = {
-        amount: Math.round(bookingAmount * 100),
+        amount: Math.round(razorpayAmount * 100),
         currency: 'INR',
         receipt: booking_id
       };
@@ -160,7 +165,7 @@ const initiateBooking = async (req, res) => {
       booking_generator_id: bookingGenerator.id,
       booking_id,
       order_id,
-      amount: bookingAmount,
+      amount: isDemoMode ? bookingAmount : razorpayAmount,
       is_demo: isDemoMode,
       key_id: isDemoMode ? 'MOCK' : process.env.RAZORPAY_KEY_ID
     });
@@ -316,7 +321,30 @@ const verifyPayment = async (req, res) => {
   }
 };
 
+const failPayment = async (req, res) => {
+  try {
+    const { booking_generator_id, razorpay_order_id } = req.body;
+    
+    if (booking_generator_id && razorpay_order_id) {
+      await Payment.update(
+        { status: 'failed' },
+        { where: { booking_generator_id, order_id: razorpay_order_id } }
+      );
+      await BookingGenerator.update(
+        { status: 'failed' },
+        { where: { id: booking_generator_id } }
+      );
+    }
+    
+    return res.json({ message: 'Payment marked as failed.' });
+  } catch (error) {
+    console.error('Payment Fail Error:', error);
+    return res.status(500).json({ message: 'Error marking payment as failed.' });
+  }
+};
+
 module.exports = {
   initiateBooking,
-  verifyPayment
+  verifyPayment,
+  failPayment
 };

@@ -207,15 +207,11 @@ const adminForgotPassword = async (req, res) => {
   }
 };
 
-/**
- * User Forgot Password (direct update)
- */
 const forgotPassword = async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
-
-    if (!email || !newPassword) {
-      return res.status(400).json({ message: 'Email and new password are required.' });
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required.' });
     }
 
     const user = await User.findOne({ where: { email } });
@@ -223,15 +219,98 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'User account with this email not found.' });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(20).toString('hex');
+    const expireDate = new Date(Date.now() + 3600000); // 1 hour
 
-    await user.update({ password: hashedPassword });
+    await user.update({ resetPasswordToken: token, resetPasswordExpires: expireDate });
 
-    return res.json({ message: 'Password updated successfully. You can now login.' });
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.SMTP_USER || 'ssquaregtechsolutions@gmail.com',
+        pass: process.env.SMTP_PASS || 'pmpwvvqhzyuyvwul'
+      }
+    });
+
+    const mailOptions = {
+      from: 'botu35326@gmail.com',
+      to: user.email,
+      subject: 'Password Reset',
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+            `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+            `http://localhost:5173/login?token=${token}\n\n` +
+            `If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    };
+
+    await transporter.sendMail(mailOptions);
+    return res.json({ message: 'Email sent successfully. Please check your inbox and spam.' });
   } catch (error) {
     console.error('User Forgot Password Error:', error);
     return res.status(500).json({ message: 'Internal server error during password reset.' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and new password are required.' });
+    }
+
+    const user = await User.findOne({ 
+      where: { 
+        resetPasswordToken: token,
+        resetPasswordExpires: { [require('sequelize').Op.gt]: new Date() }
+      } 
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Password reset token is invalid or has expired.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await user.update({ 
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null
+    });
+
+    return res.json({ message: 'Password updated successfully. You can now login.' });
+  } catch (error) {
+    console.error('User Reset Password Error:', error);
+    return res.status(500).json({ message: 'Internal server error during password reset.' });
+  }
+};
+
+const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email required' });
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      return res.json({ exists: true, message: 'this email is already used please use another email' });
+    }
+    return res.json({ exists: false });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const checkMobile = async (req, res) => {
+  try {
+    const { mobile } = req.body;
+    if (!mobile) return res.status(400).json({ message: 'Mobile required' });
+    const user = await User.findOne({ where: { mobile } });
+    if (user) {
+      return res.json({ exists: true, message: 'this number is already used please use another number' });
+    }
+    return res.json({ exists: false });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -241,5 +320,8 @@ module.exports = {
   adminLogin,
   getMe,
   adminForgotPassword,
-  forgotPassword
+  forgotPassword,
+  resetPassword,
+  checkEmail,
+  checkMobile
 };

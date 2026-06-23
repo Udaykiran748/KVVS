@@ -7,8 +7,11 @@ const { verifyToken } = require('../middleware/authMiddleware');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 router.post('/admin/login', authController.adminLogin);
 router.post('/admin/forgot-password', authController.adminForgotPassword);
+router.post('/check-email', authController.checkEmail);
+router.post('/check-mobile', authController.checkMobile);
 
 // Protected Identity Verification Route
 router.get('/me', verifyToken, authController.getMe);

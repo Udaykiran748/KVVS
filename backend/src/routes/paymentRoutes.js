@@ -9,4 +9,7 @@ router.post('/initiate', paymentController.initiateBooking);
 // Protected Booking Step 2: Validate transaction capture and process ticket passes
 router.post('/verify', paymentController.verifyPayment);
 
+// Payment fail route
+router.post('/fail', paymentController.failPayment);
+
 module.exports = router;

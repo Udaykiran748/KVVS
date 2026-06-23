@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create central Axios instance (handled via proxy in vite.config.js during dev)
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://api-kvvs.ssquareg.tech/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -41,9 +41,12 @@ export const authAPI = {
   signup: (userData) => API.post('/auth/register', userData),
   login: (credentials) => API.post('/auth/login', credentials),
   forgotPassword: (data) => API.post('/auth/forgot-password', data),
+  resetPassword: (data) => API.post('/auth/reset-password', data),
   adminLogin: (credentials) => API.post('/auth/admin/login', credentials),
   adminForgotPassword: (data) => API.post('/auth/admin/forgot-password', data),
-  getMe: () => API.get('/auth/me')
+  getMe: () => API.get('/auth/me'),
+  checkEmail: (email) => API.post('/auth/check-email', { email }),
+  checkMobile: (mobile) => API.post('/auth/check-mobile', { mobile })
 };
 
 export const productsAPI = {
@@ -66,6 +69,7 @@ export const eventAPI = {
 export const bookingsAPI = {
   initiate: (bookingData) => API.post('/payments/initiate', bookingData),
   verify: (paymentDetails) => API.post('/payments/verify', paymentDetails),
+  fail: (data) => API.post('/payments/fail', data),
   getHistory: () => API.get('/bookings/history'),
   search: (query) => API.post('/bookings/search', { query })
 };
