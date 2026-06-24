@@ -13,8 +13,8 @@ const Login = () => {
   const isAdminLogin = searchParams.get('admin') === 'true';
   const from = location.state?.from?.pathname || (isAdminLogin ? '/admin' : '/');
 
-  const [email, setEmail] = useState(isAdminLogin ? 'admin@gmail.com' : '');
-  const [password, setPassword] = useState(isAdminLogin ? 'admin123' : '');
+  const [email, setEmail] = useState(isAdminLogin ? 'kvvsaielectricals@gmail.com' : '');
+  const [password, setPassword] = useState(isAdminLogin ? 'KattrojKL@1902' : '');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');

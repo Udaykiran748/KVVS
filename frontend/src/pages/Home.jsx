@@ -62,7 +62,7 @@ const Home = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/5 text-blue-600 text-[10px] sm:text-xs font-orbitron tracking-widest uppercase mb-4"
+          className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/5 text-blue-600 text-[10px] sm:text-xs font-orbitron tracking-widest uppercase mt-10 mb-4"
         >
           <Zap className="w-3.5 h-3.5 animate-bounce" />
           <span>The Zero-Fuel Energy Revolution</span>

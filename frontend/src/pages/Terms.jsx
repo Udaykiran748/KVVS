@@ -4,14 +4,27 @@ import { Leaf, ShieldAlert } from 'lucide-react';
 import { eventAPI } from '../services/api';
 
 const Terms = () => {
-  const [termsParagraphs] = useState([
-    "By accessing and using this website, you agree to comply with and be bound by these Terms and Conditions. The website is intended to provide information about our products, services, events, and booking facilities. Users must ensure that all information provided during registration, booking, or payment is accurate, complete, and up to date. Any misuse of the website may result in the suspension or termination of access.",
-    "All bookings made through the website are subject to availability and confirmation. Users are responsible for reviewing the details of their booking before completing the payment process. Once a booking is confirmed, changes or cancellations may be subject to company policies. The company reserves the right to refuse or cancel any booking if inaccurate information, fraudulent activity, or policy violations are detected.",
-    "Payments made through the website must be completed using approved payment methods. All transactions are processed through secure payment gateways to protect customer information. The company is not responsible for delays, technical failures, or interruptions caused by third-party payment service providers. Users are advised to retain payment receipts and booking confirmations for future reference.",
-    "All content available on this website, including text, images, logos, designs, videos, and software, is the property of the company and is protected by applicable intellectual property laws. Users may not copy, reproduce, distribute, modify, or use any content from the website without prior written permission from the company. Unauthorized use of website content may result in legal action.",
-    "The company reserves the right to modify, update, or discontinue any part of the website, products, services, or these Terms and Conditions at any time without prior notice. While reasonable efforts are made to ensure the accuracy of information provided on the website, the company does not guarantee that all content will always be error-free or uninterrupted. Continued use of the website after any changes indicates acceptance of the revised Terms and Conditions."
-  ]);
-  const [loading, setLoading] = useState(false);
+  const [termsParagraphs, setTermsParagraphs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const response = await eventAPI.getActive();
+        if (response.data && response.data.terms_and_conditions) {
+          const paragraphs = response.data.terms_and_conditions.split('\n').filter(p => p.trim() !== '');
+          if (paragraphs.length > 0) {
+            setTermsParagraphs(paragraphs);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch terms:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTerms();
+  }, []);
   return (
     <div className="relative min-h-screen bg-slate-50 pt-28 pb-20 overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

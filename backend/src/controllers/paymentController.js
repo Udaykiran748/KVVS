@@ -9,7 +9,7 @@ require('dotenv').config();
 
 // Initialize Razorpay SDK if credentials are present
 let razorpay = null;
-const isDemoMode = false;
+const isDemoMode = process.env.RAZORPAY_KEY_ID === 'MOCK' || !process.env.RAZORPAY_KEY_ID;
 
 if (!isDemoMode) {
   try {
@@ -324,7 +324,7 @@ const verifyPayment = async (req, res) => {
 const failPayment = async (req, res) => {
   try {
     const { booking_generator_id, razorpay_order_id } = req.body;
-    
+
     if (booking_generator_id && razorpay_order_id) {
       await Payment.update(
         { status: 'failed' },
@@ -335,7 +335,7 @@ const failPayment = async (req, res) => {
         { where: { id: booking_generator_id } }
       );
     }
-    
+
     return res.json({ message: 'Payment marked as failed.' });
   } catch (error) {
     console.error('Payment Fail Error:', error);

@@ -85,7 +85,7 @@ const seedDatabase = async () => {
 };
 
 // Database connection & listener activation
-sequelize.sync({ alter: true }) // Preserves existing user profiles and passes
+sequelize.sync() // Preserves existing user profiles and passes
   .then(async () => {
     console.log('Sequelize: Database structure synchronized successfully.');
     await seedDatabase();

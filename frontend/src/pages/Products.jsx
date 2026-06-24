@@ -23,14 +23,16 @@ const Products = () => {
           kw_capacity: 6,
           badge_text: '6KW - 40KW',
           price: '6000',
-          image_url: '/images/Resources free generator.jpg',
+          image_url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop',
           benefits: [
-            'Runs on its own source, no external resources needed (solar, water, fuel, battery, KEB)',
-            'Affordable maintenance compared to traditional generators',
-            '90% of load guaranteed on the requirement of output energy'
+            'A system which doesn\'t consumes or either needs any other Resources like *solar *water *petroleum *battery *KEB power supply To generate the electricity power.',
+            'It runs on its own source which generates electricity also the maintenance is affordable compared to any other generators which are dependent on Resources mentioned above.',
+            'Its availability is from 6kw to 100kw output power generation also 90% of load guaranteed on the requirement of output energy.',
+            'Applications for: Agriculture',
+            'RS . 6000per KW'
           ],
           specifications: {
-            availability: '6KW to 40KW output power generation',
+            availability: '6kw to 100kw output power generation',
             load_guarantee: '90%',
             applications: 'Agriculture',
             type: 'Resource-Free Generator'
@@ -42,16 +44,20 @@ const Products = () => {
           kw_capacity: 40,
           badge_text: '40KW - 1MVA',
           price: '6000',
-          image_url: '/images/Energy booster.jpg', // Vite serves public directory from root '/'
+          image_url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop', // Vite serves public directory from root '/'
           benefits: [
-            'Consumes 10kw input to distribute 40kw load (1:4 ratio)',
-            'High-efficiency ENERGY BOOSTER system',
-            '90% load guaranteed on the requirement of output power'
+            'A system which consumes a input power of 10kw from the LT through the output power it distributes about 40kw load.',
+            'By consumption of 10kw power it provides about 40kw load the ratio of 1:4 times of power output which the system is known as ENERGY BOOSTER.',
+            'Its availability from 40kw to 1000kw output power supply also 90% load guaranteed on the requirement of output power.',
+            'Applications for: Commercial industries, Agricultural',
+            'RS . 6000per KW'
           ],
           specifications: {
-            availability: '40KW to 1MVA output power supply',
+            availability: '40KW to 1000KW output power supply',
             input: '10 KW from LT',
             output: '40 KW Load',
+            ratio: '1:4',
+            load_guarantee: '90%',
             applications: 'Commercial industries, Agricultural'
           }
         }
@@ -251,52 +257,35 @@ const Products = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Video 1 */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
-              <div
-                className="relative w-full h-full cursor-pointer group"
-                onClick={() => setPlayingVideo('/images/RFG Video.mp4')}
-              >
-                <img
-                  src="/images/Resources free generator.jpg"
-                  alt="RFG Demo"
-                  className="w-full h-full object-cover filter brightness-75 group-hover:brightness-50 transition-all duration-500"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-blue-600/80 group-hover:bg-blue-500 rounded-full p-6 shadow-[0_0_30px_rgba(59,130,246,0.6)] backdrop-blur-sm transition-all duration-300 transform group-hover:scale-110">
-                    <Play className="w-10 h-10 text-white fill-white ml-1" />
-                  </div>
+            <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-lg group cursor-pointer" onClick={() => setPlayingVideo('/images/RFG Video.mp4')}>
+              {products.length > 0 && (
+                <img src={getImageUrl((products.find(p => p.name.toLowerCase().includes('resources free')) || products[0]).image_url)} alt="RFG Thumbnail" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              )}
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-blue-500/80 backdrop-blur flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover:scale-110 transition-transform">
+                  <Play className="w-6 h-6 text-white ml-1" />
                 </div>
-                <div className="absolute bottom-4 left-4 font-orbitron text-white font-bold tracking-wider drop-shadow-md">
-                  RESOURCES FREE GENERATOR MODEL DEMO
-                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                <p className="font-orbitron font-semibold text-white text-lg">Resources Free Generator Running Demo</p>
               </div>
             </div>
 
-            {/* Video 2 */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800/50 bg-slate-100 aspect-video flex items-center justify-center">
-              <div
-                className="relative w-full h-full cursor-pointer group"
-                onClick={() => setPlayingVideo('/images/EBS1 Video.mp4')}
-              >
-                <img
-                  src="/images/Energy booster.jpg"
-                  alt="EBS Demo"
-                  className="w-full h-full object-cover filter brightness-75 group-hover:brightness-50 transition-all duration-500"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-purple-600/80 group-hover:bg-purple-500 rounded-full p-6 shadow-[0_0_30px_rgba(168,85,247,0.6)] backdrop-blur-sm transition-all duration-300 transform group-hover:scale-110">
-                    <Play className="w-10 h-10 text-white fill-white ml-1" />
-                  </div>
+            <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-800 shadow-lg group cursor-pointer" onClick={() => setPlayingVideo('/images/EBS1 Video.mp4')}>
+              {products.length > 0 && (
+                <img src={getImageUrl((products.find(p => p.name.toLowerCase().includes('energy booster')) || products[1] || products[0]).image_url)} alt="EBS Thumbnail" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              )}
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-blue-500/80 backdrop-blur flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover:scale-110 transition-transform">
+                  <Play className="w-6 h-6 text-white ml-1" />
                 </div>
-                <div className="absolute bottom-4 left-4 font-orbitron text-white font-bold tracking-wider drop-shadow-md">
-                  ENERGY BOOSTER SYSTEM MODEL DEMO
-                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                <p className="font-orbitron font-semibold text-white text-lg">Energy Booster System in Action</p>
               </div>
             </div>
           </div>
         </div>
-
       </div>
 
       {/* --- Fullscreen Video Modal --- */}
