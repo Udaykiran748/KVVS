@@ -358,11 +358,11 @@ const BookingHistory = () => {
                         </p>
                       </td>
                       <td className="p-3">
-                        <p className="font-bold text-slate-800">{book.Product.name}</p>
-                        <p className="text-[10px] text-slate-500">{book.Product.kw_capacity} KW</p>
+                        <p className="font-bold text-slate-800">{book.Product?.name || 'Unknown'}</p>
+                        <p className="text-[10px] text-slate-500">{book.kw_capacity || book.Product?.kw_capacity || 0} KW</p>
                       </td>
                       <td className="p-3 font-mono font-bold text-slate-800">
-                        ₹{book.Payment.amount}
+                        ₹{book.Payment?.amount || 0}
                       </td>
                       <td className="p-3 font-bold uppercase text-[#3395ff]">
                         RAZORPAY
@@ -462,10 +462,10 @@ const BookingHistory = () => {
                 <div>
                   <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Generator Details</h4>
                   <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
-                    <p className="font-bold text-slate-800">{selectedBooking.Product.name}</p>
+                    <p className="font-bold text-slate-800">{selectedBooking.Product?.name || 'Unknown'}</p>
                     <div className="flex justify-between mt-1.5 text-slate-600">
-                      <span>Capacity: <strong className="text-slate-800">{selectedBooking.Product.kw_capacity} KW</strong></span>
-                      <span>Rate: <strong className="text-slate-800">₹{selectedBooking.Product.price}/KW</strong></span>
+                      <span>Capacity: <strong className="text-slate-800">{selectedBooking.kw_capacity || selectedBooking.Product?.kw_capacity || 0} KW</strong></span>
+                      <span>Rate: <strong className="text-slate-800">₹{selectedBooking.Product?.price || 6000}/KW</strong></span>
                     </div>
                   </div>
                 </div>
@@ -485,7 +485,7 @@ const BookingHistory = () => {
                     </div>
                     <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
                       <span className="font-bold">Total Amount Paid:</span>
-                      <span className="font-mono font-bold text-base text-slate-800">₹{selectedBooking.Payment.amount}</span>
+                      <span className="font-mono font-bold text-base text-slate-800">₹{selectedBooking.Payment?.amount || 0}</span>
                     </div>
                   </div>
                 </div>

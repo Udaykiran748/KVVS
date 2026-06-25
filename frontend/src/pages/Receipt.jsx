@@ -123,7 +123,10 @@ export default function Receipt() {
 
     doc.text(`Transaction ID: ${successBooking.transaction_id || 'pay_mock_' + Math.random().toString(36).substring(2, 9)}`, 110, 150);
     doc.text(`Payment Method: ${successBooking.payment_method || 'RAZORPAY'}`, 110, 156);
-    const paymentStatus = successBooking.payment_status ? successBooking.payment_status.toUpperCase() : 'COMPLETED';
+    let paymentStatus = successBooking.payment_status ? successBooking.payment_status.toUpperCase() : 'SUCCESS';
+    if (paymentStatus === 'CAPTURED' || paymentStatus === 'CONFIRMED' || paymentStatus === 'COMPLETED') {
+      paymentStatus = 'SUCCESS';
+    }
     doc.text(`Payment Status: ${paymentStatus}`, 110, 162);
 
     // Generator Details

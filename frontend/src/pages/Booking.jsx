@@ -27,6 +27,11 @@ const Booking = () => {
   const [termsParagraphs, setTermsParagraphs] = useState([]);
   const [termChecks, setTermChecks] = useState([]);
 
+  // Scroll to top on mount or when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   useEffect(() => {
     if (event && event.terms_and_conditions) {
       const paragraphs = event.terms_and_conditions.split('\n').filter(p => p.trim() !== '');
@@ -85,7 +90,7 @@ const Booking = () => {
         sanitizedValue = sanitizedValue.slice(0, 10);
       }
       setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
-      
+
       if (sanitizedValue.length === 10 && /^(\d)\1{9}$/.test(sanitizedValue)) {
         setMobileError('Mobile number cannot be all same digits');
       } else if (sanitizedValue.length > 0 && sanitizedValue.length < 10) {
@@ -205,8 +210,8 @@ const Booking = () => {
 
       // Pre-select product from URL search param or navigation state
       const urlProductId = location.state?.product || searchParams.get('product');
-      if (urlProductId && hardcodedProducts.find(p => p.id === urlProductId)) {
-        setSelectedProductId(urlProductId);
+      if (urlProductId && hardcodedProducts.find(p => p.id === String(urlProductId))) {
+        setSelectedProductId(String(urlProductId));
       } else {
         setSelectedProductId('1');
       }

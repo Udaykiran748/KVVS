@@ -32,22 +32,22 @@
 
 .glass-panel-hover:hover {
   background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(0, 242, 254, 0.3);
-  box-shadow: 0 0 40px rgba(0, 242, 254, 0.08), inset 0 0 12px rgba(0, 0, 0, 0.02);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.08), inset 0 0 12px rgba(0, 0, 0, 0.02);
   transform: translateY(-4px);
 }
 
 /* Cybernetic Neon Glow Filters */
-.text-glow-cyan {
-  text-shadow: 0 0 8px rgba(0, 242, 254, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
+.text-glow-blue {
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
 .text-glow-purple {
   text-shadow: 0 0 8px rgba(124, 58, 237, 0.5), 0 0 20px rgba(124, 58, 237, 0.2);
 }
 
-.glow-shadow-cyan {
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+.glow-shadow-blue {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
 .glow-shadow-purple {
@@ -82,7 +82,7 @@
   z-index: 0;
   background: 
     radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 45%),
-    radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 45%),
     radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.02) 0%, transparent 60%);
   filter: blur(120px);
 }

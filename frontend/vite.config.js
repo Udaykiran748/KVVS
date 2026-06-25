@@ -13,8 +13,8 @@ export default defineConfig({
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
             if (res && !res.headersSent) {
-               res.writeHead(502, { 'Content-Type': 'application/json' });
-               res.end(JSON.stringify({ error: 'Backend down' }));
+              res.writeHead(502, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Backend down' }));
             }
           });
         }
@@ -26,8 +26,8 @@ export default defineConfig({
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
             if (res && !res.headersSent) {
-               res.writeHead(502, { 'Content-Type': 'application/json' });
-               res.end(JSON.stringify({ error: 'Backend down' }));
+              res.writeHead(502, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Backend down' }));
             }
           });
         }

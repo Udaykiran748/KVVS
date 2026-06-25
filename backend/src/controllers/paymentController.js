@@ -9,7 +9,7 @@ require('dotenv').config();
 
 // Initialize Razorpay SDK if credentials are present
 let razorpay = null;
-const isDemoMode = process.env.RAZORPAY_KEY_ID === 'MOCK' || !process.env.RAZORPAY_KEY_ID;
+const isDemoMode = !process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'MOCK';
 
 if (!isDemoMode) {
   try {
@@ -208,13 +208,13 @@ const verifyPayment = async (req, res) => {
 
       await payment.update({
         transaction_id: razorpay_payment_id || `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
-        status: 'captured',
+        status: 'Confirmed',
         signature: 'demo_simulation_signature'
       });
     } else {
       // Live Signature verification
       if (!razorpay_payment_id || !razorpay_signature) {
-        return res.status(400).json({ message: 'Missing transaction capture parameters.' });
+        return res.status(400).json({ message: 'Missing transaction Confirmed parameters.' });
       }
 
       const generatedSignature = crypto
@@ -226,7 +226,7 @@ const verifyPayment = async (req, res) => {
         isVerified = true;
         await payment.update({
           transaction_id: razorpay_payment_id,
-          status: 'captured',
+          status: 'Confirmed',
           signature: razorpay_signature
         });
       } else {
@@ -241,7 +241,7 @@ const verifyPayment = async (req, res) => {
     isVerified = true;
     await payment.update({
       transaction_id: razorpay_payment_id || `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
-      status: 'captured',
+      status: 'Confirmed',
       signature: razorpay_signature || 'auto_bypassed_signature'
     });
     */
@@ -287,7 +287,7 @@ const verifyPayment = async (req, res) => {
       );
 
       return res.json({
-        message: 'Transaction captured and boarding pass processed successfully.',
+        message: 'Transaction Confirmed and boarding pass processed successfully.',
         booking_id: bookingGenerator.booking_id,
         customer_name: bookingGenerator.customer_name,
         mobile_number: bookingGenerator.mobile_number,

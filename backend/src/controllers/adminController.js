@@ -224,6 +224,19 @@ const deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    // Manually cascade delete associated records to prevent foreign key constraint errors
+    const bookings = await BookingGenerator.findAll({ where: { user_id: user.id } });
+    for (const booking of bookings) {
+      await Payment.destroy({ where: { booking_generator_id: booking.id } });
+      const pass = await Pass.findOne({ where: { booking_generator_id: booking.id } });
+      if (pass) {
+        await Attendance.destroy({ where: { pass_id: pass.id } });
+        await pass.destroy();
+      }
+      await booking.destroy();
+    }
+
     await user.destroy();
     return res.json({ message: 'User account permanently removed.' });
   } catch (error) {

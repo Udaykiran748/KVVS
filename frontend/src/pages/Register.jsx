@@ -241,7 +241,7 @@ const Register = () => {
         <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
         <div className="w-full max-w-xl glass-panel border border-green-500/30 bg-green-500/5 rounded-2xl p-6 sm:p-10 text-center shadow-2xl relative">
 
-          <div className="w-16 h-16 rounded-full bg-slate-100 border border-green-400 shrink-0 flex items-center justify-center mx-auto mb-6 glow-shadow-cyan">
+          <div className="w-16 h-16 rounded-full bg-slate-100 border border-green-400 shrink-0 flex items-center justify-center mx-auto mb-6 glow-shadow-blue">
             <ShieldCheck className="w-8 h-8 text-green-400" />
           </div>
 
@@ -284,7 +284,7 @@ const Register = () => {
           <h1 className="font-orbitron font-extrabold text-3xl text-black mb-2 tracking-wider">
             RESERVE PASS Clearance
           </h1>
-          <p className="text-[10px] text-[#3b82f6] text-glow-cyan font-orbitron tracking-widest uppercase">Launch Event Priority Checkout</p>
+          <p className="text-[10px] text-[#3b82f6] text-glow-blue font-orbitron tracking-widest uppercase">Launch Event Priority Checkout</p>
         </div>
 
         {errorMsg && (
@@ -333,7 +333,7 @@ const Register = () => {
                 {products.map((prod) => (
                   <label
                     key={prod.id}
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${selectedProductId === prod.id.toString() ? 'border-[#3b82f6] bg-cyan-500/5 glow-shadow-cyan' : 'border-slate-800/80 hover:border-slate-700 bg-slate-100/30'}`}
+                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${selectedProductId === prod.id.toString() ? 'border-[#3b82f6] bg-blue-500/5 glow-shadow-blue' : 'border-slate-800/80 hover:border-slate-700 bg-slate-100/30'}`}
                   >
                     <div className="flex items-center space-x-3.5">
                       <input
@@ -342,7 +342,7 @@ const Register = () => {
                         value={prod.id}
                         checked={selectedProductId === prod.id.toString()}
                         onChange={(e) => setSelectedProductId(e.target.value)}
-                        className="w-4 h-4 text-cyan-500 bg-slate-100 border-slate-850 accent-cyan-400 focus:ring-0 focus:ring-offset-0"
+                        className="w-4 h-4 text-blue-500 bg-slate-100 border-slate-850 accent-blue-400 focus:ring-0 focus:ring-offset-0"
                       />
                       <div>
                         <span className="font-orbitron font-bold text-xs sm:text-sm text-black block">{prod.name}</span>
@@ -373,7 +373,7 @@ const Register = () => {
 
                 <div className="space-y-4 text-xs mb-6">
                   <div className="flex items-start space-x-3">
-                    <Calendar className="w-4.5 h-4.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <Calendar className="w-4.5 h-4.5 text-blue-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="text-slate-500 font-medium">Unveiling Launch Event</span>
                       <p className="text-black font-semibold mt-1">{event.title}</p>
@@ -381,7 +381,7 @@ const Register = () => {
                   </div>
 
                   <div className="flex items-start space-x-3">
-                    <MapPin className="w-4.5 h-4.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <MapPin className="w-4.5 h-4.5 text-blue-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="text-slate-500 font-medium">Clearance Gate Entrance</span>
                       <p className="text-black font-semibold mt-1">{event.venue}</p>
@@ -401,7 +401,7 @@ const Register = () => {
                   </div>
                   <div className="border-t border-slate-800/80 pt-3 flex justify-between font-orbitron font-extrabold text-sm text-black">
                     <span>TOTAL AMOUNT</span>
-                    <span className="text-[#3b82f6] text-glow-cyan">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span>
+                    <span className="text-[#3b82f6] text-glow-blue">Rs. {parseFloat(event.ticket_price).toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -434,13 +434,13 @@ const Register = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-white/90 backdrop-blur-md"></div>
 
-          <div className="relative w-full max-w-md bg-slate-50 border border-cyan-500/40 glow-shadow-cyan rounded-2xl p-6 sm:p-8 shadow-2xl z-10 text-center">
+          <div className="relative w-full max-w-md bg-slate-50 border border-blue-500/40 glow-shadow-blue rounded-2xl p-6 sm:p-8 shadow-2xl z-10 text-center">
 
-            <div className="w-12 h-12 rounded-full bg-slate-100 border border-cyan-400 shrink-0 flex items-center justify-center mx-auto mb-4 glow-shadow-cyan">
-              <Zap className="w-6 h-6 text-cyan-400 fill-cyan-400 animate-pulse" />
+            <div className="w-12 h-12 rounded-full bg-slate-100 border border-blue-400 shrink-0 flex items-center justify-center mx-auto mb-4 glow-shadow-blue">
+              <Zap className="w-6 h-6 text-blue-400 fill-blue-400 animate-pulse" />
             </div>
 
-            <h3 className="font-orbitron font-extrabold text-lg text-cyan-400 tracking-wide text-glow-cyan mb-2">
+            <h3 className="font-orbitron font-extrabold text-lg text-blue-400 tracking-wide text-glow-blue mb-2">
               K V V SAI ELECTRICALS PAY SANDBOX
             </h3>
             <p className="text-[10px] text-slate-500 font-orbitron tracking-widest uppercase mb-6">Demo checkout Simulation Active</p>
