@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { eventAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import Countdown from '../components/Countdown';
 import { Zap, ShieldCheck, FlameKindling, Landmark, ArrowRight, Activity, Cpu, Award, MessageSquare, ChevronDown, RefreshCw } from 'lucide-react';
 
 const Home = () => {
+  const { user, isAdmin } = useAuth();
   const [event, setEvent] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
 
@@ -102,7 +104,7 @@ const Home = () => {
             <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <Link to="/history" className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
+          <Link to={isAdmin ? "/admin" : (user ? "/history" : "/login")} className="px-8 py-3 rounded-sm font-orbitron border border-slate-700 bg-transparent text-black hover:text-black hover:border-slate-500 hover:bg-slate-100/50 transition-all text-xs tracking-wider font-bold w-full sm:w-auto">
             VIEW BOOKING HISTORY
           </Link>
 

@@ -189,35 +189,32 @@ const Booking = () => {
 
   useEffect(() => {
     const loadBookingParameters = async () => {
-      const hardcodedProducts = [
-        {
-          id: '1',
-          name: 'Resources Free Generator',
-          min_kw: 5,
-          max_kw: 40,
-          base_price_per_kw: 6000
-        },
-        {
-          id: '2',
-          name: 'Energy Booster System',
-          min_kw: 40,
-          max_kw: 1000,
-          base_price_per_kw: 6000
-        }
-      ];
-
-      setProducts(hardcodedProducts);
-
-      // Pre-select product from URL search param or navigation state
-      const urlProductId = location.state?.product || searchParams.get('product');
-      if (urlProductId && hardcodedProducts.find(p => p.id === String(urlProductId))) {
-        setSelectedProductId(String(urlProductId));
-      } else {
-        setSelectedProductId('1');
-      }
-
       try {
         const prodRes = await productsAPI.getAll();
+        const apiProducts = prodRes.data?.data || prodRes.data || [];
+        
+        const mappedProducts = apiProducts.map(p => ({
+          id: String(p.id),
+          name: p.name,
+          min_kw: p.name.includes('Resources') ? 5 : 40,
+          max_kw: p.name.includes('Resources') ? 40 : 1000,
+          base_price_per_kw: parseFloat(p.price) || 6000
+        }));
+
+        const finalProducts = mappedProducts.length > 0 ? mappedProducts : [
+          { id: '1', name: 'Resources Free Generator', min_kw: 5, max_kw: 40, base_price_per_kw: 6000 },
+          { id: '2', name: 'Energy Booster System', min_kw: 40, max_kw: 1000, base_price_per_kw: 6000 }
+        ];
+
+        setProducts(finalProducts);
+
+        const urlProductId = location.state?.product || searchParams.get('product');
+        if (urlProductId && finalProducts.find(p => p.id === String(urlProductId))) {
+          setSelectedProductId(String(urlProductId));
+        } else {
+          setSelectedProductId(String(finalProducts[0].id));
+        }
+
         const eventRes = await eventAPI.getActive();
         setEvent(eventRes.data);
       } catch (error) {
@@ -227,7 +224,7 @@ const Booking = () => {
       }
     };
     loadBookingParameters();
-  }, [searchParams]);
+  }, [searchParams, location.state]);
 
   const selectedProduct = products.find(p => p.id.toString() === selectedProductId);
 
@@ -569,14 +566,14 @@ const Booking = () => {
                         <div className="flex-1 flex justify-between items-center">
                           <div>
                             <span className="font-orbitron font-bold text-xs sm:text-sm text-black block">{prod.name}</span>
-                            <span className="text-[10px] text-slate-500">Range: {prod.id === '1' ? '5 HP - 40 HP | 6 KW - 40 KW' : '5 HP - 100 HP | 40 KW - 1MVA'}</span>
+                            <span className="text-[10px] text-slate-500">Range: {prod.name.includes('Resources') ? '5 HP - 40 HP | 6 KW - 40 KW' : '5 HP - 100 HP | 40 KW - 1MVA'}</span>
                           </div>
                         </div>
                       </div>
                     </label>
                   ))}
 
-                  {selectedProduct && selectedProduct.id === '1' ? (
+                  {selectedProduct && selectedProduct.name.includes('Resources') ? (
                     <div className="mt-6 space-y-4">
                       {/* Field 1: KW Range */}
                       <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">
@@ -729,7 +726,7 @@ const Booking = () => {
                         </p>
                       </div>
                     </div>
-                  ) : selectedProduct && selectedProduct.id === '2' ? (
+                  ) : selectedProduct && selectedProduct.name.includes('Energy') ? (
                     <div className="mt-6 space-y-4">
                       {/* Field 1: KW Range */}
                       <div className="p-4 border border-blue-500/30 rounded-xl bg-blue-50/50">

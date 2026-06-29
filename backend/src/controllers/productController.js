@@ -43,17 +43,21 @@ const createProduct = async (req, res) => {
     }
 
     let parsedSpecs = specifications;
-    if (typeof specifications === 'string') {
-      try { parsedSpecs = JSON.parse(specifications); } catch (e) { parsedSpecs = {}; }
+    if (typeof specifications === 'string' && specifications.trim()) {
+      try { parsedSpecs = JSON.parse(specifications); } catch (e) { return res.status(400).json({ message: 'Invalid JSON format in specifications.' }); }
+    } else {
+      parsedSpecs = {};
     }
 
     let parsedBenefits = benefits;
-    if (typeof benefits === 'string') {
-      try { parsedBenefits = JSON.parse(benefits); } catch (e) { parsedBenefits = []; }
+    if (typeof benefits === 'string' && benefits.trim()) {
+      try { parsedBenefits = JSON.parse(benefits); } catch (e) { return res.status(400).json({ message: 'Invalid JSON format in benefits.' }); }
+    } else {
+      parsedBenefits = [];
     }
 
     // Capture uploaded file url or set default futuristic graphic url
-    let image_url = '/images/generator-placeholder.webp';
+    let image_url = 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop';
     if (req.file) {
       image_url = `/uploads/${req.file.filename}`;
     } else if (req.body.image_url) {
@@ -93,13 +97,17 @@ const updateProduct = async (req, res) => {
     }
 
     let parsedSpecs = specifications;
-    if (typeof specifications === 'string') {
-      try { parsedSpecs = JSON.parse(specifications); } catch (e) { parsedSpecs = product.specifications; }
+    if (typeof specifications === 'string' && specifications.trim()) {
+      try { parsedSpecs = JSON.parse(specifications); } catch (e) { return res.status(400).json({ message: 'Invalid JSON format in specifications.' }); }
+    } else if (!specifications) {
+      parsedSpecs = product.specifications;
     }
 
     let parsedBenefits = benefits;
-    if (typeof benefits === 'string') {
-      try { parsedBenefits = JSON.parse(benefits); } catch (e) { parsedBenefits = product.benefits; }
+    if (typeof benefits === 'string' && benefits.trim()) {
+      try { parsedBenefits = JSON.parse(benefits); } catch (e) { return res.status(400).json({ message: 'Invalid JSON format in benefits.' }); }
+    } else if (!benefits) {
+      parsedBenefits = product.benefits;
     }
 
     let image_url = product.image_url;

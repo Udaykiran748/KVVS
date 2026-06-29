@@ -183,9 +183,13 @@ const getAllUsers = async (req, res) => {
 
     // Attach booking count per user
     const usersWithStats = await Promise.all(users.map(async (u) => {
-      const bookingCount = await BookingGenerator.count({ where: { user_id: u.id } });
-      const confirmedCount = await BookingGenerator.count({ where: { user_id: u.id, status: 'confirmed' } });
-      return { ...u.toJSON(), bookingCount, confirmedCount };
+      const bookings = await BookingGenerator.findAll({ 
+        where: { user_id: u.id },
+        include: [{ model: Product }]
+      });
+      const bookingCount = bookings.length;
+      const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
+      return { ...u.toJSON(), bookingCount, confirmedCount, bookingHistory: bookings };
     }));
 
     return res.json(usersWithStats);

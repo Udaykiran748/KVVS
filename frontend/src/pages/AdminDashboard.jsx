@@ -438,7 +438,7 @@ const ProductsTab = () => {
   const [confirm, setConfirm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
-  const [form, setForm] = useState({ name: '', kw_capacity: '', price: '', availability_status: 'available', specifications: '', benefits: '' });
+  const [form, setForm] = useState({ name: '', kw_capacity: '', price: '', availability_status: '6KW - 40KW', specifications: '', benefits: '' });
   const fileRef = useRef(null);
 
   const showToast = (msg, type = 'success') => {
@@ -456,7 +456,7 @@ const ProductsTab = () => {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ name: '', kw_capacity: '', price: '', availability_status: 'available', specifications: '', benefits: '' });
+    setForm({ name: '', kw_capacity: '', price: '', availability_status: '6KW - 40KW', specifications: '', benefits: '' });
     setShowForm(true);
   };
 
@@ -486,7 +486,10 @@ const ProductsTab = () => {
       if (editing) { await adminAPI.updateProduct(editing.id, fd); showToast('Product updated successfully.'); }
       else { await adminAPI.createProduct(fd); showToast('Product created successfully.'); }
       setShowForm(false); fetchProducts();
-    } catch { showToast('Save failed. Please try again.', 'error'); }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Save failed. Please try again.';
+      showToast(errMsg, 'error');
+    }
     finally { setSaving(false); }
   };
 
@@ -544,12 +547,10 @@ const ProductsTab = () => {
                   </div>
                 ))}
                 <div>
-                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Availability</label>
-                  <select value={form.availability_status} onChange={e => setForm(p => ({ ...p, availability_status: e.target.value }))}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none cursor-pointer">
-                    <option value="available">Available</option>
-                    <option value="unavailable">Unavailable</option>
-                  </select>
+                  <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Availability Badge Text</label>
+                  <input type="text" value={form.availability_status} placeholder="e.g. 6KW to 40KW"
+                    onChange={e => setForm(p => ({ ...p, availability_status: e.target.value }))}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-sm focus:border-blue-500 outline-none" />
                 </div>
                 <div>
                   <label className="text-slate-600 font-mono text-[10px] uppercase mb-1 block">Specifications (JSON)</label>
@@ -717,7 +718,30 @@ const UsersTab = () => {
                   </div>
                 ))}
               </div>
-              <button onClick={() => setViewUser(null)} className="mt-5 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 rounded-xl font-mono text-sm transition">CLOSE</button>
+
+              <div className="mt-5 border-t border-slate-300 pt-4">
+                <h4 className="text-blue-500 font-mono text-xs font-bold mb-3">BOOKING HISTORY</h4>
+                {viewUser.bookingHistory && viewUser.bookingHistory.length > 0 ? (
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    {viewUser.bookingHistory.map((b, i) => (
+                      <div key={i} className="p-3 border border-slate-300 bg-slate-50/20 rounded-lg flex justify-between items-center font-mono text-[10px]">
+                        <div>
+                          <div className="font-semibold text-slate-900 text-xs">{b.booking_id}</div>
+                          <div className="text-blue-400">{b.Product?.name || 'Generator'} {b.generator_kw ? `(${b.generator_kw}KW)` : ''}</div>
+                          <div className="text-slate-500 mt-0.5">{new Date(b.createdAt).toLocaleDateString()}</div>
+                        </div>
+                        <div>
+                          <StatusBadge status={b.status} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-slate-500 text-xs font-mono italic text-center py-2">No bookings found for this user.</div>
+                )}
+              </div>
+
+              <button onClick={() => setViewUser(null)} className="mt-5 w-full py-2.5 bg-slate-200 hover:bg-zinc-700 text-slate-900 rounded-xl font-mono text-sm transition font-bold hover:text-white">CLOSE</button>
             </motion.div>
           </motion.div>
         )}

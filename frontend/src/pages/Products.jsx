@@ -21,15 +21,14 @@ const Products = () => {
           id: '1',
           name: 'Resources Free Generator',
           kw_capacity: 6,
-          badge_text: '6KW - 40KW',
+          badge_text: '6KW to 40KW',
           price: '6000',
           image_url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop',
           benefits: [
-            'A system which doesn\'t consumes or either needs any other Resources like *solar *water *petroleum *battery *KEB power supply To generate the electricity power.',
-            'It runs on its own source which generates electricity also the maintenance is affordable compared to any other generators which are dependent on Resources mentioned above.',
-            'Its availability is from 6kw to 100kw output power generation also 90% of load guaranteed on the requirement of output energy.',
-            'Applications for: Agriculture',
-            'RS . 6000per KW'
+            "A system which doesn't consumes or either needs any other Resources like *solar *water *petroleum *battery *KEB power supply To generate the electricity power.",
+            "It runs on its own source which generates electricity also the maintenance is affordable compared to any other generators which are dependent on Resources mentioned above.",
+            "It's availability is from 6kw to 100kw output power generation also 90% of load guaranteed on the requirement of output energy.",
+            "It's applications for :- Agriculture"
           ],
           specifications: {
             availability: '6kw to 100kw output power generation',
@@ -42,15 +41,14 @@ const Products = () => {
           id: '2',
           name: 'Energy Booster System',
           kw_capacity: 40,
-          badge_text: '40KW - 1MVA',
+          badge_text: '40KW 1MVA',
           price: '6000',
           image_url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop', // Vite serves public directory from root '/'
           benefits: [
-            'A system which consumes a input power of 10kw from the LT through the output power it distributes about 40kw load.',
-            'By consumption of 10kw power it provides about 40kw load the ratio of 1:4 times of power output which the system is known as ENERGY BOOSTER.',
-            'Its availability from 40kw to 1000kw output power supply also 90% load guaranteed on the requirement of output power.',
-            'Applications for: Commercial industries, Agricultural',
-            'RS . 6000per KW'
+            "A system which consumes a input power of 10kw from the LT through the output power it distributes about 40kw load.",
+            "By consumption of 10kw power it provides about 40kw load the ratio of 1:4 times of power output which the system is known as ENERGY BOOSTER.",
+            "It's availability from 40kw to 1000kw output power supply also 90% load guaranteed on the requirement of output power.",
+            "It's applications for :- *Commercial industries. *Agricultural"
           ],
           specifications: {
             availability: '40KW to 1000KW output power supply',
@@ -86,7 +84,13 @@ const Products = () => {
     fetchShowroomData();
   }, []);
 
-  const handleReserve = (productId) => {
+  const handleReserve = (prod) => {
+    let productId = prod.id;
+    if (prod.name.toLowerCase().includes('resources free')) {
+      productId = '1';
+    } else if (prod.name.toLowerCase().includes('energy booster')) {
+      productId = '2';
+    }
     navigate('/booking', { state: { product: productId } });
   };
 
@@ -225,7 +229,7 @@ const Products = () => {
                   </button>
 
                   <button
-                    onClick={() => handleReserve(prod.id)}
+                    onClick={() => handleReserve(prod)}
                     className="w-full btn-cyber py-2.5 rounded text-xs"
                   >
                     BOOKING GENERATOR
@@ -353,7 +357,17 @@ const Products = () => {
 
               {/* Grid of specs */}
               <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-8 text-xs">
-                {Object.entries(selectedProductDetails.specifications || {}).map(([key, val]) => (
+                {Object.entries(
+                  typeof selectedProductDetails.specifications === 'string'
+                    ? (() => {
+                      try {
+                        return JSON.parse(selectedProductDetails.specifications);
+                      } catch {
+                        return {};
+                      }
+                    })()
+                    : selectedProductDetails.specifications || {}
+                ).map(([key, val]) => (
                   <div key={key} className="p-3 bg-slate-100/50 border border-slate-800/80 rounded-lg">
                     <span className="text-slate-500 font-orbitron block capitalize mb-1">{key.replace('_', ' ')}</span>
                     <span className="text-black font-semibold">{val}</span>
@@ -370,9 +384,9 @@ const Products = () => {
                 </button>
                 <button
                   onClick={() => {
-                    const id = selectedProductDetails.id;
+                    const prod = selectedProductDetails;
                     setSelectedProductDetails(null);
-                    handleReserve(id);
+                    handleReserve(prod);
                   }}
                   className="w-full btn-cyber py-2.5 rounded text-xs"
                 >

@@ -19,43 +19,41 @@ const seedDatabase = async () => {
         {
           name: 'Resources Free Generator-6 Magnet Generator',
           kw_capacity: 6,
-          price: 95000.00,
-          availability_status: 'available',
+          price: 6000.00,
+          availability_status: '6KW to 40KW',
           image_url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop',
           specifications: {
-            dimensions: '75cm x 55cm x 60cm',
-            weight: '82 Kg',
-            output_voltage: '220V - 240V AC Single Phase',
-            magnet_type: 'Hyper-Coercive Samarium Cobalt',
-            estimated_lifespan: '30 Years',
-            cooling_system: 'Liquid Zero-Viscosity Conduction'
+            availability: '6kw to 100kw output power generation',
+            load_guarantee: '90%',
+            applications: 'Agriculture',
+            type: 'Resource-Free Generator'
           },
           benefits: [
-            'Powers standard 3-bedroom household completely',
-            'Seamless automated grid switching built-in',
-            'Weatherproof rugged armor shell for outdoor placement',
-            'Smart control console with IoT tracking app'
+            "A system which doesn't consumes or either needs any other Resources like *solar *water *petroleum *battery *KEB power supply To generate the electricity power.",
+            "It runs on its own source which generates electricity also the maintenance is affordable compared to any other generators which are dependent on Resources mentioned above.",
+            "It's availability is from 6kw to 100kw output power generation also 90% of load guaranteed on the requirement of output energy.",
+            "It's applications for :- Agriculture"
           ]
         },
         {
           name: 'Energy Booster System-40 Magnet Generator',
           kw_capacity: 40,
-          price: 180000.00,
-          availability_status: 'available',
+          price: 6000.00,
+          availability_status: '40KW 1MVA',
           image_url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop',
           specifications: {
-            dimensions: '110cm x 85cm x 90cm',
-            weight: '148 Kg',
-            output_voltage: '415V Three Phase / 240V Single Phase',
-            magnet_type: 'Superconducting Cryo-Magnetic Ring',
-            estimated_lifespan: '40 Years',
-            cooling_system: 'Helium-Enriched closed circuit'
+            availability: '40KW to 1000KW output power supply',
+            input: '10 KW from LT',
+            output: '40 KW Load',
+            ratio: '1:4',
+            load_guarantee: '90%',
+            applications: 'Commercial industries, Agricultural'
           },
           benefits: [
-            'Industrial-grade energy output for manufacturing or estates',
-            'Dual linking system allows scaling by parallel connections',
-            'Advanced anti-shock safety systems and surge gates',
-            'Real-time automated diagnostic telemetry transmission'
+            "A system which consumes a input power of 10kw from the LT through the output power it distributes about 40kw load.",
+            "By consumption of 10kw power it provides about 40kw load the ratio of 1:4 times of power output which the system is known as ENERGY BOOSTER.",
+            "It's availability from 40kw to 1000kw output power supply also 90% load guaranteed on the requirement of output power.",
+            "It's applications for :- *Commercial industries. *Agricultural"
           ]
         }
       ]);

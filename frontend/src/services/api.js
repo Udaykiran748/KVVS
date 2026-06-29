@@ -52,12 +52,8 @@ export const authAPI = {
 export const productsAPI = {
   getAll: () => API.get('/products'),
   getById: (id) => API.get(`/products/${id}`),
-  create: (formData) => API.post('/products', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
-  update: (id, formData) => API.put(`/products/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  create: (formData) => API.post('/products', formData),
+  update: (id, formData) => API.put(`/products/${id}`, formData),
   delete: (id) => API.delete(`/products/${id}`)
 };
 
@@ -95,12 +91,8 @@ export const adminAPI = {
 
   // Products (admin-scoped)
   getAllProducts: () => API.get('/admin/products'),
-  createProduct: (formData) => API.post('/admin/products', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
-  updateProduct: (id, formData) => API.put(`/admin/products/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  createProduct: (formData) => API.post('/admin/products', formData),
+  updateProduct: (id, formData) => API.put(`/admin/products/${id}`, formData),
   deleteProduct: (id) => API.delete(`/admin/products/${id}`)
 };
 

@@ -234,7 +234,7 @@ const Login = () => {
               {loading ? (
                 <div className="w-4 h-4 border-2 border-t-white border-r-transparent border-slate-700 rounded-full animate-spin"></div>
               ) : (
-                <span>{isResetPassword ? 'RESET PASSWORD' : (isForgotPassword ? 'SEND RESET LINK' : (isAdminLogin ? 'ADMIN LOGIN' : 'AUTHENTICATE'))}</span>
+                <span>{isResetPassword ? 'RESET PASSWORD' : (isForgotPassword ? 'SEND RESET LINK' : (isAdminLogin ? 'ADMIN LOGIN' : 'USER LOGIN'))}</span>
               )}
             </button>
 
@@ -247,16 +247,7 @@ const Login = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> CANCEL
               </button>
             )}
-            {!isAdminLogin && !isResetPassword && (
-              <div className="text-center mt-4">
-                <p className="text-xs text-slate-500">
-                  Don't have an account?{' '}
-                  <Link to="/register" className="text-[#3b82f6] hover:underline font-bold">
-                    Register here
-                  </Link>
-                </p>
-              </div>
-            )}
+
           </form>
         </div>
       </div>
