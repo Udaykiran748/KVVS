@@ -1,27 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Send, MapPin, Phone, Mail, Globe, Sparkles } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Sparkles } from 'lucide-react';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: 'VIP Clearance Inquiry',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate transmission loop
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-      setFormData({ name: '', email: '', subject: 'VIP Clearance Inquiry', message: '' });
-    }, 1500);
-  };
 
   return (
     <div className="relative min-h-screen bg-white pt-28 pb-20 overflow-hidden">
@@ -41,22 +23,14 @@ const Contact = () => {
             className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/5 text-blue-600 text-xs font-orbitron tracking-widest uppercase mb-4"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>COMMUNICATIONS GATES OPEN</span>
+            <span>CONTACT US</span>
           </motion.div>
-
-          <h1 className="font-orbitron font-extrabold text-3xl sm:text-5xl text-black mb-4 tracking-wider leading-tight">
-            COMMUNICATION HUB
-          </h1>
-
-          <p className="text-black text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-            Transmit structural inquiries, press clearances, or VIP pre-booking assistance directly to the engineers.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+        <div className="flex justify-center items-start">
 
-          {/* Left Column: Direct Communication Channels */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Communication Channels */}
+          <div className="w-full max-w-2xl space-y-6">
 
             <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
               {/* Glowing top line */}
@@ -103,97 +77,7 @@ const Contact = () => {
 
           </div>
 
-          {/* Right Column: Sleek Message Transmission Form */}
-          <div className="lg:col-span-3">
 
-            <div className="glass-panel border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
-              <h3 className="font-orbitron font-extrabold text-lg text-black tracking-wide mb-6">TRANSMIT PACKET MESSAGE</h3>
-
-              {submitted ? (
-                <div className="border border-green-500/40 rounded-xl p-6 bg-green-500/5 text-center text-xs sm:text-sm shadow-xl">
-                  <h4 className="font-orbitron font-extrabold text-green-400 text-lg mb-2">TRANSMISSION COMPLETED</h4>
-                  <p className="text-black leading-relaxed">
-                    Your communications packet has been encrypted and routed to our central gate servers. System engineers will respond on your coordinates shortly.
-                  </p>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-6 font-orbitron font-bold text-xs text-blue-600 border-b border-blue-600 hover:text-black hover:border-white transition-all focus:outline-none"
-                  >
-                    TRANSMIT NEW PACKET
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5 text-xs sm:text-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-orbitron text-xs text-black block mb-2">ATTENDEE NAME</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="John Doe"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 bg-slate-100 border border-slate-800 rounded-lg text-black placeholder-slate-600 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="font-orbitron text-xs text-black block mb-2">COORDINATE EMAIL</label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="john@example.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-slate-100 border border-slate-800 rounded-lg text-black placeholder-slate-600 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="font-orbitron text-xs text-black block mb-2">PACKET SUBJECT</label>
-                    <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-100 border border-slate-800 rounded-lg text-black focus:outline-none focus:border-blue-500/60 transition-colors cursor-pointer"
-                    >
-                      <option value="VIP Clearance Inquiry">VIP Entry Clearance Booking</option>
-                      <option value="Generator Technical Blueprint">Generator Structural Specs</option>
-                      <option value="Press / Media Access">Press / Media Accreditation</option>
-                      <option value="General Network Communications">General System Support</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="font-orbitron text-xs text-black block mb-2">MESSAGE PACKET</label>
-                    <textarea
-                      required
-                      rows="5"
-                      placeholder="Type details of your communication packet..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-100 border border-slate-800 rounded-lg text-black placeholder-slate-600 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors resize-none"
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full btn-cyber py-3.5 rounded text-xs flex items-center justify-center space-x-2"
-                  >
-                    {loading ? (
-                      <div className="w-4 h-4 border-2 border-t-slate-900 border-r-transparent border-slate-700 rounded-full animate-spin"></div>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>TRANSMIT PACKET</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-            </div>
-
-          </div>
 
         </div>
 
