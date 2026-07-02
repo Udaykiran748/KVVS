@@ -8,9 +8,14 @@ async function seedAdmin() {
     await sequelize.authenticate();
     console.log('Database connected successfully.');
 
-    const email = 'kvvsaielectricals@gmail.com';
-    const plainPassword = 'KattrojKL@1902';
-    const name = 'Admin';
+    const email = process.env.ADMIN_EMAIL;
+    const plainPassword = process.env.ADMIN_PASSWORD;
+    const name = process.env.ADMIN_NAME || 'Admin';
+
+    if (!email || !plainPassword) {
+      console.error('Error: ADMIN_EMAIL and ADMIN_PASSWORD must be provided in environment variables.');
+      process.exit(1);
+    }
 
     // Hash the password
     const salt = await bcrypt.genSalt(10);

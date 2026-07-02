@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
   state VARCHAR(100) NULL,
   pincode VARCHAR(20) NULL,
   role VARCHAR(50) DEFAULT 'user',
+  resetPasswordToken VARCHAR(255) NULL,
+  resetPasswordExpires DATETIME NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

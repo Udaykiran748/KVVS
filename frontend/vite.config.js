@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000',
+        target: 'https://api-kvvs.ssquareg.tech',
         changeOrigin: true,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
@@ -21,7 +21,7 @@ export default defineConfig({
       },
 
       '/uploads': {
-        target: 'http://127.0.0.1:5000',
+        target: 'https://api-kvvs.ssquareg.tech',
         changeOrigin: true,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
